@@ -1,8 +1,7 @@
-# Medizone-frontend
-Strategic information system proposal and prototype for "Medizone (pvt) ltd"
+# Medizone FE
 
-Frontend prototype for the IS3610 group assignment: an information system for Medizone Pharmacy
-(four branches). Frontend only: all data is mock data stored in `src/data`.
+Frontend prototype for the IS3610 group assignment: an information system for Medizone Pharmacy.
+Frontend only: use mock data, no backend.
 
 **Stack:** Next.js (App Router), React, TypeScript, Tailwind CSS
 
@@ -10,66 +9,49 @@ Frontend prototype for the IS3610 group assignment: an information system for Me
 
 ```bash
 git clone <repo-url>
-cd medizone-fe
+cd Medizone-frontend
 npm install
-cp .env.example .env.local
 npm run dev
 ```
 
 Open http://localhost:3000. Use Node 22 (`nvm use` reads `.nvmrc`).
 
-## Demo login
-
-There is no real backend. On the login page, pick a role. Each role sees a different sidebar.
-Staff roles also get a **branch selector** in the top bar (All branches, or one branch).
-
-| Role | Can open |
-|---|---|
-| Owner | every module |
-| Senior pharmacist assistant | every module |
-| Pharmacist assistant | home, prescriptions and orders, customers, delivery, billing |
-| Purchasing manager | home, inventory, suppliers |
-| Accountant clerk | home, billing, staff and payroll, reports |
-| Customer | home, prescriptions and orders |
-
-Roles, labels and sidebar rules live in `src/types/index.ts` and `src/lib/nav.ts`.
-
 ## Modules and folders
 
-| # | Module | Folder | Owner |
+| # | Module | Page folder | Owner |
 |---|---|---|---|
-| 1 | Login, roles, home, branch selector | `src/app/login`, `src/app/(app)/home` | |
-| 2 | Admin dashboard | `src/app/(app)/admin` | |
-| 3 | Products and inventory (AI: expiry and reorder alerts) | `src/app/(app)/inventory` | |
-| 4 | Prescriptions and orders | `src/app/(app)/orders` | |
-| 5 | Customers and loyalty (AI: refill reminders) | `src/app/(app)/customers` | |
-| 6 | Suppliers and purchases | `src/app/(app)/suppliers` | |
-| 7 | Delivery, returns and warranty | `src/app/(app)/delivery` | |
-| 8 | Billing and payments | `src/app/(app)/billing` | |
-| 9 | Staff and payroll | `src/app/(app)/staff` | |
-| 10 | Reports and forecasting | `src/app/(app)/reports` | |
+| 1 | Login, roles, home | `src/app/login`, `src/app/home` | |
+| 2 | Admin dashboard | `src/app/admin` | |
+| 3 | Products and inventory | `src/app/inventory` | |
+| 4 | Prescriptions and orders | `src/app/orders` | |
+| 5 | Customers and loyalty | `src/app/customers` | |
+| 6 | Suppliers and purchases | `src/app/suppliers` | |
+| 7 | Delivery, returns and warranty | `src/app/delivery` | |
+| 8 | Billing and payments | `src/app/billing` | |
+| 9 | Staff and payroll | `src/app/staff` | |
+| 10 | Reports and forecasting | `src/app/reports` | |
 
 Write the owner's name in the last column once modules are assigned.
 
-## Shared building blocks
+## Folder structure
 
-- `src/components/ui`: `Button`, `Card`, `Input`, `Badge`, `Table`, `Modal`, `PageHeader`
-- `src/components/layout`: `Sidebar`, `Topbar`, `BranchSelector`
-- `src/lib/auth.tsx`: fake login. `useAuth()` gives `user`, `login`, `logout`
-- `src/lib/branch.tsx`: `useBranch()` gives `selected` (`"all"` or a branch id such as `"b1"`)
-- `src/lib/nav.ts`: sidebar items and which roles can see them
-- `src/data/branches.ts`: the four branches (replace the placeholder names)
-- `src/types/index.ts`: shared types
+```
+src/
+  app/<module>/page.tsx       pages of each module (add more routes as subfolders)
+  components/<module>/        components used only by that module
+  components/shared/          components used by several modules
+  data/                       mock data, one file per module (<module>.ts)
+  lib/                        helpers
+  types/                      shared TypeScript types
+```
 
-Use these instead of writing your own buttons and tables, so every module looks the same.
+`src/app/page.tsx` is a temporary index page that links to every module. It will be replaced when the UI is finalized.
 
-## Writing your module
+## Working on your module
 
-1. Work only in your folder under `src/app/(app)/<module>/` and put your mock data in `src/data/<module>.ts`.
-2. Replace the placeholder `page.tsx`. Add more routes as subfolders (for example `inventory/new/page.tsx`).
-3. Give every record a `branchId` and filter it with `useBranch().selected`, so the branch selector works.
-4. Match your screens to your Figma wireframes.
-
-## Rules
+1. Create your branch: `git checkout -b feature/<module>`.
+2. Build your pages and components inside your own folders.
+3. Install any package you need yourself and list it in your pull request.
+4. Run `npm run lint` and `npm run build`, then open a pull request.
 
 Read `CONTRIBUTING.md` before your first pull request.

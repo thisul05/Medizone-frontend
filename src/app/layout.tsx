@@ -7,8 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // data-theme drives the design tokens in tokens.css ("light" or "dark").
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light">
       <body>{children}</body>
     </html>
   );

@@ -1,0 +1,181 @@
+/*
+  Medizone design tokens — the single source of truth for colour, depth and size.
+  Generated from the Medizone design system. See docs/UI-STYLE-GUIDE.md.
+
+  Only values that change between light and dark live in the theme blocks below.
+  Constant values (spacing, radii, control heights, fonts) are at the bottom.
+
+  Naming note: tokens that would collide with a Tailwind v4 theme namespace
+  (--radius-*, --shadow-*, --font-*) are prefixed with --mz- here, then mapped
+  onto the Tailwind namespace inside the @theme block in globals.css.
+*/
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Brand — identity only, never used for status */
+  --logo-navy: #072f68;
+  --logo-red: #e10102;
+  --logo-green: #62b126;
+
+  /* Surfaces */
+  --surface-page: #f5f7fa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #ebeff5;
+  --surface-hover: #f0f4f9;
+  --surface-nav: var(--logo-navy);
+
+  /* Side navigation */
+  --nav-ink: #ffffff;
+  --nav-ink-muted: #b8c7dc;
+  --nav-active: #1e4a8c;
+
+  /* Lines */
+  --border: #d3dbe6;
+  --border-strong: #7b8ba1;
+
+  /* Text */
+  --ink: #0e1b2e;
+  --ink-muted: #46566d;
+  --ink-subtle: #5d6d84;
+  --ink-disabled: #97a3b4;
+
+  /* Interactive navy */
+  --primary: var(--logo-navy);
+  --primary-hover: #04224d;
+  --on-primary: #ffffff;
+  --primary-tint: #e7eef8;
+  --primary-tint-ink: var(--logo-navy);
+  --link: #1d5aa6;
+  --focus-ring: #2e6fc0;
+  --focus-ring-nav: #ffffff;
+  --scrim: rgba(8, 16, 27, 0.55);
+
+  /* Status tones: -bg ground, -ink text/icon, -solid dots and fills */
+  --info-bg: #e6f0fb;
+  --info-ink: #1d5aa6;
+  --info-solid: #2e6fc0;
+  --success-bg: #e1f4ee;
+  --success-ink: #006450;
+  --success-solid: #007a5e;
+  --warning-bg: #fff3dc;
+  --warning-ink: #8a5200;
+  --warning-solid: #c27a00;
+  --danger-bg: #fdecea;
+  --danger-ink: #b42318;
+  --danger-solid: #c42b21;
+  --neutral-bg: #eef1f5;
+  --neutral-ink: #46566d;
+  --neutral-solid: #7b8ba1;
+  --transit-bg: #e1f3f5;
+  --transit-ink: #0b6470;
+  --transit-solid: #0f8291;
+  --on-solid: #ffffff;
+
+  /* Expiry stickers (module 3) — reserved for expiry only */
+  --expiry-red: #c42b21;
+  --on-expiry-red: #ffffff;
+  --expiry-orange: #ef7d1a;
+  --on-expiry-orange: #231300;
+  --expiry-yellow: #f5c928;
+  --on-expiry-yellow: #2a2000;
+
+  /* Loyalty (module 5) and storefront sale text */
+  --loyalty-bg: #eef6e6;
+  --loyalty-ink: #365f1a;
+  --sale: #c42b21;
+
+  /* Depth */
+  --mz-shadow-1: 0 1px 2px rgba(14, 27, 46, 0.06), 0 1px 3px rgba(14, 27, 46, 0.08);
+  --mz-shadow-2: 0 4px 12px rgba(14, 27, 46, 0.1), 0 2px 4px rgba(14, 27, 46, 0.06);
+  --mz-shadow-3: 0 20px 48px rgba(14, 27, 46, 0.2);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface-page: #0b1422;
+  --surface-raised: #121e30;
+  --surface-sunken: #08101b;
+  --surface-hover: #18263b;
+
+  --border: #24324a;
+  --border-strong: #6b7e99;
+
+  --ink: #e9eef6;
+  --ink-muted: #a9b6c8;
+  --ink-subtle: #8a9ab0;
+  --ink-disabled: #56657b;
+
+  --primary: #8fb4ec;
+  --primary-hover: #b0caf2;
+  --on-primary: #0b1422;
+  --primary-tint: #17294a;
+  --primary-tint-ink: #b9d0f3;
+  --link: #8cbcf2;
+  --focus-ring: #8cbcf2;
+  --scrim: rgba(0, 0, 0, 0.62);
+
+  --info-bg: #10243d;
+  --info-ink: #8cbcf2;
+  --info-solid: #5e9be0;
+  --success-bg: #0b2a22;
+  --success-ink: #6fd8b6;
+  --success-solid: #35b893;
+  --warning-bg: #2e2208;
+  --warning-ink: #f3c46b;
+  --warning-solid: #e8a93a;
+  --danger-bg: #3a1210;
+  --danger-ink: #ff9b91;
+  --danger-solid: #ef5a4f;
+  --neutral-bg: #1a2638;
+  --neutral-ink: #b3c0d1;
+  --neutral-solid: #6b7e99;
+  --transit-bg: #0c2a2e;
+  --transit-ink: #74d0dc;
+  --transit-solid: #2bb0c0;
+  --on-solid: #0b1422;
+
+  --expiry-red: #ef5a4f;
+  --on-expiry-red: #1a0503;
+  --expiry-orange: #f59342;
+  --on-expiry-orange: #231300;
+  --expiry-yellow: #f6d04d;
+  --on-expiry-yellow: #2a2000;
+
+  --loyalty-bg: #1a2b16;
+  --loyalty-ink: #b4dc8c;
+  --sale: #ff8a7f;
+
+  --mz-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --mz-shadow-2: 0 6px 16px rgba(0, 0, 0, 0.55);
+  --mz-shadow-3: 0 20px 48px rgba(0, 0, 0, 0.7);
+}
+
+/* Constant across themes */
+:root {
+  /* 4px base — matches Tailwind's default spacing scale, so p-1 … p-12 work as is */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --mz-radius-sm: 6px;
+  --mz-radius-md: 10px;
+  --mz-radius-lg: 16px;
+  --mz-radius-pill: 999px;
+
+  --control-sm: 32px;
+  --control-md: 40px;
+  --control-lg: 48px;
+  --nav-width: 248px;
+  --content-max: 1280px;
+
+  --mz-font-sans: Figtree, "Noto Sans Sinhala", "Noto Sans Tamil", system-ui, sans-serif;
+  --mz-font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}

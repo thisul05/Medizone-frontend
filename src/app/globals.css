@@ -1,26 +1,105 @@
+/* Medizone global styles: design tokens mapped to Tailwind v4 utilities.
+   Class names: bg-primary, text-primary-on, bg-surface-raised, border-line, text-ink-muted,
+   bg-success-bg text-success-ink, rounded-md, shadow-1, h-control-md, w-nav, max-w-content, text-h1 ... */
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "./tokens.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-logo-navy: var(--logo-navy);
+  --color-logo-red: var(--logo-red);
+  --color-logo-green: var(--logo-green);
+  --color-surface-page: var(--surface-page);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-nav: var(--surface-nav);
+  --color-nav-ink: var(--nav-ink);
+  --color-nav-muted: var(--nav-ink-muted);
+  --color-nav-active: var(--nav-active);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-disabled: var(--ink-disabled);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-on: var(--on-primary);
+  --color-primary-tint: var(--primary-tint);
+  --color-primary-tint-ink: var(--primary-tint-ink);
+  --color-link: var(--link);
+  --color-focus: var(--focus-ring);
+  --color-focus-nav: var(--focus-ring-nav);
+  --color-scrim: var(--scrim);
+  --color-on-solid: var(--on-solid);
+  --color-info-bg: var(--info-bg);
+  --color-info-ink: var(--info-ink);
+  --color-info-solid: var(--info-solid);
+  --color-success-bg: var(--success-bg);
+  --color-success-ink: var(--success-ink);
+  --color-success-solid: var(--success-solid);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-ink: var(--warning-ink);
+  --color-warning-solid: var(--warning-solid);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-ink: var(--danger-ink);
+  --color-danger-solid: var(--danger-solid);
+  --color-neutral-bg: var(--neutral-bg);
+  --color-neutral-ink: var(--neutral-ink);
+  --color-neutral-solid: var(--neutral-solid);
+  --color-transit-bg: var(--transit-bg);
+  --color-transit-ink: var(--transit-ink);
+  --color-transit-solid: var(--transit-solid);
+  --color-expiry-red: var(--expiry-red);
+  --color-expiry-on-red: var(--on-expiry-red);
+  --color-expiry-orange: var(--expiry-orange);
+  --color-expiry-on-orange: var(--on-expiry-orange);
+  --color-expiry-yellow: var(--expiry-yellow);
+  --color-expiry-on-yellow: var(--on-expiry-yellow);
+  --color-loyalty-bg: var(--loyalty-bg);
+  --color-loyalty-ink: var(--loyalty-ink);
+  --color-sale: var(--sale);
+  --font-sans: var(--font-sans-stack);
+  --font-mono: var(--font-mono-stack);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --spacing-control-sm: 32px;
+  --spacing-control-md: 40px;
+  --spacing-control-lg: 48px;
+  --spacing-nav: 248px;
+  --container-content: 1280px;
+
+  --text-display: 40px; --text-display--line-height: 44px; --text-display--font-weight: 800; --text-display--letter-spacing: -0.02em;
+  --text-h1: 28px; --text-h1--line-height: 34px; --text-h1--font-weight: 700; --text-h1--letter-spacing: -0.01em;
+  --text-h2: 22px; --text-h2--line-height: 28px; --text-h2--font-weight: 700;
+  --text-h3: 18px; --text-h3--line-height: 24px; --text-h3--font-weight: 600;
+  --text-body-lg: 17px; --text-body-lg--line-height: 26px;
+  --text-body: 15px; --text-body--line-height: 22px;
+  --text-body-sm: 13px; --text-body-sm--line-height: 18px;
+  --text-label: 14px; --text-label--line-height: 18px; --text-label--font-weight: 600;
+  --text-body-sm font-medium: 12px; --text-body-sm font-medium--line-height: 16px; --text-body-sm font-medium--font-weight: 500;
+  --text-overline: 11px; --text-overline--line-height: 14px; --text-overline--font-weight: 700; --text-overline--letter-spacing: 0.08em;
+  --text-kpi: 30px; --text-kpi--line-height: 36px; --text-kpi--font-weight: 600;
+  --text-price: 18px; --text-price--line-height: 24px; --text-price--font-weight: 700;
 }
 
+@utility shadow-1 { box-shadow: var(--shadow-1); }
+@utility shadow-2 { box-shadow: var(--shadow-2); }
+@utility shadow-3 { box-shadow: var(--shadow-3); }
+@utility tabular { font-variant-numeric: tabular-nums; }
+
+html { scroll-behavior: smooth; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface-page);
+  color: var(--ink);
+  font-family: var(--font-sans-stack);
+  font-size: 15px;
+  line-height: 22px;
 }
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

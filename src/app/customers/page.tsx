@@ -1,7 +1,10 @@
-export default function Page() {
-  return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">Module 5: Customers and loyalty</h1>
-    </main>
-  );
+import type { Metadata } from "next";
+import { CustomersView } from "@/components/customers/CustomersView";
+
+export const metadata: Metadata = {
+  title: "Customers · Medizone",
+};
+
+export default function CustomersPage() {
+  return <CustomersView />;
 }

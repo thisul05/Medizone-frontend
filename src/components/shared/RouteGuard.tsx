@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { Suspense, useEffect, type ReactNode } from "react";
 import { canOpen } from "@/lib/access";
 import { useAuth } from "@/lib/auth";
 import { isPublicRoute, moduleForPath } from "@/lib/routes";
@@ -43,12 +43,24 @@ function useGuard(module: ModuleId | null, enabled: boolean): GuardState {
   return state;
 }
 
-/** Wraps the whole app once, in the root layout. Protects every non-public route. */
-export function RouteGuard({ children }: { children: ReactNode }) {
+function RouteGuardInner({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isPublic = isPublicRoute(pathname);
   const state = useGuard(moduleForPath(pathname), !isPublic);
   return state === "ok" ? <>{children}</> : <FullPageLoader />;
+}
+
+/**
+ * Wraps the whole app once, in the root layout. Protects every non-public route.
+ * usePathname is only known at request time on dynamic routes (such as /customers/[id])
+ * when cacheComponents is on, so the guard sits under Suspense.
+ */
+export function RouteGuard({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={<FullPageLoader />}>
+      <RouteGuardInner>{children}</RouteGuardInner>
+    </Suspense>
+  );
 }
 
 /** Protects one page or section by module, with the same rules as RouteGuard. */

@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+/* Figtree and IBM Plex Mono are self-hosted with next/font in src/app/layout.tsx,
+   which points --mz-font-sans and --mz-font-mono at them. A remote @import url()
+   cannot go here: Tailwind expands above it, and Turbopack rejects a late @import. */
 @import "./tokens.css";
 
 /*

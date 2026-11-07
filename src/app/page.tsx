@@ -1,67 +1,45 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { BranchesSection } from "@/components/storefront/BranchesSection";
+import { BrandsStrip } from "@/components/storefront/BrandsStrip";
+import { CategoryGrid } from "@/components/storefront/CategoryGrid";
+import { FaqSection } from "@/components/storefront/FaqSection";
+import { HealthTips } from "@/components/storefront/HealthTips";
+import { Hero } from "@/components/storefront/Hero";
+import { MembershipBand } from "@/components/storefront/MembershipBand";
+import { NewsletterBand } from "@/components/storefront/NewsletterBand";
+import {
+  Bestsellers, FeaturedProducts, HealthDevices, NewArrivals, OffersThisWeek,
+} from "@/components/storefront/ProductSections";
+import { PromoBanner } from "@/components/storefront/PromoBanner";
+import { ServiceHighlights } from "@/components/storefront/ServiceHighlights";
+import { StorefrontShell } from "@/components/storefront/StorefrontShell";
+import { WhyMedizone } from "@/components/storefront/WhyMedizone";
 
-// Temporary index so everyone can open their module page. Remove or replace it when the UI is finalized.
-export default function Index() {
+export const metadata: Metadata = {
+  title: { absolute: "Medizone Pharmacy, Piliyandala" },
+  description:
+    "Vitamins, skincare, mom and baby care and health devices from pharmacists you trust. Islandwide delivery or collection at our four branches in Piliyandala.",
+};
+
+export default function StorefrontHome() {
   return (
-    <main className="p-6">
-      <h1 className="mb-4 text-2xl font-semibold">Medizone</h1>
-      <ul className="flex flex-col gap-2">
-        <li>
-          <Link href="/home" className="underline">
-            Module 1: Home
-          </Link>
-        </li>
-        <li>
-          <Link href="/admin" className="underline">
-            Module 2: Admin dashboard
-          </Link>
-        </li>
-        <li>
-          <Link href="/inventory" className="underline">
-            Module 3: Products and inventory
-          </Link>
-        </li>
-        <li>
-          <Link href="/orders" className="underline">
-            Module 4: Prescriptions and orders
-          </Link>
-        </li>
-        <li>
-          <Link href="/customers" className="underline">
-            Module 5: Customers and loyalty
-          </Link>
-        </li>
-        <li>
-          <Link href="/suppliers" className="underline">
-            Module 6: Suppliers and purchases
-          </Link>
-        </li>
-        <li>
-          <Link href="/delivery" className="underline">
-            Module 7: Delivery, returns and warranty
-          </Link>
-        </li>
-        <li>
-          <Link href="/billing" className="underline">
-            Module 8: Billing and payments
-          </Link>
-        </li>
-        <li>
-          <Link href="/staff" className="underline">
-            Module 9: Staff and payroll
-          </Link>
-        </li>
-        <li>
-          <Link href="/reports" className="underline">
-            Module 10: Reports and forecasting
-          </Link>
-        </li>
-        <li>
-          <Link href="/login" className="underline">
-            Module 1: Login
-          </Link>
-        </li>
-      </ul>
-    </main>
+    <StorefrontShell>
+      <Hero />
+      <ServiceHighlights />
+      <CategoryGrid />
+      <FeaturedProducts />
+      <OffersThisWeek />
+      <PromoBanner />
+      <HealthDevices />
+      <Bestsellers />
+      <NewArrivals />
+      <MembershipBand />
+      <WhyMedizone />
+      <BrandsStrip />
+      <BranchesSection />
+      <HealthTips />
+      <FaqSection />
+      <NewsletterBand />
+    </StorefrontShell>
   );
 }

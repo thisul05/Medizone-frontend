@@ -1,7 +1,13 @@
-export default function Page() {
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { LoginView } from "@/components/auth/LoginView";
+
+export const metadata: Metadata = { title: "Sign in" };
+
+export default function LoginPage() {
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">Module 1: Login</h1>
-    </main>
+    <Suspense>
+      <LoginView />
+    </Suspense>
   );
 }

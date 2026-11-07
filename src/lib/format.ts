@@ -21,9 +21,12 @@ export function formatLKR(amount: number, options?: { decimals?: boolean }): str
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-/** Date: ISO `2026-11-04` in, `4 Nov 2026` out. */
+/**
+ * Date: ISO `2026-11-04` in, `4 Nov 2026` out.
+ * A full ISO timestamp (`2026-11-04T09:00:00.000Z`) also works: only the date part is read.
+ */
 export function formatDate(iso: string): string {
-  const [year, month, day] = iso.split("-").map(Number);
+  const [year, month, day] = iso.slice(0, 10).split("-").map(Number);
   if (!year || !month || !day) return iso;
   return `${day} ${MONTHS[month - 1]} ${year}`;
 }

@@ -23,7 +23,7 @@ export function RegisterStepPassword({ values, set, err, blur }: StepProps) {
         {PASSWORD_RULES.map((r) => {
           const met = r.test(values.password);
           return (
-            <li key={r.id} className={cx("flex items-center gap-2 text-body-sm", met ? "text-success-ink" : "text-ink-muted")}>
+            <li key={r.id} className={cx("flex items-center gap-2 mz-body-sm", met ? "text-success-ink" : "text-ink-muted")}>
               <Icon name={met ? "circle-check" : "x"} size={16} />
               {r.label}
               <span className="sr-only">{met ? "(met)" : "(not met yet)"}</span>
@@ -51,11 +51,11 @@ export function RegisterStepPassword({ values, set, err, blur }: StepProps) {
           onChange={(e) => set("terms", e.target.checked)}
         />
         <div className="ml-8">
-          <button type="button" aria-expanded={showTerms} onClick={() => setShowTerms((s) => !s)} className="rounded-sm text-label text-link hover:underline">
+          <button type="button" aria-expanded={showTerms} onClick={() => setShowTerms((s) => !s)} className="rounded-sm mz-label text-link hover:underline">
             {showTerms ? "Hide the terms" : "Read the terms"}
           </button>
           {showTerms && (
-            <p className="mt-2 text-body-sm text-ink-muted">
+            <p className="mt-2 mz-body-sm text-ink-muted">
               We use your details only to serve you at Medizone: to manage orders, deliveries, loyalty points and discounts.
               We never sell your data. You can ask any branch to correct or delete your details at any time.
             </p>

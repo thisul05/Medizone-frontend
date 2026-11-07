@@ -23,8 +23,8 @@ function Choice({ name, checked, onChange, title, detail }: { name: string; chec
     >
       <input type="radio" name={name} checked={checked} onChange={onChange} className="mt-0.5 size-4 accent-primary" />
       <span className="flex flex-col">
-        <span className="text-label">{title}</span>
-        {detail && <span className="text-body-sm text-ink-muted">{detail}</span>}
+        <span className="mz-label">{title}</span>
+        {detail && <span className="mz-body-sm text-ink-muted">{detail}</span>}
       </span>
     </label>
   );
@@ -70,7 +70,7 @@ export function CartCheckout() {
   return (
     <div className="flex flex-col gap-4 border-t border-line px-5 py-5">
       <fieldset className="flex flex-col gap-2">
-        <legend className="mb-2 text-label">How would you like to get it?</legend>
+        <legend className="mb-2 mz-label">How would you like to get it?</legend>
         <Choice name="method" checked={method === "pickup"} onChange={() => setMethod("pickup")} title="Collect from a branch" />
         {method === "pickup" && (
           <Select
@@ -90,7 +90,7 @@ export function CartCheckout() {
       </fieldset>
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="mb-2 text-label">Pay with</legend>
+        <legend className="mb-2 mz-label">Pay with</legend>
         <div className="grid grid-cols-2 gap-2">
           {payOptions.map((p) => (
             <Choice key={p} name="pay" checked={effectivePay === p} onChange={() => setPay(p)} title={PAY_LABELS[p]} />
@@ -110,7 +110,7 @@ export function CartCheckout() {
           Place order
         </Button>
       )}
-      <p className="flex items-center gap-1.5 text-body-sm text-ink-muted">
+      <p className="flex items-center gap-1.5 mz-body-sm text-ink-muted">
         <Icon name="lock" size={16} />
         Prototype checkout. No payment is taken.
       </p>

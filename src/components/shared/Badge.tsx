@@ -63,7 +63,7 @@ export function Badge({ tone = "neutral", variant = "soft", icon, dot, children,
   return (
     <span
       className={cx(
-        "inline-flex h-6 items-center gap-1 whitespace-nowrap rounded-sm px-2 text-body-sm font-medium",
+        "inline-flex h-6 items-center gap-1 whitespace-nowrap rounded-sm px-2 mz-caption",
         palette[tone],
         className,
       )}

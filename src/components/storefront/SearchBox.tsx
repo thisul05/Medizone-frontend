@@ -93,8 +93,8 @@ export function SearchBox({ onDone }: { onDone?: () => void }) {
               onClick={() => go(p.name)}
               className={cx("flex cursor-pointer items-center justify-between gap-3 px-4 py-2.5", active === i ? "bg-primary-tint" : "hover:bg-surface-hover")}
             >
-              <span className="truncate text-body">{p.name}</span>
-              <span className="shrink-0 text-label text-ink-muted tabular">{formatLKR(p.price)}</span>
+              <span className="truncate">{p.name}</span>
+              <span className="shrink-0 mz-label text-ink-muted mz-num">{formatLKR(p.price)}</span>
             </li>
           ))}
           <li
@@ -103,7 +103,7 @@ export function SearchBox({ onDone }: { onDone?: () => void }) {
             aria-selected={active === matches.length}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => go(q)}
-            className={cx("flex cursor-pointer items-center gap-2 border-t border-line px-4 py-2.5 text-label text-link", active === matches.length ? "bg-primary-tint" : "hover:bg-surface-hover")}
+            className={cx("flex cursor-pointer items-center gap-2 border-t border-line px-4 py-2.5 mz-label text-link", active === matches.length ? "bg-primary-tint" : "hover:bg-surface-hover")}
           >
             <Icon name="search" size={16} />
             Search for “{q.trim()}”

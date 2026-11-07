@@ -6,12 +6,12 @@ import { site } from "@/data/site";
 import { CONTAINER, NAV_FOCUS } from "./Section";
 import { FooterCartLink } from "./FooterCartLink";
 
-const link = "rounded-sm text-body text-nav-muted transition-colors duration-150 hover:text-nav-ink hover:underline";
+const link = "rounded-sm text-nav-muted transition-colors duration-150 hover:text-nav-ink hover:underline";
 
 function Column({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="text-label text-nav-ink">{title}</h2>
+      <h2 className="mz-label text-nav-ink">{title}</h2>
       <ul className="flex flex-col gap-2">{children}</ul>
     </div>
   );
@@ -23,7 +23,7 @@ export function Footer() {
       <div className={cx(CONTAINER, "grid gap-10 py-12 lg:grid-cols-[1.3fr_2fr] lg:py-16")}>
         <div className="flex flex-col gap-4">
           <Logo height={40} />
-          <address className="flex flex-col gap-2 not-italic text-body text-nav-muted">
+          <address className="flex flex-col gap-2 not-italic text-nav-muted">
             <span className="flex items-start gap-2">
               <Icon name="map-pin" className="mt-0.5" />
               {site.address}
@@ -71,19 +71,19 @@ export function Footer() {
       </div>
 
       <div className={cx(CONTAINER, "flex flex-wrap items-center gap-2 pb-8")}>
-        <span className="mr-2 text-label text-nav-ink">We accept</span>
+        <span className="mr-2 mz-label text-nav-ink">We accept</span>
         {["Cash", "Card", "Bank transfer", "Cash on delivery"].map((p) => (
-          <span key={p} className="rounded-pill border border-nav-muted px-3 py-1 text-body-sm text-nav-ink">{p}</span>
+          <span key={p} className="rounded-pill border border-nav-muted px-3 py-1 mz-body-sm text-nav-ink">{p}</span>
         ))}
       </div>
 
       <div className="border-t border-nav-active">
-        <div className={cx(CONTAINER, "flex flex-col gap-3 py-6 text-body-sm text-nav-muted md:flex-row md:items-start md:justify-between")}>
+        <div className={cx(CONTAINER, "flex flex-col gap-3 py-6 mz-body-sm text-nav-muted md:flex-row md:items-start md:justify-between")}>
           <div className="flex flex-col gap-1">
             <p>© 2026 Medizone Pharmacy. All rights reserved.</p>
             <p>Prototype built for the IS 3610 MIS group assignment. Not the live medizone.lk site. Product prices are samples. Product images are for illustration.</p>
           </div>
-          <a href="#top" className={cx(link, "flex shrink-0 items-center gap-1.5 text-label")}>
+          <a href="#top" className={cx(link, "flex shrink-0 items-center gap-1.5 mz-label")}>
             <Icon name="arrow-up" size={16} /> Back to top
           </a>
         </div>

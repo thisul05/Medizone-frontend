@@ -24,8 +24,8 @@ const LINKS = [
 export default function ModulesPage() {
   return (
     <main id="main" className="mx-auto max-w-content px-4 py-8 lg:px-8">
-      <h1 className="text-h1">Medizone modules</h1>
-      <p className="mt-1 text-body text-ink-muted">Temporary page for the team. Remove before the final demo.</p>
+      <h1 className="mz-h1">Medizone modules</h1>
+      <p className="mt-1 text-ink-muted">Temporary page for the team. Remove before the final demo.</p>
       <ul className="mt-6 flex flex-col gap-2">
         {LINKS.map((l) => (
           <li key={l.href}>

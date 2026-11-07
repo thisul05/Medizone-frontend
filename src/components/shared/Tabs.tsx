@@ -60,7 +60,7 @@ export function Tabs({ tabs, value, onChange, variant = "underline", label, idBa
             onClick={() => onChange(t.id)}
             onKeyDown={(e) => onKeyDown(e, i)}
             className={cx(
-              "inline-flex items-center justify-center gap-2 text-label transition-colors duration-150",
+              "inline-flex items-center justify-center gap-2 mz-label transition-colors duration-150",
               pill
                 ? cx("h-control-sm flex-1 rounded-pill px-4", selected ? "bg-surface-raised text-primary-tint-ink shadow-1" : "text-ink-muted hover:text-ink")
                 : cx("-mb-px h-control-md border-b-2", selected ? "border-primary text-primary-tint-ink" : "border-transparent text-ink-muted hover:text-ink"),
@@ -68,7 +68,7 @@ export function Tabs({ tabs, value, onChange, variant = "underline", label, idBa
           >
             {t.label}
             {t.count !== undefined && (
-              <span className="rounded-pill bg-neutral-bg px-1.5 text-body-sm font-medium text-neutral-ink">{t.count}</span>
+              <span className="rounded-pill bg-neutral-bg px-1.5 mz-caption text-neutral-ink">{t.count}</span>
             )}
           </button>
         );

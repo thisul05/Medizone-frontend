@@ -6,6 +6,7 @@ import { formatLKR } from "@/lib/format";
 import { Badge } from "./Badge";
 import { Button } from "./Button";
 import { Icon, type IconName } from "./Icon";
+import StatusBadge from "./StatusBadge";
 
 export type ProductStock = "in_stock" | "low" | "out";
 
@@ -30,12 +31,6 @@ export interface ProductCardProps {
   isNew?: boolean;
 }
 
-const STOCK: Record<ProductStock, { label: string; tone: "success" | "warning" | "danger"; icon: IconName }> = {
-  in_stock: { label: "In stock", tone: "success", icon: "circle-check" },
-  low: { label: "Low stock", tone: "warning", icon: "alert" },
-  out: { label: "Out of stock", tone: "danger", icon: "x" },
-};
-
 function warrantyText(months: number) {
   if (months % 12 === 0) {
     const years = months / 12;
@@ -50,7 +45,6 @@ export function ProductCard({
 }: ProductCardProps) {
   const discount =
     price !== undefined && originalPrice && originalPrice > price ? Math.round((1 - price / originalPrice) * 100) : null;
-  const s = STOCK[stock];
   const out = stock === "out";
   const [failed, setFailed] = useState(false);
 
@@ -71,7 +65,7 @@ export function ProductCard({
         )}
         <div className="absolute left-3 top-3 flex gap-1.5">
           {discount !== null ? (
-            <span className="inline-flex h-6 items-center rounded-sm bg-sale px-2 text-body-sm font-medium text-on-solid">
+            <span className="inline-flex h-6 items-center rounded-sm bg-sale px-2 mz-caption text-on-solid">
               <span className="sr-only">Save </span>−{discount}%
             </span>
           ) : isNew ? (
@@ -82,12 +76,12 @@ export function ProductCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
-        {brand && <p className="text-body-sm font-medium text-ink-muted">{brand}</p>}
-        <h3 className="line-clamp-2 text-body font-semibold text-ink">{name}</h3>
+        {brand && <p className="mz-caption text-ink-muted">{brand}</p>}
+        <h3 className="line-clamp-2 font-semibold text-ink">{name}</h3>
         {category && <p className="sr-only">Category: {category}</p>}
-        {note && <p className="text-body-sm text-ink-muted">{note}</p>}
+        {note && <p className="mz-body-sm text-ink-muted">{note}</p>}
         {warrantyMonths ? (
-          <p className="flex items-center gap-1.5 text-body-sm text-ink-muted">
+          <p className="flex items-center gap-1.5 mz-body-sm text-ink-muted">
             <Icon name="shield-check" size={16} />
             {warrantyText(warrantyMonths)}
           </p>
@@ -95,10 +89,10 @@ export function ProductCard({
 
         <div className="mt-auto flex flex-col gap-3 pt-2">
           {price !== undefined && (
-            <p className="flex flex-wrap items-baseline gap-x-2 tabular">
-              <span className="text-price text-ink">{formatLKR(price)}</span>
+            <p className="flex flex-wrap items-baseline gap-x-2 mz-num">
+              <span className="mz-price text-ink">{formatLKR(price)}</span>
               {discount !== null && originalPrice && (
-                <s className="text-body-sm text-ink-subtle">
+                <s className="mz-body-sm text-ink-subtle">
                   <span className="sr-only">Was </span>
                   {formatLKR(originalPrice)}
                 </s>
@@ -106,7 +100,7 @@ export function ProductCard({
             </p>
           )}
           <div>
-            <Badge tone={s.tone} icon={s.icon}>{s.label}</Badge>
+            <StatusBadge kind="stock" status={stock} />
           </div>
           {rxRequired && onUpload ? (
             <Button variant="secondary" block icon="file-text" onClick={onUpload}>

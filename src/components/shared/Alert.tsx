@@ -41,8 +41,8 @@ export function Alert({ tone = "info", title, icon, action, children, className,
     >
       <Icon name={icon ?? TONE_ICON[tone]} size={20} className="mt-px" />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        {title && <p className="text-label">{title}</p>}
-        {children && <div className="text-body-sm text-ink">{children}</div>}
+        {title && <p className="mz-label">{title}</p>}
+        {children && <div className="mz-body-sm text-ink">{children}</div>}
         {action && <div className="mt-1">{action}</div>}
       </div>
     </div>

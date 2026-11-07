@@ -38,8 +38,8 @@ export function Select({
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(selectId, hint, error)}
           className={cx(
-            "h-full w-full cursor-pointer appearance-none rounded-md bg-transparent pl-3 pr-9 text-body outline-none",
-            nav ? "text-nav-ink" : "text-ink",
+            "h-full w-full cursor-pointer appearance-none rounded-md bg-transparent pl-3 pr-9 outline-none",
+            nav ? "text-nav-ink focus-visible:outline-focus-nav" : "text-ink",
           )}
           {...rest}
         >

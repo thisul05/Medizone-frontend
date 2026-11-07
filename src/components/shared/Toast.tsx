@@ -71,8 +71,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             >
               <Icon name={TONE_ICON[tone]} size={20} className={cx("mt-px", ICON_INK[tone])} />
               <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <p className="text-label text-ink">{t.title}</p>
-                {t.description && <p className="text-body-sm text-ink-muted">{t.description}</p>}
+                <p className="mz-label text-ink">{t.title}</p>
+                {t.description && <p className="mz-body-sm text-ink-muted">{t.description}</p>}
                 {t.action && (
                   <button
                     type="button"
@@ -80,7 +80,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                       t.action?.onClick();
                       dismiss(t.id);
                     }}
-                    className="mt-1 self-start text-label text-link underline-offset-2 hover:underline"
+                    className="mt-1 self-start mz-label text-link underline-offset-2 hover:underline"
                   >
                     {t.action.label}
                   </button>

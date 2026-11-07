@@ -13,7 +13,7 @@ import { useToast } from "./Toast";
 import { cx } from "./cx";
 
 const navButton = cx(
-  "inline-flex h-control-md items-center gap-2 rounded-md px-3 text-label text-nav-ink",
+  "inline-flex h-control-md items-center gap-2 rounded-md px-3 mz-label text-nav-ink",
   "transition-colors duration-150 hover:bg-nav-active",
 );
 
@@ -32,13 +32,13 @@ export function StaffTopBar() {
   };
 
   return (
-    <header className="bg-surface-nav text-nav-ink [--focus-ring:var(--focus-ring-nav)]">
+    <header className="bg-surface-nav text-nav-ink mz-on-nav">
       <div className="mx-auto flex max-w-content flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 lg:px-8">
         <Link href="/home" className="rounded-md" aria-label="Medizone Pharmacy, go to home">
           <Logo height={32} />
         </Link>
 
-        <div className="flex items-center gap-2 text-body-sm text-nav-muted">
+        <div className="flex items-center gap-2 mz-body-sm text-nav-muted">
           <Icon name="store" size={20} />
           {allBranches ? (
             <Select
@@ -52,14 +52,14 @@ export function StaffTopBar() {
               className="w-56 max-w-[60vw]"
             />
           ) : (
-            <span className="text-label text-nav-ink">{branchName(user.branchId)}</span>
+            <span className="mz-label text-nav-ink">{branchName(user.branchId)}</span>
           )}
         </div>
 
         <div className="ml-auto flex items-center gap-2">
           <div className="hidden text-right sm:block">
-            <p className="text-label text-nav-ink">{user.name}</p>
-            <p className="text-body-sm font-medium text-nav-muted">{user.jobTitle}</p>
+            <p className="mz-label text-nav-ink">{user.name}</p>
+            <p className="mz-caption text-nav-muted">{user.jobTitle}</p>
           </div>
           <Link href="/profile" className={navButton}>
             <Icon name="user" size={20} />

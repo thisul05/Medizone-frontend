@@ -37,17 +37,17 @@ export function Checkbox({ label, description, error, id, className, ...rest }: 
             className="pointer-events-none absolute left-0.5 top-0.5 hidden text-primary-on peer-checked:block"
           />
         </span>
-        <label htmlFor={boxId} className="cursor-pointer text-body text-ink">
+        <label htmlFor={boxId} className="cursor-pointer text-ink">
           {label}
         </label>
       </div>
       {error ? (
-        <p id={msgId} className="ml-8 flex items-start gap-1.5 text-body-sm text-danger-ink">
+        <p id={msgId} className="ml-8 flex items-start gap-1.5 mz-body-sm text-danger-ink">
           <Icon name="alert-circle" size={16} className="mt-px" />
           {error}
         </p>
       ) : description ? (
-        <p id={msgId} className="ml-8 text-body-sm text-ink-muted">
+        <p id={msgId} className="ml-8 mz-body-sm text-ink-muted">
           {description}
         </p>
       ) : null}

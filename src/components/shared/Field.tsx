@@ -31,18 +31,18 @@ interface FieldProps {
 export function Field({ id, label, labelHidden, hint, error, optional, children, className }: FieldProps) {
   return (
     <div className={cx("flex flex-col gap-1.5", className)}>
-      <label htmlFor={id} className={cx("text-label text-ink", labelHidden && "sr-only")}>
+      <label htmlFor={id} className={cx("mz-label text-ink", labelHidden && "sr-only")}>
         {label}
         {optional && <span className="font-normal text-ink-muted"> (optional)</span>}
       </label>
       {children}
       {error ? (
-        <p id={`${id}-msg`} className="flex items-start gap-1.5 text-body-sm text-danger-ink">
+        <p id={`${id}-msg`} className="flex items-start gap-1.5 mz-body-sm text-danger-ink">
           <Icon name="alert-circle" size={16} className="mt-px" />
           <span>{error}</span>
         </p>
       ) : hint ? (
-        <p id={`${id}-msg`} className="text-body-sm text-ink-muted">
+        <p id={`${id}-msg`} className="mz-body-sm text-ink-muted">
           {hint}
         </p>
       ) : null}

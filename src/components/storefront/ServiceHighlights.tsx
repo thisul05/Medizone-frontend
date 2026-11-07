@@ -29,8 +29,8 @@ export function ServiceHighlights() {
               <Icon name={i.icon} />
             </span>
             <div className="flex min-w-0 flex-col">
-              <p className="text-label">{i.title}</p>
-              <p className="text-body-sm text-ink-muted">{i.text}</p>
+              <p className="mz-label">{i.title}</p>
+              <p className="mz-body-sm text-ink-muted">{i.text}</p>
             </div>
           </li>
         ))}

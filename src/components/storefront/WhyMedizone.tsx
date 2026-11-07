@@ -21,9 +21,9 @@ export function WhyMedizone() {
       <dl className="grid grid-cols-2 gap-6 lg:grid-cols-4">
         {STATS.map((s) => (
           <div key={s.label} className="flex flex-col gap-1 border-l-0 border-t border-line pt-4">
-            <dt className="order-2 text-label text-ink">{s.label}</dt>
-            <dd className="order-1 text-kpi text-primary-tint-ink tabular">{s.value}</dd>
-            {s.caption && <dd className="order-3 text-body-sm text-ink-muted">{s.caption}</dd>}
+            <dt className="order-2 mz-label text-ink">{s.label}</dt>
+            <dd className="order-1 mz-kpi text-primary-tint-ink mz-num">{s.value}</dd>
+            {s.caption && <dd className="order-3 mz-body-sm text-ink-muted">{s.caption}</dd>}
           </div>
         ))}
       </dl>
@@ -33,8 +33,8 @@ export function WhyMedizone() {
             <span className="flex size-11 items-center justify-center rounded-pill bg-primary-tint text-primary-tint-ink">
               <Icon name={r.icon} />
             </span>
-            <h3 className="text-h3">{r.title}</h3>
-            <p className="text-body text-ink-muted">{r.text}</p>
+            <h3 className="mz-h3">{r.title}</h3>
+            <p className="text-ink-muted">{r.text}</p>
           </li>
         ))}
       </ul>

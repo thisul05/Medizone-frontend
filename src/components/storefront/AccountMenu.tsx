@@ -6,7 +6,7 @@ import { ButtonLink, Icon, useToast } from "@/components/shared";
 import { useAuth } from "@/lib/auth";
 
 const menuItem =
-  "flex w-full items-center gap-2 px-4 py-2.5 text-left text-body text-ink transition-colors duration-150 hover:bg-surface-hover focus-visible:bg-surface-hover";
+  "flex w-full items-center gap-2 px-4 py-2.5 text-left text-ink transition-colors duration-150 hover:bg-surface-hover focus-visible:bg-surface-hover";
 
 /** Signed out: Sign in and Create account. Signed in: a first-name menu. */
 export function AccountMenu() {
@@ -31,7 +31,7 @@ export function AccountMenu() {
           <ButtonLink href="/login" variant="ghost" size="md">Sign in</ButtonLink>
           <ButtonLink href="/register" variant="secondary" size="md">Create account</ButtonLink>
         </div>
-        <p className="text-body-sm text-ink-muted">Members earn loyalty points</p>
+        <p className="mz-body-sm text-ink-muted">Members earn loyalty points</p>
       </div>
     );
   }
@@ -50,7 +50,7 @@ export function AccountMenu() {
         aria-expanded={open}
         aria-controls="account-menu"
         onClick={() => setOpen((o) => !o)}
-        className="flex h-control-lg items-center gap-2 rounded-md px-3 text-label text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint"
+        className="flex h-control-lg items-center gap-2 rounded-md px-3 mz-label text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint"
       >
         <Icon name="account" />
         {firstName}

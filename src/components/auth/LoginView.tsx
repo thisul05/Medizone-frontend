@@ -15,7 +15,7 @@ const POINTS = [
 
 function SignInHelp() {
   return (
-    <div className="flex flex-col gap-1 text-body-sm text-nav-muted">
+    <div className="flex flex-col gap-1 mz-body-sm text-nav-muted">
       <p className="flex flex-wrap items-center gap-1.5">
         <Icon name="phone" size={16} />
         Need help signing in? Call

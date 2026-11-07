@@ -19,8 +19,8 @@ export function AccessDeniedView() {
         <span className="flex size-14 items-center justify-center rounded-pill bg-danger-bg text-danger-ink">
           <Icon name="lock" size={28} />
         </span>
-        <h1 className="text-h1">You don&apos;t have access to this page</h1>
-        <p className="text-body-lg text-ink-muted">
+        <h1 className="mz-h1">You don&apos;t have access to this page</h1>
+        <p className="mz-body-lg text-ink-muted">
           Your role ({role}) can&apos;t open {mod ? mod.label : "this module"}. Ask the owner if you need access.
         </p>
         <ButtonLink href="/home" icon="home" className="mt-2">

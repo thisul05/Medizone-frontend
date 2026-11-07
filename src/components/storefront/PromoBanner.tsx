@@ -10,8 +10,8 @@ export function PromoBanner() {
         <div className="flex flex-col gap-8 rounded-lg bg-primary-tint p-6 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex max-w-xl flex-col items-start gap-4">
             <p className={cx(OVERLINE, "text-primary-tint-ink")}>Beauty and skincare</p>
-            <h2 id="promo-title" className="text-h1 text-primary-tint-ink">Care for your hair and skin from within</h2>
-            <p className="text-body-lg text-ink-muted">
+            <h2 id="promo-title" className="mz-h1 text-primary-tint-ink">Care for your hair and skin from within</h2>
+            <p className="mz-body-lg text-ink-muted">
               Supplements, shampoos and daily lotions, with advice from our pharmacists when you need it.
             </p>
             <ButtonLink href="/shop?category=skincare" iconRight="arrow-right">

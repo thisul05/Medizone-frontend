@@ -12,10 +12,10 @@ export function HealthTips() {
             <article className="flex h-full flex-col gap-3 rounded-lg border border-line bg-surface-raised p-5 shadow-1">
               <div className="flex items-center justify-between gap-2">
                 <Badge tone="brand">{t.category}</Badge>
-                <time dateTime={t.date} className="text-body-sm text-ink-muted">{formatDate(t.date)}</time>
+                <time dateTime={t.date} className="mz-body-sm text-ink-muted">{formatDate(t.date)}</time>
               </div>
-              <h3 className="text-h3">{t.title}</h3>
-              <p className="text-body text-ink-muted">{t.body}</p>
+              <h3 className="mz-h3">{t.title}</h3>
+              <p className="text-ink-muted">{t.body}</p>
             </article>
           </li>
         ))}

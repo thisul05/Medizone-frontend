@@ -48,7 +48,7 @@ export function RegisterStepAddress({ values, set, err, blur }: StepProps) {
         options={branches.map((b) => ({ value: b.id, label: `${b.name}, ${b.area}` }))}
       />
       <fieldset id="reg-contactChannel" className="flex flex-col gap-2">
-        <legend className="mb-1.5 text-label">Contact me by</legend>
+        <legend className="mb-1.5 mz-label">Contact me by</legend>
         <div className="grid grid-cols-3 gap-2">
           {CHANNELS.map((c) => {
             const checked = values.contactChannel === c.value;
@@ -56,7 +56,7 @@ export function RegisterStepAddress({ values, set, err, blur }: StepProps) {
               <label
                 key={c.value}
                 className={cx(
-                  "flex h-control-lg cursor-pointer items-center justify-center gap-2 rounded-md border px-2 text-label transition-colors duration-150 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-focus",
+                  "flex h-control-lg cursor-pointer items-center justify-center gap-2 rounded-md border px-2 mz-label transition-colors duration-150 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-focus",
                   checked ? "border-primary bg-primary-tint text-primary-tint-ink" : "border-line-strong hover:bg-surface-hover",
                 )}
               >

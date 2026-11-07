@@ -10,7 +10,7 @@ export function BrandsStrip() {
           <li key={b}>
             <Link
               href={`/shop?q=${encodeURIComponent(b)}`}
-              className="inline-flex h-control-lg items-center rounded-pill border border-line-strong bg-surface-raised px-5 text-label text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint"
+              className="inline-flex h-control-lg items-center rounded-pill border border-line-strong bg-surface-raised px-5 mz-label text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint"
             >
               {b}
             </Link>

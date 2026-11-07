@@ -16,8 +16,8 @@ const CHANNEL = { whatsapp: "WhatsApp", sms: "SMS", call: "Phone call" };
 function Row({ label, children, mono }: { label: string; children: ReactNode; mono?: boolean }) {
   return (
     <div className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-4">
-      <dt className="text-label text-ink-muted">{label}</dt>
-      <dd className={mono ? "font-mono text-body" : "text-body"}>{children}</dd>
+      <dt className="mz-label text-ink-muted">{label}</dt>
+      <dd className={mono ? "mz-code" : undefined}>{children}</dd>
     </div>
   );
 }
@@ -38,8 +38,8 @@ export function ProfileView() {
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-h1">{user.name}</h1>
-            <p className="text-body-lg text-ink-muted">
+            <h1 className="mz-h1">{user.name}</h1>
+            <p className="mz-body-lg text-ink-muted">
               {user.jobTitle}
               {!isCustomer && ` · ${ROLE_LABELS[user.role]} role`}
             </p>
@@ -58,7 +58,7 @@ export function ProfileView() {
         </div>
 
         <section aria-labelledby="account-title" className={card}>
-          <h2 id="account-title" className="text-h3">Account</h2>
+          <h2 id="account-title" className="mz-h3">Account</h2>
           <dl className="mt-2 divide-y divide-line">
             <Row label={isCustomer ? "Preferred branch" : "Branch"}>{branchName(user.branchId)}</Row>
             {user.username && <Row label="Username" mono>{user.username}</Row>}
@@ -72,7 +72,7 @@ export function ProfileView() {
 
         {profile && (
           <section aria-labelledby="reg-title" className={card}>
-            <h2 id="reg-title" className="text-h3">Registration details</h2>
+            <h2 id="reg-title" className="mz-h3">Registration details</h2>
             <dl className="mt-2 divide-y divide-line">
               <Row label="WhatsApp number">{formatPhone(profile.whatsapp)}</Row>
               {profile.dateOfBirth && <Row label="Date of birth">{formatDate(profile.dateOfBirth)}</Row>}
@@ -81,7 +81,7 @@ export function ProfileView() {
               <Row label="City or town">{profile.city}</Row>
               <Row label="Contact by">{CHANNEL[profile.contactChannel]}</Row>
             </dl>
-            <h3 className="mt-6 text-label">Consents</h3>
+            <h3 className="mt-6 mz-label">Consents</h3>
             <dl className="mt-1 divide-y divide-line">
               <Row label="Terms and privacy">{yesNo(true)}</Row>
               <Row label="Save purchase history">{yesNo(profile.consents.storeHistory)}</Row>
@@ -89,7 +89,7 @@ export function ProfileView() {
               <Row label="Offers and health tips">{yesNo(profile.consents.promotions)}</Row>
               <Row label="Given on">{formatDate(profile.consents.at)}</Row>
             </dl>
-            <p className="mt-4 text-body-sm text-ink-muted">To change these details, call us or ask at any branch.</p>
+            <p className="mt-4 mz-body-sm text-ink-muted">To change these details, call us or ask at any branch.</p>
           </section>
         )}
       </div>

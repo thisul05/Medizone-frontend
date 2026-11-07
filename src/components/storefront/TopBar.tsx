@@ -6,7 +6,7 @@ const item = "flex items-center gap-1.5 rounded-sm text-nav-ink hover:underline"
 
 export function TopBar() {
   return (
-    <div className={cx("bg-surface-nav text-body-sm text-nav-muted", NAV_FOCUS)}>
+    <div className={cx("bg-surface-nav mz-body-sm text-nav-muted", NAV_FOCUS)}>
       <div className={cx(CONTAINER, "flex min-h-10 items-center justify-between gap-4 py-2")}>
         <p className="hidden lg:block">
           Pharmacist-run since {site.established} · Quality, internationally recognised products · Safe payments

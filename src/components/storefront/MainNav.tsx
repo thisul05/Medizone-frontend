@@ -30,7 +30,7 @@ export function MainNav() {
             aria-expanded={open}
             aria-controls="category-menu"
             onClick={() => setOpen((o) => !o)}
-            className="flex h-control-md items-center gap-2 rounded-md bg-primary px-4 text-label text-primary-on transition-colors duration-150 hover:bg-primary-hover"
+            className="flex h-control-md items-center gap-2 rounded-md bg-primary px-4 mz-label text-primary-on transition-colors duration-150 hover:bg-primary-hover"
           >
             <Icon name="menu" />
             Shop by category
@@ -43,7 +43,7 @@ export function MainNav() {
                   <Link
                     href={`/shop?category=${c.id}`}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-body text-ink transition-colors duration-150 hover:bg-surface-hover"
+                    className="flex items-center gap-3 px-4 py-2.5 text-ink transition-colors duration-150 hover:bg-surface-hover"
                   >
                     <Icon name={c.icon} className="text-ink-subtle" />
                     {c.name}
@@ -56,7 +56,7 @@ export function MainNav() {
         <ul className="flex items-center gap-1">
           {NAV_LINKS.map((l) => (
             <li key={l.href}>
-              <Link href={l.href} className="rounded-md px-3 py-2 text-label text-ink transition-colors duration-150 hover:bg-primary-tint hover:text-primary-tint-ink">
+              <Link href={l.href} className="rounded-md px-3 py-2 mz-label text-ink transition-colors duration-150 hover:bg-primary-tint hover:text-primary-tint-ink">
                 {l.label}
               </Link>
             </li>

@@ -87,8 +87,8 @@ export function RegisterView() {
           <span className="flex size-12 items-center justify-center rounded-pill bg-success-bg text-success-ink">
             <Icon name="circle-check" size={28} />
           </span>
-          <h1 className="text-h1">Your account is ready, {doneName}</h1>
-          <p className="text-body-lg text-ink-muted">
+          <h1 className="mz-h1">Your account is ready, {doneName}</h1>
+          <p className="mz-body-lg text-ink-muted">
             Staff can mark you as a regular customer at your branch to get your 3% or 5% discount.
           </p>
           <div className="flex w-full flex-col gap-3 pt-2">
@@ -104,13 +104,13 @@ export function RegisterView() {
     <AuthShell heading="Create your Medizone account" points={POINTS}>
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
         <div className="flex flex-col gap-3">
-          <h1 className="text-h1">Create account</h1>
-          <p className="text-label text-ink-muted" aria-live="polite">Step {step + 1} of 3: {STEPS[step]}</p>
+          <h1 className="mz-h1">Create account</h1>
+          <p className="mz-label text-ink-muted" aria-live="polite">Step {step + 1} of 3: {STEPS[step]}</p>
           <ol className="grid grid-cols-3 gap-2" aria-label="Registration steps">
             {STEPS.map((name, i) => (
               <li key={name} aria-current={i === step ? "step" : undefined} className="flex flex-col gap-1.5">
                 <span className={cx("h-1 rounded-pill", i <= step ? "bg-primary" : "bg-line")} />
-                <span className={cx("text-body-sm", i === step ? "font-semibold text-ink" : "text-ink-muted")}>{name}</span>
+                <span className={cx("mz-body-sm", i === step ? "font-semibold text-ink" : "text-ink-muted")}>{name}</span>
               </li>
             ))}
           </ol>
@@ -131,7 +131,7 @@ export function RegisterView() {
           </Button>
         </div>
       </form>
-      <p className="mt-6 text-center text-body text-ink-muted">
+      <p className="mt-6 text-center text-ink-muted">
         Already have an account?{" "}
         <Link href="/login" className="font-semibold text-link hover:underline">Sign in</Link>
       </p>

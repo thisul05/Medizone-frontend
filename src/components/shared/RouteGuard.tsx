@@ -12,7 +12,7 @@ function FullPageLoader() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-surface-page" role="status">
       <Logo height={36} />
-      <p className="text-body text-ink-muted">Loading…</p>
+      <p className="text-ink-muted">Loading…</p>
     </div>
   );
 }

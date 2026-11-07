@@ -30,7 +30,7 @@ const SIZES: Record<ButtonSize, string> = {
 
 export function buttonClasses({ variant = "primary", size = "md", block }: StyleProps, extra?: string) {
   return cx(
-    "inline-flex items-center justify-center rounded-md font-semibold text-label whitespace-nowrap",
+    "inline-flex items-center justify-center rounded-md font-semibold mz-label whitespace-nowrap",
     "transition-[background-color,color,opacity] duration-150 select-none",
     "disabled:bg-surface-sunken disabled:text-ink-disabled disabled:border-transparent disabled:cursor-not-allowed",
     "aria-disabled:bg-surface-sunken aria-disabled:text-ink-disabled aria-disabled:cursor-not-allowed",

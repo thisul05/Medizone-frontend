@@ -19,12 +19,12 @@ function CategoryButton({ active, onClick, label, count }: { active: boolean; on
       aria-pressed={active}
       onClick={onClick}
       className={cx(
-        "flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-body transition-colors duration-150",
+        "flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left transition-colors duration-150",
         active ? "bg-primary-tint font-semibold text-primary-tint-ink" : "text-ink hover:bg-surface-hover",
       )}
     >
       <span>{label}</span>
-      <span className="text-body-sm text-ink-muted tabular">{count}</span>
+      <span className="mz-body-sm text-ink-muted mz-num">{count}</span>
     </button>
   );
 }
@@ -34,7 +34,7 @@ export function ShopFilters({ category, offers, inStock, onCategory, onOffers, o
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 rounded-lg border border-line bg-surface-raised p-4">
-        <h2 className="flex items-center gap-2 text-label">
+        <h2 className="flex items-center gap-2 mz-label">
           <Icon name="filter" size={20} /> Show only
         </h2>
         <Checkbox label="Offers only" checked={offers} onChange={(e) => onOffers(e.target.checked)} />
@@ -43,7 +43,7 @@ export function ShopFilters({ category, offers, inStock, onCategory, onOffers, o
 
       {/* Phone and tablet: a compact select-like list in a disclosure. Desktop: full list. */}
       <details className="group rounded-lg border border-line bg-surface-raised lg:hidden">
-        <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-label [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 mz-label [&::-webkit-details-marker]:hidden">
           Categories{category ? `: ${categories.find((c) => c.id === category)?.name ?? ""}` : ""}
           <Icon name="chevron-down" className="text-ink-subtle group-open:rotate-180" />
         </summary>
@@ -56,7 +56,7 @@ export function ShopFilters({ category, offers, inStock, onCategory, onOffers, o
       </details>
 
       <nav aria-label="Categories" className="hidden flex-col gap-2 lg:flex">
-        <h2 className="px-3 text-label">Categories</h2>
+        <h2 className="px-3 mz-label">Categories</h2>
         <div className="flex flex-col gap-0.5">
           <CategoryButton active={!category} onClick={() => onCategory(null)} label="All products" count={products.length} />
           {categories.map((c) => (

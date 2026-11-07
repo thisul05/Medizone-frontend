@@ -18,8 +18,8 @@ function CardBody({ icon, title, text }: { icon: IconName; title: string; text: 
       <span className="flex size-11 items-center justify-center rounded-pill bg-primary-tint text-primary-tint-ink">
         <Icon name={icon} />
       </span>
-      <span className="text-h3 text-ink">{title}</span>
-      <span className="text-body text-ink-muted">{text}</span>
+      <span className="mz-h3 text-ink">{title}</span>
+      <span className="text-ink-muted">{text}</span>
     </>
   );
 }
@@ -34,7 +34,7 @@ export function CustomerHome() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col items-start gap-3">
-        <h1 className="text-display">
+        <h1 className="mz-display">
           {greeting()}, {firstName}
         </h1>
         <Badge tone="loyalty" icon="gift">0 points</Badge>
@@ -65,13 +65,13 @@ export function CustomerHome() {
 
       <section aria-labelledby="contact-title" className="flex flex-col gap-4 rounded-lg border border-line bg-surface-raised p-5 shadow-1 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-1">
-          <h2 id="contact-title" className="text-h3">Need help with an order?</h2>
-          <p className="text-body text-ink-muted">
+          <h2 id="contact-title" className="mz-h3">Need help with an order?</h2>
+          <p className="text-ink-muted">
             Your preferred branch: {branchName(user.branchId)}
             {branch?.confirmed ? `, ${branch.area}` : ""}
           </p>
         </div>
-        <a href={site.phoneHref} className="flex items-center gap-2 text-h3 text-link hover:underline">
+        <a href={site.phoneHref} className="flex items-center gap-2 mz-h3 text-link hover:underline">
           <Icon name="phone" />
           {site.phone}
         </a>

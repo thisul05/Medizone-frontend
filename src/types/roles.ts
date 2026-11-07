@@ -10,7 +10,7 @@ export type Role =
   | "accountant"
   | "customer";
 
-export type BranchId = "b1" | "b2" | "b3" | "b4";
+export type BranchId = "b1" | "b2" | "b3" | "b4" | "b5";
 
 export type ModuleId =
   | "admin"

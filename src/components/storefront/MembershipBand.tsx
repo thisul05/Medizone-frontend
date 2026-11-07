@@ -15,8 +15,8 @@ export function MembershipBand() {
     <section id="membership" aria-labelledby="membership-title" className="scroll-mt-40 bg-loyalty-bg py-12 lg:py-16">
       <div className={cx(CONTAINER, "flex flex-col gap-8")}>
         <div className="flex max-w-2xl flex-col gap-2">
-          <h2 id="membership-title" className="text-h1 text-loyalty-ink">Get more from every visit</h2>
-          <p className="text-body-lg text-ink">A free Medizone account works at all four branches and online.</p>
+          <h2 id="membership-title" className="mz-h1 text-loyalty-ink">Get more from every visit</h2>
+          <p className="mz-body-lg text-ink">A free Medizone account works at all four branches and online.</p>
         </div>
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {BENEFITS.map((b) => (
@@ -24,14 +24,14 @@ export function MembershipBand() {
               <span className="flex size-11 items-center justify-center rounded-pill bg-surface-raised text-loyalty-ink">
                 <Icon name={b.icon} />
               </span>
-              <p className="text-h3 text-ink">{b.title}</p>
-              <p className="text-body text-ink-muted">{b.text}</p>
+              <p className="mz-h3 text-ink">{b.title}</p>
+              <p className="text-ink-muted">{b.text}</p>
             </li>
           ))}
         </ul>
         <div className="flex flex-wrap items-center gap-4">
           <ButtonLink href="/register" size="lg">Create account</ButtonLink>
-          <p className="text-body text-ink">
+          <p className="text-ink">
             Already a member?{" "}
             <Link href="/login" className="font-semibold text-link hover:underline">Sign in</Link>
           </p>

@@ -77,7 +77,7 @@ export function LoginForm({ next, handledRef }: LoginFormProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-h1">Sign in</h1>
+      <h1 className="mz-h1">Sign in</h1>
 
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
         {formError && <Alert tone="danger">{formError}</Alert>}
@@ -109,7 +109,7 @@ export function LoginForm({ next, handledRef }: LoginFormProps) {
         />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Checkbox label="Keep me signed in" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-          <button type="button" onClick={() => setForgot((f) => !f)} aria-expanded={forgot} className="rounded-sm text-label text-link hover:underline">
+          <button type="button" onClick={() => setForgot((f) => !f)} aria-expanded={forgot} className="rounded-sm mz-label text-link hover:underline">
             Forgot password?
           </button>
         </div>
@@ -123,13 +123,13 @@ export function LoginForm({ next, handledRef }: LoginFormProps) {
         </Button>
       </form>
 
-      <p className="text-center text-body text-ink-muted">
+      <p className="text-center text-ink-muted">
         New to Medizone?{" "}
         <Link href="/register" className="font-semibold text-link hover:underline">
           Create account
         </Link>
       </p>
-      <p className="text-center text-body-sm font-medium text-ink-muted">Prototype: demo accounts only, not real security.</p>
+      <p className="text-center mz-caption text-ink-muted">Prototype: demo accounts only, not real security.</p>
     </div>
   );
 }

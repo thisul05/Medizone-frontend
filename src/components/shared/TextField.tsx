@@ -29,12 +29,12 @@ export function TextField({
     <Field id={inputId} label={label} labelHidden={labelHidden} hint={hint} error={error} optional={optional} className={fieldClassName}>
       <div className={cx("flex items-center gap-2 px-3", CONTROL_HEIGHT[size], controlFrame(error), className)}>
         {icon && <Icon name={icon} size={20} className="text-ink-subtle" />}
-        {prefix && <span className="text-body text-ink-muted">{prefix}</span>}
+        {prefix && <span className="text-ink-muted">{prefix}</span>}
         <input
           id={inputId}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(inputId, hint, error)}
-          className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-subtle disabled:text-ink-disabled"
+          className="h-full min-w-0 flex-1 bg-transparent text-ink outline-none placeholder:text-ink-subtle disabled:text-ink-disabled"
           {...rest}
         />
         {suffix}

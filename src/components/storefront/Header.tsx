@@ -40,7 +40,7 @@ export function Header() {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen((o) => !o)}
-            className="flex h-control-lg items-center gap-2 rounded-md px-3 text-label text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint lg:hidden"
+            className="flex h-control-lg items-center gap-2 rounded-md px-3 mz-label text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint lg:hidden"
           >
             <Icon name={menuOpen ? "x" : "menu"} />
             <span className="sr-only sm:not-sr-only">Menu</span>

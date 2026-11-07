@@ -67,7 +67,7 @@ export function ShopView() {
   return (
     <div className={cx(CONTAINER, "py-8 lg:py-10")}>
       <nav aria-label="Breadcrumb" className="mb-3">
-        <ol className="flex flex-wrap items-center gap-1.5 text-body-sm text-ink-muted">
+        <ol className="flex flex-wrap items-center gap-1.5 mz-body-sm text-ink-muted">
           <li><Link href="/" className="text-link hover:underline">Home</Link></li>
           <li aria-hidden><Icon name="chevron-right" size={16} /></li>
           <li>
@@ -81,7 +81,7 @@ export function ShopView() {
           )}
         </ol>
       </nav>
-      <h1 className="mb-6 text-h1 lg:mb-8">{heading}</h1>
+      <h1 className="mb-6 mz-h1 lg:mb-8">{heading}</h1>
 
       <div className="grid gap-6 lg:grid-cols-[260px_1fr] lg:gap-8">
         <aside aria-label="Filters">
@@ -97,7 +97,7 @@ export function ShopView() {
 
         <div className="flex min-w-0 flex-col gap-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <p className="text-body text-ink-muted" aria-live="polite">
+            <p className="text-ink-muted" aria-live="polite">
               {results.length} product{results.length === 1 ? "" : "s"}
             </p>
             <div className="flex flex-wrap items-end gap-3">
@@ -113,8 +113,8 @@ export function ShopView() {
           ) : (
             <div className="flex flex-col items-center gap-3 rounded-lg border border-line bg-surface-raised px-6 py-16 text-center">
               <Icon name="search" size={28} className="text-ink-subtle" />
-              <p className="text-h3">No products match</p>
-              <p className="max-w-sm text-body text-ink-muted">Try another search word, or clear the filters to see everything we stock.</p>
+              <p className="mz-h3">No products match</p>
+              <p className="max-w-sm text-ink-muted">Try another search word, or clear the filters to see everything we stock.</p>
               <Button variant="secondary" onClick={clearAll}>Clear filters</Button>
             </div>
           )}

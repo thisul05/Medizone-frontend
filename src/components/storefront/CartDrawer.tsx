@@ -53,7 +53,7 @@ export function CartDrawer() {
       className={cx("fixed inset-0 z-50 transition-opacity duration-150", open ? "opacity-100" : "pointer-events-none invisible opacity-0")}
       inert={!open}
     >
-      <div className="absolute inset-0 bg-scrim" onClick={() => setOpen(false)} aria-hidden />
+      <div className="absolute inset-0 bg-(--scrim)" onClick={() => setOpen(false)} aria-hidden />
       <div
         ref={panel}
         role="dialog"
@@ -63,7 +63,7 @@ export function CartDrawer() {
         className="absolute inset-y-0 right-0 flex w-full max-w-[400px] flex-col bg-surface-raised shadow-3"
       >
         <div className="flex items-center justify-between border-b border-line px-5 py-4">
-          <h2 id="cart-title" className="text-h3">
+          <h2 id="cart-title" className="mz-h3">
             Your cart {count > 0 && <span className="text-ink-muted">({count})</span>}
           </h2>
           <button
@@ -79,8 +79,8 @@ export function CartDrawer() {
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 p-8 text-center">
             <Icon name="cart" size={28} className="text-ink-subtle" />
-            <p className="text-h3">Your cart is empty</p>
-            <p className="text-body text-ink-muted">Add vitamins, devices and everyday essentials to get started.</p>
+            <p className="mz-h3">Your cart is empty</p>
+            <p className="text-ink-muted">Add vitamins, devices and everyday essentials to get started.</p>
             <ButtonLink href="/shop" onClick={() => setOpen(false)} className="mt-2">
               Browse products
             </ButtonLink>
@@ -98,23 +98,23 @@ export function CartDrawer() {
                     </div>
                     <div className="flex min-w-0 flex-1 flex-col gap-2">
                       <div className="flex justify-between gap-2">
-                        <p className="line-clamp-2 text-label">{p.name}</p>
-                        <p className="text-label tabular">{formatLKR(p.price * item.qty)}</p>
+                        <p className="line-clamp-2 mz-label">{p.name}</p>
+                        <p className="mz-label mz-num">{formatLKR(p.price * item.qty)}</p>
                       </div>
-                      <p className="text-body-sm text-ink-muted tabular">{formatLKR(p.price)} each</p>
+                      <p className="mz-body-sm text-ink-muted mz-num">{formatLKR(p.price)} each</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <button type="button" className={stepBtn} onClick={() => setQty(p.id, item.qty - 1)} aria-label={`Decrease quantity of ${p.name}`}>
                             <Icon name="minus" size={16} />
                           </button>
-                          <span className="w-6 text-center text-label tabular" aria-live="polite" aria-label={`Quantity ${item.qty}`}>
+                          <span className="w-6 text-center mz-label mz-num" aria-live="polite" aria-label={`Quantity ${item.qty}`}>
                             {item.qty}
                           </span>
                           <button type="button" className={stepBtn} disabled={item.qty >= MAX_QTY} onClick={() => setQty(p.id, item.qty + 1)} aria-label={`Increase quantity of ${p.name}`}>
                             <Icon name="plus" size={16} />
                           </button>
                         </div>
-                        <button type="button" onClick={() => remove(p.id)} className="flex items-center gap-1 rounded-md px-2 py-1 text-label text-danger-ink hover:bg-danger-bg">
+                        <button type="button" onClick={() => remove(p.id)} className="flex items-center gap-1 rounded-md px-2 py-1 mz-label text-danger-ink hover:bg-danger-bg">
                           <Icon name="trash" size={16} />
                           Remove<span className="sr-only"> {p.name}</span>
                         </button>
@@ -125,8 +125,8 @@ export function CartDrawer() {
               })}
             </ul>
             <div className="flex items-center justify-between border-t border-line px-5 py-4">
-              <span className="text-label">Subtotal</span>
-              <span className="text-price tabular">{formatLKR(subtotal)}</span>
+              <span className="mz-label">Subtotal</span>
+              <span className="mz-price mz-num">{formatLKR(subtotal)}</span>
             </div>
             <CartCheckout />
           </div>

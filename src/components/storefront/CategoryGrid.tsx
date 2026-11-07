@@ -18,8 +18,8 @@ export function CategoryGrid() {
                 <span className="flex size-12 items-center justify-center rounded-pill bg-primary-tint text-primary-tint-ink">
                   <Icon name={c.icon} />
                 </span>
-                <span className="text-label text-ink">{c.name}</span>
-                <span className="mt-auto text-body-sm text-ink-muted">
+                <span className="mz-label text-ink">{c.name}</span>
+                <span className="mt-auto mz-body-sm text-ink-muted">
                   {n} product{n === 1 ? "" : "s"}
                 </span>
               </Link>

@@ -10,10 +10,11 @@ export interface Branch {
 }
 
 export const branches: Branch[] = [
-  { id: "b1", name: "Branch 1", area: "Miriswaththa, Piliyandala", address: "238 1/B, Horana Road, Miriswaththa, Piliyandala", confirmed: true },
-  { id: "b2", name: "Branch 2", area: "Piliyandala town", confirmed: true },
-  { id: "b3", name: "Branch 3", area: "Location to be confirmed", confirmed: false },
-  { id: "b4", name: "Branch 4", area: "Location to be confirmed", confirmed: false },
+  { id: "b1", name: "Miriswaththa", area: "Piliyandala", address: "238 1/B, Horana Road, Miriswaththa, Piliyandala", confirmed: true },
+  { id: "b2", name: "Piliyandala", area: "Piliyandala town", confirmed: true },
+  { id: "b3", name: "Kesbewa", area: "Address to be confirmed", confirmed: false },
+  { id: "b4", name: "Moratuwa", area: "Idama, Moratuwa", address: "692 B, Galle Road, Idama, Moratuwa", confirmed: true },
+  { id: "b5", name: "Thalawathugoda", area: "Address to be confirmed", confirmed: false },
 ];
 
 export function getBranch(id: BranchId): Branch | undefined {

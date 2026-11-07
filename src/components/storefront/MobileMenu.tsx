@@ -8,7 +8,7 @@ import { NAV_LINKS } from "./nav-links";
 import { SearchBox } from "./SearchBox";
 import { CONTAINER } from "./Section";
 
-const linkClass = "flex items-center gap-3 rounded-md px-3 py-2.5 text-body text-ink transition-colors duration-150 hover:bg-surface-hover";
+const linkClass = "flex items-center gap-3 rounded-md px-3 py-2.5 text-ink transition-colors duration-150 hover:bg-surface-hover";
 
 /** The panel opened by the menu button under 1024px. */
 export function MobileMenu({ onClose }: { onClose: () => void }) {
@@ -35,7 +35,7 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
         </nav>
 
         <div className="flex flex-col gap-2">
-          <h2 className="px-3 text-label text-ink-muted">Shop by category</h2>
+          <h2 className="px-3 mz-label text-ink-muted">Shop by category</h2>
           <ul className="grid sm:grid-cols-2">
             {categories.map((c) => (
               <li key={c.id}>
@@ -51,7 +51,7 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
         <div className="flex flex-col gap-2 border-t border-line pt-4">
           {ready && user ? (
             <>
-              <p className="px-3 text-label">Signed in as {user.name}</p>
+              <p className="px-3 mz-label">Signed in as {user.name}</p>
               <Link href="/home" className={linkClass} onClick={onClose}>
                 <Icon name="home" /> Go to home
               </Link>
@@ -74,7 +74,7 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
             <>
               <ButtonLink href="/login" block size="lg" onClick={onClose}>Sign in</ButtonLink>
               <ButtonLink href="/register" block size="lg" variant="secondary" onClick={onClose}>Create account</ButtonLink>
-              <p className="text-center text-body-sm text-ink-muted">Members earn loyalty points</p>
+              <p className="text-center mz-body-sm text-ink-muted">Members earn loyalty points</p>
             </>
           )}
         </div>

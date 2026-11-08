@@ -20,7 +20,7 @@ Open http://localhost:3000. Use Node 22 (`nvm use` reads `.nvmrc`).
 
 | # | Module | Page folder | Owner |
 |---|---|---|---|
-| 1 | Login, roles, home | `src/app/login`, `src/app/home` | |
+| 1 | Website, login, roles, home | `src/app/page.tsx`, `src/app/{shop,login,register,home,profile,access-denied,modules}`, `src/components/{storefront,auth,home,shared}`. Demo accounts: see `demo_details.md`, docs: `docs/MODULE-1.md` | |
 | 2 | Admin dashboard | `src/app/admin` | |
 | 3 | Products and inventory | `src/app/inventory` | |
 | 4 | Prescriptions and orders | `src/app/orders` | |

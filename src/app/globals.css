@@ -1,26 +1,229 @@
 @import "tailwindcss";
+/* Figtree and IBM Plex Mono are self-hosted with next/font in src/app/layout.tsx,
+   which points --mz-font-sans and --mz-font-mono at them. A remote @import url()
+   cannot go here: Tailwind expands above it, and Turbopack rejects a late @import. */
+@import "./tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  Map the Medizone tokens onto Tailwind v4 theme namespaces.
 
+  `inline` keeps the var() reference in the generated utility instead of baking
+  in a literal colour, so every utility re-resolves when the data-theme
+  attribute on <html> flips between light and dark.
+
+  Tailwind v4 has no height or width theme namespace, so the fixed control
+  heights and the nav width are defined with @utility further down.
+*/
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand */
+  --color-logo-navy: var(--logo-navy);
+  --color-logo-red: var(--logo-red);
+  --color-logo-green: var(--logo-green);
+
+  /* Surfaces */
+  --color-surface-page: var(--surface-page);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-nav: var(--surface-nav);
+
+  /* Side navigation */
+  --color-nav-ink: var(--nav-ink);
+  --color-nav-muted: var(--nav-ink-muted);
+  --color-nav-active: var(--nav-active);
+
+  /* Text */
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-disabled: var(--ink-disabled);
+
+  /* Lines */
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+
+  /* Interactive navy */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-on: var(--on-primary);
+  --color-primary-tint: var(--primary-tint);
+  --color-primary-tint-ink: var(--primary-tint-ink);
+  --color-link: var(--link);
+  --color-focus: var(--focus-ring);
+  --color-focus-nav: var(--focus-ring-nav);
+  --color-on-solid: var(--on-solid);
+
+  /* Status tones */
+  --color-info-bg: var(--info-bg);
+  --color-info-ink: var(--info-ink);
+  --color-info-solid: var(--info-solid);
+  --color-success-bg: var(--success-bg);
+  --color-success-ink: var(--success-ink);
+  --color-success-solid: var(--success-solid);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-ink: var(--warning-ink);
+  --color-warning-solid: var(--warning-solid);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-ink: var(--danger-ink);
+  --color-danger-solid: var(--danger-solid);
+  --color-neutral-bg: var(--neutral-bg);
+  --color-neutral-ink: var(--neutral-ink);
+  --color-neutral-solid: var(--neutral-solid);
+  --color-transit-bg: var(--transit-bg);
+  --color-transit-ink: var(--transit-ink);
+  --color-transit-solid: var(--transit-solid);
+
+  /* Expiry stickers */
+  --color-expiry-red: var(--expiry-red);
+  --color-expiry-on-red: var(--on-expiry-red);
+  --color-expiry-orange: var(--expiry-orange);
+  --color-expiry-on-orange: var(--on-expiry-orange);
+  --color-expiry-yellow: var(--expiry-yellow);
+  --color-expiry-on-yellow: var(--on-expiry-yellow);
+
+  /* Loyalty and sale */
+  --color-loyalty-bg: var(--loyalty-bg);
+  --color-loyalty-ink: var(--loyalty-ink);
+  --color-sale: var(--sale);
+
+  /* Type */
+  --font-sans: var(--mz-font-sans);
+  --font-mono: var(--mz-font-mono);
+
+  /* Radii — these replace Tailwind's defaults so rounded-md is 10px, not 6px */
+  --radius-sm: var(--mz-radius-sm);
+  --radius-md: var(--mz-radius-md);
+  --radius-lg: var(--mz-radius-lg);
+  --radius-pill: var(--mz-radius-pill);
+
+  /* Depth */
+  --shadow-1: var(--mz-shadow-1);
+  --shadow-2: var(--mz-shadow-2);
+  --shadow-3: var(--mz-shadow-3);
+
+  /* Layout width cap: max-w-content */
+  --container-content: var(--content-max);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Fixed control heights and the nav width (no Tailwind namespace for these) */
+@utility h-control-sm {
+  height: var(--control-sm);
+}
+@utility h-control-md {
+  height: var(--control-md);
+}
+@utility h-control-lg {
+  height: var(--control-lg);
+}
+@utility w-nav {
+  width: var(--nav-width);
+}
+
+@layer base {
+  body {
+    background: var(--surface-page);
+    color: var(--ink);
+    font-family: var(--mz-font-sans);
+    font-size: 15px;
+    line-height: 22px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus is never removed: 2px ring, 2px offset, on every focusable element */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Inside the navy side nav the ring switches to white */
+  .mz-on-nav :where(a, button):focus-visible {
+    outline-color: var(--focus-ring-nav);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Type scale from the style guide. Use these for headings and numbers. */
+@layer components {
+  .mz-display {
+    font-size: 40px;
+    line-height: 44px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .mz-h1 {
+    font-size: 28px;
+    line-height: 34px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .mz-h2 {
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 700;
+  }
+  .mz-h3 {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  .mz-body-lg {
+    font-size: 17px;
+    line-height: 26px;
+  }
+  .mz-body-sm {
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .mz-label {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 600;
+  }
+  .mz-caption {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+  }
+  .mz-overline {
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* Numbers: tabular so columns line up and digits never shift */
+  .mz-kpi {
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .mz-price {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .mz-num {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Ids (batch, order, PO, serial) */
+  .mz-code {
+    font-family: var(--mz-font-mono);
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+  }
+}
+
+/* Print views (dispensing label, invoice, payslip): black on white, one page. */
+@media print {
+  .mz-print,
+  .mz-print * {
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+  .mz-no-print {
+    display: none !important;
+  }
 }

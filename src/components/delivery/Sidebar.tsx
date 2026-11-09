@@ -1,8 +1,35 @@
 "use client";
+import { useState } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Logo } from "@/components/shared/Logo";
 import { Icon, type IconName } from "@/components/shared/Icon";
 
+const DELIVERY_SUBITEMS = [
+  { id: "deliveries", label: "Deliveries" },
+  { id: "cod", label: "Cash on Delivery" },
+  { id: "returns", label: "Customer Returns" },
+  { id: "warranty", label: "Warranty Claims" },
+  { id: "checker", label: "Warranty Check" },
+] as const;
+
 export default function Sidebar() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const isDelivery = pathname === "/delivery";
+  const activeTab = searchParams.get("tab") ?? "deliveries";
+  const [open, setOpen] = useState(isDelivery);
+
+  const handleDeliveryToggle = () => {
+    if (!isDelivery) {
+      router.push("/delivery?tab=deliveries");
+      setOpen(true);
+    } else {
+      setOpen((v) => !v);
+    }
+  };
+
   return (
     <aside className="mz-on-nav sticky top-0 flex h-screen w-nav shrink-0 flex-col bg-surface-nav text-nav-ink">
       {/* Logo */}
@@ -18,23 +45,62 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-3 pb-4">
-        <NavItem icon="home" label="Home" href="/home" />
-        <NavItem icon="dashboard" label="Dashboard" href="/admin" />
+        <NavItem icon="home" label="Home" href="/home" active={pathname === "/home"} />
+        <NavItem icon="dashboard" label="Dashboard" href="/admin" active={pathname === "/admin"} />
 
         <SectionLabel>Pharmacy</SectionLabel>
-        <NavItem icon="clipboard" label="Prescriptions" href="/orders" />
-        <NavItem icon="receipt" label="Billing" href="/billing" />
-        <NavItem icon="package" label="Inventory" href="/inventory" />
-        <NavItem icon="users" label="Customers" href="/customers" />
+        <NavItem icon="clipboard" label="Prescriptions" href="/orders" active={pathname === "/orders"} />
+        <NavItem icon="receipt" label="Billing" href="/billing" active={pathname === "/billing"} />
+        <NavItem icon="package" label="Inventory" href="/inventory" active={pathname === "/inventory"} />
+        <NavItem icon="users" label="Customers" href="/customers" active={pathname === "/customers"} />
 
         <SectionLabel>Back Office</SectionLabel>
-        <NavItem icon="building" label="Suppliers" href="/suppliers" />
-        <NavItem icon="truck" label="Delivery & warranty" href="/delivery" active />
-        <NavItem icon="users" label="Staff & payroll" href="/staff" />
-        <NavItem icon="chart" label="Reports" href="/reports" />
+        <NavItem icon="building" label="Suppliers" href="/suppliers" active={pathname === "/suppliers"} />
+
+        {/* Delivery & warranty — expandable */}
+        <div className="mb-0.5">
+          <button
+            type="button"
+            onClick={handleDeliveryToggle}
+            className={`flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label transition-colors duration-150 ${
+              isDelivery
+                ? "bg-nav-active text-nav-ink"
+                : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
+            }`}
+          >
+            <Icon name="truck" size={18} />
+            <span className="flex-1 text-left">Delivery &amp; warranty</span>
+            <Icon
+              name="chevron-down"
+              size={14}
+              className={`shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {open && (
+            <div className="ml-7 mt-0.5 space-y-0.5">
+              {DELIVERY_SUBITEMS.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/delivery?tab=${item.id}`}
+                  className={`flex h-8 items-center rounded-md px-2.5 text-sm transition-colors duration-150 ${
+                    isDelivery && activeTab === item.id
+                      ? "bg-white/15 font-semibold text-nav-ink"
+                      : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <NavItem icon="users" label="Staff & payroll" href="/staff" active={pathname === "/staff"} />
+        <NavItem icon="chart" label="Reports" href="/reports" active={pathname === "/reports"} />
       </nav>
 
-      {/* User + Logout */}
+      {/* Bottom: Help + Logout + User */}
       <div className="border-t border-white/10 px-3 py-3 space-y-1">
         <a
           href="/help"
@@ -79,7 +145,7 @@ function NavItem({
   icon: IconName;
   label: string;
   href: string;
-  active?: boolean;
+  active: boolean;
 }) {
   return (
     <a

@@ -83,12 +83,11 @@ export default function ReturnsTable({ returns, onStatusChange, onAddReturn }: P
 
       {/* New return form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-info-bg bg-info-bg p-4">
-          <p className="mz-label text-primary">New Return Request</p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {field("Customer Name", "customerName", "e.g. Sunil Perera")}
+        <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-line bg-surface-raised p-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+            {field("Customer Name", "customerName", "Enter customer name")}
             {field("Phone", "phone", "07X XXX XXXX")}
-            {field("Product Name", "productName", "e.g. OMRON HEM-7121J")}
+            {field("Product Name", "productName", "Enter product name")}
             <div>
               <label className="mb-1 block text-xs font-medium text-ink-muted">Branch</label>
               <select
@@ -96,10 +95,13 @@ export default function ReturnsTable({ returns, onStatusChange, onAddReturn }: P
                 onChange={(e) => setForm((f) => ({ ...f, branchId: e.target.value }))}
                 className="h-control-sm w-full rounded-md border border-line px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-focus"
               >
-                {["b1", "b2", "b3", "b4"].map((b) => (
-                  <option key={b} value={b}>Branch {b.slice(1)}</option>
-                ))}
+                <option value="b1">Piliyandala (Main)</option>
+                <option value="b2">Miriswattha</option>
+                <option value="b3">Kesbewa</option>
+                <option value="b4">Moratuwa</option>
+                <option value="b5">Thalawathugoda</option>
               </select>
+              <p className="mt-1 text-xs text-ink-subtle">Piliyandala · Miriswattha · Kesbewa · Moratuwa · Thalawathugoda</p>
             </div>
           </div>
           <div>
@@ -110,7 +112,7 @@ export default function ReturnsTable({ returns, onStatusChange, onAddReturn }: P
               value={form.reason}
               onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))}
               rows={2}
-              placeholder="Describe the reason for return"
+              placeholder="Describe the reason for this return"
               className={`w-full rounded-md border px-3 py-2 text-sm text-ink placeholder:text-ink-subtle focus:outline-none focus:ring-1 focus:ring-focus ${errors.reason ? "border-danger-ink" : "border-line"}`}
             />
             {errors.reason && <p className="mt-0.5 text-xs text-danger-ink">{errors.reason}</p>}

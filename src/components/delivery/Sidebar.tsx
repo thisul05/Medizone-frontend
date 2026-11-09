@@ -13,7 +13,7 @@ export default function Sidebar() {
       {/* Branch selector */}
       <div className="mx-3 mb-4 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-nav-muted">
         <Icon name="store" size={16} />
-        <span className="mz-label">Branch 1 (main)</span>
+        <span className="mz-label">Miriswattha, Piliyandala</span>
       </div>
 
       {/* Nav */}
@@ -51,12 +51,12 @@ export default function Sidebar() {
           Log out
         </a>
         <div className="flex items-center gap-3 px-2 py-1">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-nav-active mz-label">
-            N
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e07c2a] mz-label text-white">
+            NP
           </div>
           <div className="min-w-0">
-            <div className="mz-label text-nav-ink truncate">Staff</div>
-            <div className="mz-caption text-nav-muted truncate">Branch 1</div>
+            <div className="mz-label text-nav-ink truncate">Nimal Perera</div>
+            <div className="mz-caption text-nav-muted truncate">Pharmacist assistant</div>
           </div>
         </div>
       </div>

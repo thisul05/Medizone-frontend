@@ -49,7 +49,7 @@ export default function Sidebar() {
         <NavItem icon="dashboard" label="Dashboard" href="/admin" active={pathname === "/admin"} />
 
         <SectionLabel>Pharmacy</SectionLabel>
-        <NavItem icon="clipboard" label="Prescriptions" href="/orders" active={pathname === "/orders"} />
+        <NavItem icon="clipboard" label="Orders" href="/orders" active={pathname === "/orders"} />
         <NavItem icon="receipt" label="Billing" href="/billing" active={pathname === "/billing"} />
         <NavItem icon="package" label="Inventory" href="/inventory" active={pathname === "/inventory"} />
         <NavItem icon="users" label="Customers" href="/customers" active={pathname === "/customers"} />

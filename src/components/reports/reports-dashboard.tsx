@@ -1,6 +1,9 @@
 "use client";
 import { useState, useMemo } from "react";
-import { REPORTS_DATA, MOCK_PREVIEW_DATA, type Report } from "@/data/reports";
+import { REPORTS_DATA, MOCK_PREVIEW_DATA } from "@/data/reports";
+import { branches as pharmacyBranches } from "@/data/branches";
+import { selectInventoryReports } from "@/lib/inventory-reports";
+import { useInventoryState } from "@/lib/use-inventory-state";
 import { ReportDialog, exportReport } from "./report-dialog";
 import MedizoneLogo from "./medizone-logo";
 import ForecastingPanel from "./forecasting-panel";
@@ -10,9 +13,16 @@ export default function ReportsDashboard() {
   const [selectedCategory, setSelectedCategory] = useState('All Reports');
   const [selectedBranch, setSelectedBranch] = useState('All Branches');
   const [viewMode, setViewMode] = useState('grid');
-  const [activeReportModal, setActiveReportModal] = useState<Report | null>(null);
+  const [activeReportId, setActiveReportId] = useState<string | null>(null);
   const [startDateTime, setStartDateTime] = useState('');
   const [endDateTime, setEndDateTime] = useState('');
+  const { inventory, today } = useInventoryState();
+  const branchId = pharmacyBranches.find((branch) => branch.name === selectedBranch)?.id ?? "all";
+  const inventoryReports = useMemo(() => selectInventoryReports(inventory, today, branchId, startDateTime, endDateTime), [inventory, today, branchId, startDateTime, endDateTime]);
+  const reports = useMemo(() => REPORTS_DATA.map((report) => ({ ...report, ...inventoryReports[report.id] })), [inventoryReports]);
+  const activeReportModal = reports.find((report) => report.id === activeReportId) ?? null;
+  const livePreview = activeReportId ? inventoryReports[activeReportId]?.preview : undefined;
+  const preview = livePreview ?? (activeReportId ? MOCK_PREVIEW_DATA[activeReportId] : undefined);
   const dateRange = startDateTime || endDateTime
     ? `${startDateTime.replace('T', ' ') || 'Any start'} to ${endDateTime.replace('T', ' ') || 'Any end'} (Asia/Colombo)`
     : 'All dates and times';
@@ -29,15 +39,12 @@ export default function ReportsDashboard() {
   // Branch Options
   const branches = [
     { id: 'all', name: 'All Branches' },
-    { id: 'miriswatta', name: 'Branch 1 - Miriswatta' },
-    { id: 'piliyandala', name: 'Branch 2 - Piliyandala Main' },
-    { id: 'maharagama', name: 'Branch 3 - Maharagama' },
-    { id: 'nugegoda', name: 'Branch 4 - Nugegoda Express' }
+    ...pharmacyBranches,
   ];
 
   // Filter Logic
   const filteredReports = useMemo(() => {
-    return REPORTS_DATA.filter((report) => {
+    return reports.filter((report) => {
       // Category match
       const matchesCategory =
         selectedCategory === 'All Reports' || report.category === selectedCategory;
@@ -52,7 +59,7 @@ export default function ReportsDashboard() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [reports, searchQuery, selectedCategory]);
 
   // Color helper function based on status
   const getBadgeStyle = (color: string) => {
@@ -207,7 +214,7 @@ export default function ReportsDashboard() {
               <div className="flex items-center gap-2 mt-1 text-[11px] text-emerald-300">
                 <span>19 Report Templates</span>
                 <span>•</span>
-                <span>Sample Data</span>
+                <span>Live inventory + sample reports</span>
               </div>
             </div>
           </div>
@@ -391,13 +398,13 @@ export default function ReportsDashboard() {
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => setActiveReportModal(report)}
+                        onClick={() => setActiveReportId(report.id)}
                         className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-medium transition-colors flex items-center gap-1"
                       >
                         <Eye className="w-3.5 h-3.5" /> Preview
                       </button>
                       <button
-                        onClick={() => setActiveReportModal(report)}
+                        onClick={() => setActiveReportId(report.id)}
                         className="px-3 py-1.5 rounded-lg bg-[#0a2540] hover:bg-[#0f385d] text-white font-medium transition-colors flex items-center gap-1 shadow-sm"
                       >
                         <FileText className="w-3.5 h-3.5" /> Run
@@ -451,14 +458,14 @@ export default function ReportsDashboard() {
                       <td className="py-4 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => setActiveReportModal(report)}
+                            onClick={() => setActiveReportId(report.id)}
                             className="p-1.5 text-slate-600 hover:text-[#0a2540] hover:bg-slate-100 rounded-lg transition-colors"
                             title="View Preview"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => setActiveReportModal(report)}
+                            onClick={() => setActiveReportId(report.id)}
                             className="px-3 py-1 bg-[#0a2540] text-white rounded-lg hover:bg-[#0f385d] font-medium flex items-center gap-1"
                           >
                             Generate <ChevronRight className="w-3 h-3" />
@@ -503,7 +510,7 @@ export default function ReportsDashboard() {
 
       {/* Interactive Report Preview Modal / Drawer */}
       {activeReportModal && (
-        <ReportDialog onClose={() => setActiveReportModal(null)}>
+        <ReportDialog onClose={() => setActiveReportId(null)}>
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
             <div className="bg-[#0a2540] text-white p-5 flex items-center justify-between border-b border-slate-800">
@@ -522,7 +529,7 @@ export default function ReportsDashboard() {
                 </div>
               </div>
               <button
-                aria-label="Close preview" onClick={() => setActiveReportModal(null)}
+                aria-label="Close preview" onClick={() => setActiveReportId(null)}
                 className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -540,7 +547,7 @@ export default function ReportsDashboard() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={() => exportReport(activeReportModal, selectedBranch, dateRange)} className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 font-medium flex items-center gap-1.5">
+                <button onClick={() => exportReport(activeReportModal, selectedBranch, dateRange, livePreview)} className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 font-medium flex items-center gap-1.5">
                   <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" /> Export CSV
                 </button>
                 <button onClick={() => window.print()} className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 font-medium flex items-center gap-1.5">
@@ -554,7 +561,7 @@ export default function ReportsDashboard() {
 
             {/* Modal Interactive Content Preview */}
             <div className="p-6 overflow-y-auto space-y-6 flex-1">
-              <p className="text-xs text-slate-500">Sample data only. Branch and timeframe are report parameters; values are fixed demo examples.</p>
+              <p className="text-xs text-slate-500">{livePreview ? "Saved inventory for the selected branch. Stock and expiry reports show current balances; the date range filters adjustment history only." : "Sample data only. Branch and timeframe are report parameters; values are fixed demo examples."}</p>
               {/* Summary Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-[#e8f0fe] p-4 rounded-xl border border-[#c2e7ff]">
@@ -564,28 +571,28 @@ export default function ReportsDashboard() {
                 <div className="bg-[#e6f4ea] p-4 rounded-xl border border-[#ceebd5]">
                   <p className="text-xs text-[#137333] font-semibold uppercase">Verification Status</p>
                   <p className="text-xl font-extrabold text-[#137333] mt-1 flex items-center gap-1">
-                    <CheckCircle2 className="w-5 h-5" /> Sample data
+                    <CheckCircle2 className="w-5 h-5" /> {livePreview ? "Saved inventory" : "Sample data"}
                   </p>
                 </div>
                 <div className="bg-[#feefc3] p-4 rounded-xl border border-[#fde293]">
-                  <p className="text-xs text-[#b06000] font-semibold uppercase">Historical Comparison</p>
+                  <p className="text-xs text-[#b06000] font-semibold uppercase">{livePreview ? "Inventory summary" : "Historical Comparison"}</p>
                   <p className="text-xl font-extrabold text-[#b06000] mt-1 flex items-center gap-1">
-                    <TrendingUp className="w-5 h-5" /> {activeReportModal.trend} vs last cycle
+                    <TrendingUp className="w-5 h-5" /> {activeReportModal.trend}{livePreview ? "" : " vs last cycle"}
                   </p>
                 </div>
               </div>
 
               {/* Data Table Preview (Sample context data) */}
-              {MOCK_PREVIEW_DATA[activeReportModal.id] ? (
+              {preview ? (
                 <div>
                   <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                    Sample Data Preview (Top Rows)
+                    {livePreview ? "Inventory records" : "Sample Data Preview (Top Rows)"}
                   </h4>
                   <div className="border border-slate-200 rounded-xl overflow-x-auto">
                     <table className="w-full text-left text-xs text-slate-700">
                       <thead className="bg-slate-100 text-slate-700 font-bold">
                         <tr>
-                          {MOCK_PREVIEW_DATA[activeReportModal.id].headers.map((h, i) => (
+                          {preview.headers.map((h, i) => (
                             <th key={i} className="py-2.5 px-3 border-b border-slate-200">
                               {h}
                             </th>
@@ -593,7 +600,7 @@ export default function ReportsDashboard() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {MOCK_PREVIEW_DATA[activeReportModal.id].rows.map((row, rIdx) => (
+                        {preview.rows.map((row, rIdx) => (
                           <tr key={rIdx} className="hover:bg-slate-50">
                             {row.map((cell, cIdx) => (
                               <td key={cIdx} className="py-2.5 px-3">
@@ -620,10 +627,10 @@ export default function ReportsDashboard() {
             {/* Modal Footer */}
             <div className="bg-slate-100 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
               <span className="text-xs text-slate-500 font-medium">
-                Medizone report preview ? Sample data · Confidential internal record
+                Medizone report preview · {livePreview ? "Saved inventory" : "Sample data"} · Confidential internal record
               </span>
               <button
-                aria-label="Close preview" onClick={() => setActiveReportModal(null)}
+                aria-label="Close preview" onClick={() => setActiveReportId(null)}
                 className="px-5 py-2 bg-[#0a2540] hover:bg-[#0f385d] text-white rounded-xl text-xs font-semibold shadow-sm transition-colors"
               >
                 Close Preview

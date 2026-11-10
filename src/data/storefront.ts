@@ -1,4 +1,4 @@
-// Sample storefront data, non-prescription only. Prices are samples. Module 3 owns real product data.
+// Seed catalogue and presentation metadata. Live names, prices and stock come from lib/use-catalog.
 import type { IconName } from "@/components/shared/Icon";
 
 export interface StoreCategory {

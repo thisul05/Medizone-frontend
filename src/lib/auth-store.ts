@@ -61,7 +61,20 @@ function readJSON<T>(key: string, fallback: T, kind: Kind = "local"): T {
 export type StoredSession = SessionUser & { activeBranchId: BranchId | "all" };
 
 let sessionCache: StoredSession | null | undefined;
+let signingOut = false;
 const listeners = new Set<() => void>();
+
+export function markSigningOut(): void {
+  signingOut = true;
+}
+
+export function isSigningOut(): boolean {
+  return signingOut;
+}
+
+export function clearSigningOut(): void {
+  signingOut = false;
+}
 
 export function readSession(): StoredSession | null {
   if (sessionCache === undefined) {
@@ -75,6 +88,7 @@ export function writeSession(session: StoredSession | null, remember?: boolean):
     writeItem(KEYS.session, null, "local");
     writeItem(KEYS.session, null, "session");
   } else {
+    signingOut = false;
     // Keep the session where it already lives unless told otherwise.
     const keepLocal = remember ?? readItem(KEYS.session, "local") !== null;
     const kind: Kind = keepLocal ? "local" : "session";

@@ -35,7 +35,7 @@ export function ProfileView() {
 
   return (
     <SignedInShell>
-      <div className="mx-auto flex max-w-3xl flex-col gap-6">
+      <div className="flex w-full flex-col gap-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="mz-h1">{user.name}</h1>
@@ -50,7 +50,7 @@ export function ProfileView() {
             onClick={() => {
               signOut();
               toast({ tone: "info", title: "You're signed out" });
-              router.push("/login");
+              router.replace("/login");
             }}
           >
             Sign out

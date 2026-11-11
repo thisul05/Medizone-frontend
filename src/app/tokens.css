@@ -174,7 +174,7 @@
   --control-md: 40px;
   --control-lg: 48px;
   --nav-width: 248px;
-  --content-max: 1280px;
+  --content-max: 100%;
 
   --mz-font-sans: Figtree, "Noto Sans Sinhala", "Noto Sans Tamil", system-ui, sans-serif;
   --mz-font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;

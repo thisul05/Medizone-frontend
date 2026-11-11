@@ -14,7 +14,7 @@ export function Hero() {
   return (
     <section aria-labelledby="hero-title" className="pt-6 pb-12 lg:pt-8 lg:pb-16">
       <div className={cx(CONTAINER, "grid gap-6 lg:grid-cols-3")}>
-        <div className={cx("grid gap-8 rounded-lg bg-surface-nav p-6 text-nav-ink sm:p-10 lg:col-span-2 xl:grid-cols-[1fr_280px] xl:items-center", NAV_FOCUS)}>
+        <div className={cx("grid gap-8 rounded-lg bg-surface-nav p-6 text-nav-ink sm:p-10 lg:col-span-2 xl:grid-cols-[1fr_300px] 2xl:grid-cols-[1fr_360px] xl:items-center", NAV_FOCUS)}>
           <div className="flex flex-col items-start gap-5">
             <p className={cx(OVERLINE, "text-nav-muted")}>Your local pharmacy, online</p>
             <h1 id="hero-title" className="mz-display max-sm:text-[32px] max-sm:leading-[38px]">

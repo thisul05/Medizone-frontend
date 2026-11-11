@@ -16,7 +16,7 @@ interface AuthShellProps {
 export function AuthShell({ heading, subline, points, footer, children }: AuthShellProps) {
   return (
     <div className="flex min-h-dvh bg-surface-page">
-      <aside className="hidden w-[44%] max-w-[600px] flex-col justify-between gap-10 bg-surface-nav p-12 text-nav-ink lg:flex mz-on-nav">
+      <aside className="hidden w-[44%] flex-col justify-between gap-10 bg-surface-nav p-12 text-nav-ink lg:flex mz-on-nav">
         <Link href="/" className="self-start rounded-md" aria-label="Medizone Pharmacy home">
           <Logo height={44} priority />
         </Link>

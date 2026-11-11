@@ -227,3 +227,13 @@
     display: none !important;
   }
 }
+
+/* Bulk payslip print from payroll page: hidden on screen, shown when printing. */
+.mz-payslips-print {
+  display: none;
+}
+@media print {
+  .mz-payslips-print {
+    display: block !important;
+  }
+}

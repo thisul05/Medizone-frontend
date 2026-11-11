@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Icon, cx } from "@/components/shared";
 
-/** Page container: 1280px max, 16px gutters on phone and 32px on desktop. */
-export const CONTAINER = "mx-auto w-full max-w-content px-4 lg:px-8";
+/** Page container: full-width fluid layout with responsive horizontal gutters. */
+export const CONTAINER = "w-full px-4 sm:px-6 lg:px-8 xl:px-10";
 
 /** Overline text. Built from body-sm so nothing on the page is below 13px. */
 export const OVERLINE = "mz-overline";

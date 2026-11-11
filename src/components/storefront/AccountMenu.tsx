@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth";
 const menuItem =
   "flex w-full items-center gap-2 px-4 py-2.5 text-left text-ink transition-colors duration-150 hover:bg-surface-hover focus-visible:bg-surface-hover";
 
-/** Signed out: Sign in and Create account. Signed in: a first-name menu. */
+/** Signed out: Sign in and Create account. Signed in: full-name account menu in the header right side. */
 export function AccountMenu() {
   const { user, ready, signOut } = useAuth();
   const toast = useToast();
@@ -26,7 +26,7 @@ export function AccountMenu() {
 
   if (!ready || !user) {
     return (
-      <div className="flex flex-col items-end gap-0.5">
+      <div className="hidden flex-col items-end gap-0.5 lg:flex">
         <div className="flex items-center gap-2">
           <ButtonLink href="/login" variant="ghost" size="md">Sign in</ButtonLink>
           <ButtonLink href="/register" variant="secondary" size="md">Create account</ButtonLink>
@@ -36,11 +36,10 @@ export function AccountMenu() {
     );
   }
 
-  const firstName = user.name.split(/\s+/)[0];
   return (
     <div
       ref={root}
-      className="relative"
+      className="relative hidden sm:block"
       onKeyDown={(e) => {
         if (e.key === "Escape") setOpen(false);
       }}
@@ -53,11 +52,15 @@ export function AccountMenu() {
         className="flex h-control-lg items-center gap-2 rounded-md px-3 mz-label text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint"
       >
         <Icon name="account" />
-        {firstName}
+        <span className="max-w-[180px] truncate lg:max-w-[240px]">{user.name}</span>
         <Icon name="chevron-down" size={16} />
       </button>
       {open && (
-        <div id="account-menu" className="absolute right-0 top-full z-50 mt-1 w-56 overflow-hidden rounded-md border border-line bg-surface-raised py-1 shadow-2">
+        <div id="account-menu" className="absolute right-0 top-full z-50 mt-1 w-60 overflow-hidden rounded-md border border-line bg-surface-raised py-1 shadow-2">
+          <div className="border-b border-line px-4 py-2.5">
+            <p className="truncate mz-label text-ink">{user.name}</p>
+            <p className="truncate mz-caption text-ink-muted">{user.jobTitle}</p>
+          </div>
           <Link href="/home" className={menuItem} onClick={() => setOpen(false)}>
             <Icon name="home" size={20} /> Go to home
           </Link>

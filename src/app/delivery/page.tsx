@@ -94,8 +94,8 @@ export default function DeliveryPage() {
     <div className="flex min-h-screen">
       <Sidebar />
 
-      <div className="flex-1 overflow-auto bg-surface-page">
-        <div className="mx-auto max-w-content px-8 py-6">
+      <div className="min-w-0 flex-1 overflow-auto bg-surface-page">
+        <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
           {/* Page header */}
           <div className="mb-6">
             <h1 className="mz-h1 text-ink">Delivery, Returns &amp; Warranty</h1>

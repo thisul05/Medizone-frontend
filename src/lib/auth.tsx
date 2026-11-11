@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { canOpen } from "@/lib/access";
 import {
-  findAccount, readSession, registerCustomer, subscribeSession, toSessionUser, writeSession, type RegisterResult,
+  findAccount, markSigningOut, readSession, registerCustomer, subscribeSession, toSessionUser, writeSession, type RegisterResult,
 } from "@/lib/auth-store";
 import type { RegisterInput, SessionUser } from "@/types/auth";
 import type { BranchId, ModuleId } from "@/types/roles";
@@ -93,7 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return result;
   }, []);
 
-  const signOut = useCallback(() => writeSession(null), []);
+  const signOut = useCallback(() => {
+    markSigningOut();
+    writeSession(null);
+  }, []);
 
   const setActiveBranch = useCallback(
     (id: BranchId | "all") => {

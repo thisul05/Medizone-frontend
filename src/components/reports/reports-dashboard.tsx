@@ -71,7 +71,7 @@ export default function ReportsDashboard() {
   return (
     <div className="min-h-screen bg-[#f4f7f6] text-slate-800 font-sans flex flex-col">
       {/* Top Banner Notice */}
-      <div className="bg-[#0a2540] text-slate-200 text-xs py-2 px-4 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
+      <div className="bg-[#0a2540] text-slate-200 text-xs py-2 px-4 sm:px-6 lg:px-8 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 font-medium text-emerald-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -89,7 +89,7 @@ export default function ReportsDashboard() {
 
       {/* Main Header / Branding Navbar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo & Portal Title */}
           <div className="flex items-center gap-3 w-full md:w-auto justify-between">
             <div className="flex items-center gap-3">
@@ -183,7 +183,7 @@ export default function ReportsDashboard() {
 
       {/* Hero Banner Section (Inspired by uploaded banner) */}
       <div className="bg-[#0a2540] text-white py-8 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-[#13375b] px-3 py-1 rounded-full text-xs font-semibold text-emerald-300 mb-3 border border-[#1d4c7b]">
               <ShieldCheck className="w-3.5 h-3.5" /> Compliance & Financial Intelligence Center
@@ -215,7 +215,7 @@ export default function ReportsDashboard() {
       </div>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+      <main className="w-full px-4 sm:px-6 lg:px-8 py-8 flex-1">
         {/* Category Navigation Pills */}
         <div className="flex items-center justify-between gap-4 mb-6 overflow-x-auto pb-2 scrollbar-none">
           <div className="flex items-center gap-2 min-w-max">
@@ -328,7 +328,7 @@ export default function ReportsDashboard() {
 
         {/* Reports Grid View */}
         {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {filteredReports.map((report) => {
               const IconComponent = reportIcons[report.icon];
               return (
@@ -635,7 +635,7 @@ export default function ReportsDashboard() {
 
       {/* Modern Footer */}
       <footer className="bg-white border-t border-slate-200 py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+        <div className="w-full px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
           <p className="font-semibold text-[#0a2540]">
             Medizone Pharmacy Management System — Reports & Operational Analytics
           </p>

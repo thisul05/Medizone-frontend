@@ -5,6 +5,7 @@ import { ButtonLink, Tabs, type TabItem } from "@/components/shared";
 import { useAuth } from "@/lib/auth";
 import { useOrders } from "@/lib/orders-store";
 import { OrdersShell } from "./OrdersShell";
+import { LabelsTab } from "./LabelsTab";
 import { QueueTab } from "./QueueTab";
 
 type Tab = "overview" | "queue" | "prescriptions" | "repeat" | "labels";
@@ -59,7 +60,8 @@ export function StaffOrders() {
 
       <div role="tabpanel" id={`orders-panel-${tab}`} aria-labelledby={`orders-tab-${tab}`}>
         {tab === "queue" && <QueueTab orders={branchOrders} staffName={staffName} onAdvance={(id) => advance(id, staffName)} onNotified={markNotified} />}
-        {tab !== "queue" && <p className="rounded-lg border border-dashed border-line-strong p-10 text-center text-ink-muted">This tab is being built next.</p>}
+        {tab === "labels" && <LabelsTab key={params.get("order") ?? "labels"} orders={branchOrders} initialOrderId={params.get("order") ?? undefined} />}
+        {tab !== "queue" && tab !== "labels" && <p className="rounded-lg border border-dashed border-line-strong p-10 text-center text-ink-muted">This tab is being built next.</p>}
       </div>
     </OrdersShell>
   );

@@ -17,7 +17,7 @@ const colorMap: Record<string, Record<string, string>> = {
   warranty: {
     received: "bg-gray-100 text-gray-700",
     sent_to_supplier: "bg-blue-100 text-blue-800",
-    repaired: "bg-teal-100 text-teal-800",
+    under_repair: "bg-amber-100 text-amber-800",
     replaced: "bg-green-100 text-green-800",
     returned: "bg-purple-100 text-purple-800",
   },
@@ -36,7 +36,7 @@ const labels: Record<string, string> = {
   rejected: "Rejected",
   received: "Received",
   sent_to_supplier: "Sent to Supplier",
-  repaired: "Repaired",
+  under_repair: "Under repair",
   replaced: "Replaced",
   returned: "Returned",
   own_driver: "Own Driver",

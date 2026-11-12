@@ -42,7 +42,7 @@ export default function DeliveryTable({ deliveries, onStatusChange, onMethodChan
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="font-semibold text-ink">Delivery list</p>
-          <p className="mz-body-sm text-ink-muted">{deliveries.length} orders</p>
+          <p className="mz-body-sm text-ink-muted">{deliveries.length} orders · Nugegoda branch</p>
         </div>
         <div className="flex gap-2">
           <div className="relative">
@@ -65,6 +65,14 @@ export default function DeliveryTable({ deliveries, onStatusChange, onMethodChan
             <option value="out">Out</option>
             <option value="delivered">Delivered</option>
           </select>
+          <button
+            type="button"
+            className="flex h-control-sm items-center gap-1.5 rounded-md border border-line px-3 text-sm text-ink hover:bg-surface-hover"
+          >
+            <Icon name="calendar" size={14} className="text-ink-subtle" />
+            4 Nov 2026
+            <Icon name="chevron-down" size={12} className="text-ink-subtle" />
+          </button>
         </div>
       </div>
 

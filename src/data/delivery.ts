@@ -198,7 +198,7 @@ export const warrantyClaims: WarrantyClaim[] = [
     serialNo: "OM-2023-00789",
     purchaseDate: "2023-06-20",
     warrantyMonths: 36,
-    status: "repaired",
+    status: "under_repair",
     loanDevice: false,
     branchId: "b3",
   },

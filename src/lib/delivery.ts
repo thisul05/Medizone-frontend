@@ -22,7 +22,7 @@ export const nextDeliveryStatus = (s: DeliveryStatus): DeliveryStatus =>
 const warrantyFlow: WarrantyStatus[] = [
   "received",
   "sent_to_supplier",
-  "repaired",
+  "under_repair",
   "replaced",
   "returned",
 ];

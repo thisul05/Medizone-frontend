@@ -70,7 +70,7 @@ export function NewOrderForm() {
       },
     );
     toast({ tone: "success", title: `Order ${id.toUpperCase()} saved`, description: "It is in the order queue as Received." });
-    router.push("/orders?tab=queue");
+    router.push(`/orders/${id}`);
   }
 
   return (

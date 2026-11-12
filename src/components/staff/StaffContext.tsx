@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
-import { staffMembers as seed, type StaffMember } from "@/data/staff";
+import { staffMembers as seed, attendanceRecords as attendanceSeed, type StaffMember, type AttendanceRecord } from "@/data/staff";
 
 interface StaffContextValue {
   staff: StaffMember[];
@@ -10,12 +10,15 @@ interface StaffContextValue {
   deleteStaff: (id: string) => void;
   getStaff: (id: string) => StaffMember | undefined;
   nextId: () => string;
+  attendance: AttendanceRecord[];
+  addAttendance: (record: AttendanceRecord) => void;
 }
 
 const StaffContext = createContext<StaffContextValue | null>(null);
 
 export function StaffProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<StaffMember[]>(seed);
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>(attendanceSeed);
 
   const addStaff = useCallback((member: StaffMember) => {
     setStaff((prev) => [...prev, member]);
@@ -42,8 +45,12 @@ export function StaffProvider({ children }: { children: ReactNode }) {
     return `EMP-${String(max + 1).padStart(3, "0")}`;
   }, [staff]);
 
+  const addAttendance = useCallback((record: AttendanceRecord) => {
+    setAttendance((prev) => [...prev, record]);
+  }, []);
+
   return (
-    <StaffContext.Provider value={{ staff, addStaff, updateStaff, deleteStaff, getStaff, nextId }}>
+    <StaffContext.Provider value={{ staff, addStaff, updateStaff, deleteStaff, getStaff, nextId, attendance, addAttendance }}>
       {children}
     </StaffContext.Provider>
   );

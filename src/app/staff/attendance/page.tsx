@@ -5,26 +5,28 @@ import AppSidebar from "@/components/shared/AppSidebar";
 import { ButtonLink } from "@/components/shared/Button";
 import { Select } from "@/components/shared/Select";
 import { useStaff } from "@/components/staff/StaffContext";
-import { attendanceRecords, WORKING_DAYS } from "@/data/staff";
+import { WORKING_DAYS } from "@/data/staff";
 
 export default function AttendancePage() {
-  const { staff } = useStaff();
+  const { staff, attendance } = useStaff();
   const [selectedMonth, setSelectedMonth] = useState("2026-11");
 
+  const today = new Date().getDate();
   const days = Array.from({ length: WORKING_DAYS }, (_, i) => i + 1);
 
   const presenceMap = useMemo(() => {
     const map = new Map<string, Set<number>>();
-    for (const r of attendanceRecords) {
+    for (const r of attendance) {
       if (!r.date.startsWith(selectedMonth)) continue;
       const day = parseInt(r.date.split("-")[2], 10);
       if (!map.has(r.staffId)) map.set(r.staffId, new Set());
       map.get(r.staffId)!.add(day);
     }
     return map;
-  }, [selectedMonth]);
+  }, [selectedMonth, attendance]);
 
-  const totalSlots = staff.length * WORKING_DAYS;
+  const elapsedDays = selectedMonth === "2026-11" ? Math.min(today, WORKING_DAYS) : WORKING_DAYS;
+  const totalSlots = staff.length * elapsedDays;
   const totalPresent = staff.reduce(
     (sum, s) => sum + (presenceMap.get(s.id)?.size ?? 0),
     0,
@@ -45,7 +47,10 @@ export default function AttendancePage() {
         <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <h1 className="mz-h1 text-ink">Attendance</h1>
+            <div className="flex items-center gap-3">
+              <ButtonLink href="/staff" variant="ghost" size="sm" icon="arrow-left" aria-label="Back" />
+              <h1 className="mz-h1 text-ink">Attendance</h1>
+            </div>
             <div className="flex items-center gap-3">
               <Select
                 label="Month"
@@ -117,18 +122,25 @@ export default function AttendancePage() {
                         </div>
                       </td>
                       {days.map((d) => {
+                        const isFuture = selectedMonth === "2026-11" && d > today;
                         const isPresent = presentDays?.has(d) ?? false;
                         return (
                           <td key={d} className="px-1 py-2.5 text-center">
-                            <span
-                              className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ${
-                                isPresent
-                                  ? "bg-success-bg text-success-ink"
-                                  : "bg-danger-bg text-danger-ink"
-                              }`}
-                            >
-                              {isPresent ? "P" : "A"}
-                            </span>
+                            {isFuture ? (
+                              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold bg-surface-sunken text-ink-muted">
+                                –
+                              </span>
+                            ) : (
+                              <span
+                                className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ${
+                                  isPresent
+                                    ? "bg-success-bg text-success-ink"
+                                    : "bg-danger-bg text-danger-ink"
+                                }`}
+                              >
+                                {isPresent ? "P" : "A"}
+                              </span>
+                            )}
                           </td>
                         );
                       })}

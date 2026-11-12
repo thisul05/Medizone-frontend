@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/shared/Button";
 import { Icon } from "@/components/shared/Icon";
@@ -13,6 +13,7 @@ import { formatLKR, formatDate, formatPhone, formatMonth } from "@/lib/format";
 export default function PayslipPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { getStaff } = useStaff();
   const staffId = params.id as string;
   const month = searchParams.get("month") ?? "2026-11";
@@ -41,7 +42,10 @@ export default function PayslipPage() {
 
   return (
     <div className="min-h-screen bg-surface-page">
-      <div className="mz-no-print flex items-center justify-end px-6 py-4">
+      <div className="mz-no-print flex items-center justify-between px-6 py-4">
+        <Button variant="secondary" icon="arrow-left" onClick={() => router.push("/staff/payroll")}>
+          Back
+        </Button>
         <Button variant="primary" icon="printer" onClick={handlePrint}>
           Print payslip
         </Button>

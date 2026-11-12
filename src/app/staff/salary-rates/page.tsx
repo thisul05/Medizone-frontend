@@ -73,7 +73,7 @@ export default function SalaryRatesPage() {
                         <input
                           type="number"
                           min="0"
-                          step="0.01"
+                          step="100"
                           value={s.dailyRate}
                           onChange={(e) => handleRateChange(s.id, e.target.value)}
                           className="w-24 bg-transparent text-right text-ink mz-num outline-none"

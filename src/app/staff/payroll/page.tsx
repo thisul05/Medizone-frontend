@@ -49,7 +49,10 @@ export default function MonthlyPayrollPage() {
       <div className="mz-no-print min-w-0 flex-1 overflow-auto bg-surface-page">
         <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <h1 className="mz-h1 text-ink">Monthly payroll</h1>
+            <div className="flex items-center gap-3">
+              <ButtonLink href="/staff" variant="ghost" size="sm" icon="arrow-left" aria-label="Back" />
+              <h1 className="mz-h1 text-ink">Monthly payroll</h1>
+            </div>
             <div className="flex items-center gap-3">
               <Select
                 label="Month"
@@ -67,12 +70,6 @@ export default function MonthlyPayrollPage() {
               <ButtonLink href="/staff/salary-rates" variant="secondary" size="md">
                 Salary rates
               </ButtonLink>
-              <ButtonLink href="#" variant="secondary" size="md" icon="download">
-                Export
-              </ButtonLink>
-              <Button variant="primary" size="md" icon="printer" onClick={() => window.print()}>
-                Print payslips
-              </Button>
             </div>
           </div>
 

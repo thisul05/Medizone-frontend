@@ -53,9 +53,6 @@ export default function AppSidebar() {
         <div className="mx-3 mb-4 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-nav-muted">
           <Icon name="store" size={16} />
           <span className="mz-label flex-1">{branchLabel(activeBranchId)}</span>
-          {activeBranchId === "all" && (
-            <Icon name="chevron-down" size={14} className="shrink-0" />
-          )}
         </div>
       )}
 

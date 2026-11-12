@@ -76,7 +76,7 @@ export function QueueTab({ orders, staffName, onAdvance, onNotified }: Props) {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-line bg-surface-raised shadow-1">
-        <table className="w-full min-w-[1000px] text-left">
+        <table className="w-full min-w-[960px] text-left">
           <thead className="bg-surface-sunken text-xs font-semibold text-ink-muted">
             <tr>
               {["Order", "Source", "Customer", "Items", "Fulfilment", "Payment", "Status", "Action", "View"].map((h) => (
@@ -90,8 +90,8 @@ export function QueueTab({ orders, staffName, onAdvance, onNotified }: Props) {
             {rows.map((o) => {
               const action = nextActionLabel(o);
               return (
-                <tr key={o.id} className="whitespace-nowrap border-b border-line last:border-0 hover:bg-surface-hover">
-                  <td className="px-4 py-3">
+                <tr key={o.id} className="border-b border-line last:border-0 hover:bg-surface-hover">
+                  <td className="whitespace-nowrap px-4 py-3">
                     <Link href={`/orders/${o.id}`} className="mz-code text-link underline">{orderCode(o.id)}</Link>
                     <p className="mz-body-sm text-ink-muted">{o.receivedAt.startsWith(TODAY) ? timeOf(o.receivedAt) : o.receivedAt.slice(5, 10).split("-").reverse().join("/")}</p>
                   </td>
@@ -109,8 +109,8 @@ export function QueueTab({ orders, staffName, onAdvance, onNotified }: Props) {
                     <p>{PAY_LABELS[o.payMethod]}</p>
                     <p className={cx("mz-body-sm", o.paymentState === "paid" ? "text-success-ink" : "text-warning-ink")}>{o.paymentState === "paid" ? "Paid" : "To pay"}</p>
                   </td>
-                  <td className="px-4 py-3"><StatusBadge kind="order" status={o.status} /></td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="whitespace-nowrap px-4 py-3"><StatusBadge kind="order" status={o.status} /></td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right">
                     {action ? <Button size="sm" variant="secondary" iconRight="arrow-right" onClick={() => move(o)}>{action}</Button> : <span className="text-ink-subtle">—</span>}
                   </td>
                   <td className="px-4 py-3 text-right">

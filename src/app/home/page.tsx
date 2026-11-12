@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
-import { HomeView } from "@/components/home/HomeView";
-
-// Signed-in page: RouteGuard renders it only in the browser, after the session is read.
-export const instant = false;
-
-export const metadata: Metadata = { title: "Home" };
-
-export default function HomePage() {
-  return <HomeView />;
+export default function Page() {
+  return (
+    <main className="p-6">
+      <h1 className="text-2xl font-semibold">Module 1: Home</h1>
+    </main>
+  );
 }

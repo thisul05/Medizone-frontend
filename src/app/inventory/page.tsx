@@ -1,16 +1,7 @@
-import type { Metadata } from "next";
-import { InventoryProvider } from "@/components/inventory/InventoryProvider";
-import { InventoryShell } from "@/components/inventory/InventoryShell";
-import { InventoryView } from "@/components/inventory/InventoryView";
-
-export const metadata: Metadata = { title: "Products and inventory" };
-
-export default function InventoryPage() {
+export default function Page() {
   return (
-    <InventoryProvider>
-      <InventoryShell>
-        <InventoryView />
-      </InventoryShell>
-    </InventoryProvider>
+    <main className="p-6">
+      <h1 className="text-2xl font-semibold">Module 3: Products and inventory</h1>
+    </main>
   );
 }

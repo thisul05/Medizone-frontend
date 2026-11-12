@@ -201,15 +201,15 @@ export const prescriptions: Prescription[] = [
 
 export const posBills: PosBill[] = [
   {
-    id: "POS-30871", customerName: "Walk-in customer", date: "2026-11-06T09:20",
+    id: "POS-30871", branchId: "b1", payMethod: "cash", customerName: "Walk-in customer", date: "2026-11-06T09:20",
     items: [med("Amoxicillin", 21, "1 capsule", 3, 7, "after_meals"), med("Cetirizine", 10, "1 tablet", 1, 10, "at_night"), plain("Baby wipes, 80 pack", 1, 450)],
   },
   {
-    id: "POS-30866", customerName: "Lasith Mendis", date: "2026-11-06T08:58",
+    id: "POS-30866", branchId: "b1", payMethod: "card", customerName: "Lasith Mendis", date: "2026-11-06T08:58",
     items: [med("Gliclazide", 30, "1 tablet", 1, 30, "before_meals"), plain("Glucose test strips, 50 pack", 1, 3900)],
   },
   {
-    id: "POS-30860", customerName: "Walk-in customer", date: "2026-11-06T08:41",
+    id: "POS-30860", branchId: "b1", payMethod: "cash", customerName: "Walk-in customer", date: "2026-11-06T08:41",
     items: [plain("Paracetamol 500 mg tablets, strip of 10", 1, 60), plain("Oral rehydration salts, 5 sachets", 1, 250)],
   },
 ];

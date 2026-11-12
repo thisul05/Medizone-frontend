@@ -101,7 +101,9 @@ export interface Prescription {
 /** A bill from the existing POS system, read only, used to print labels. */
 export interface PosBill {
   id: string;
+  branchId: BranchId;
   customerName: string;
+  payMethod: "cash" | "card";
   /** ISO date and time. */
   date: string;
   items: OrderItem[];

@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { useOrders } from "@/lib/orders-store";
 import { OrdersShell } from "./OrdersShell";
 import { LabelsTab } from "./LabelsTab";
+import { OverviewTab } from "./OverviewTab";
 import { PrescriptionsTab } from "./PrescriptionsTab";
 import { QueueTab } from "./QueueTab";
 import { RepeatTab } from "./RepeatTab";
@@ -66,7 +67,7 @@ export function StaffOrders() {
         {tab === "labels" && <LabelsTab key={params.get("order") ?? "labels"} orders={branchOrders} initialOrderId={params.get("order") ?? undefined} />}
         {tab === "prescriptions" && <PrescriptionsTab prescriptions={branchRx} orders={orders} />}
         {tab === "repeat" && <RepeatTab prescriptions={branchRx} orders={orders} onPrepare={prepareRepeat} onPause={setRepeatPaused} />}
-        {tab === "overview" && <p className="rounded-lg border border-dashed border-line-strong p-10 text-center text-ink-muted">This tab is being built next.</p>}
+        {tab === "overview" && <OverviewTab orders={branchOrders} branch={branch} />}
       </div>
     </OrdersShell>
   );

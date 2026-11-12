@@ -6,7 +6,9 @@ import { useAuth } from "@/lib/auth";
 import { useOrders } from "@/lib/orders-store";
 import { OrdersShell } from "./OrdersShell";
 import { LabelsTab } from "./LabelsTab";
+import { PrescriptionsTab } from "./PrescriptionsTab";
 import { QueueTab } from "./QueueTab";
+import { RepeatTab } from "./RepeatTab";
 
 type Tab = "overview" | "queue" | "prescriptions" | "repeat" | "labels";
 
@@ -21,7 +23,7 @@ const SUBTITLES: Record<Tab, string> = {
 /** The staff Orders page: header, tabs and the open tab. The tab is kept in the URL (?tab=queue). */
 export function StaffOrders() {
   const { user, activeBranchId } = useAuth();
-  const { orders, advance, markNotified } = useOrders();
+  const { orders, prescriptions, advance, markNotified, prepareRepeat, setRepeatPaused } = useOrders();
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -41,6 +43,7 @@ export function StaffOrders() {
   // Staff at one branch see that branch; the owner can switch branches in the top bar.
   const branch = activeBranchId ?? user?.branchId ?? "all";
   const branchOrders = branch === "all" ? orders : orders.filter((o) => o.branchId === branch);
+  const branchRx = branch === "all" ? prescriptions : prescriptions.filter((p) => p.branchId === branch);
   const staffName = user?.name ?? "Staff";
 
   return (
@@ -61,7 +64,9 @@ export function StaffOrders() {
       <div role="tabpanel" id={`orders-panel-${tab}`} aria-labelledby={`orders-tab-${tab}`}>
         {tab === "queue" && <QueueTab orders={branchOrders} staffName={staffName} onAdvance={(id) => advance(id, staffName)} onNotified={markNotified} />}
         {tab === "labels" && <LabelsTab key={params.get("order") ?? "labels"} orders={branchOrders} initialOrderId={params.get("order") ?? undefined} />}
-        {tab !== "queue" && tab !== "labels" && <p className="rounded-lg border border-dashed border-line-strong p-10 text-center text-ink-muted">This tab is being built next.</p>}
+        {tab === "prescriptions" && <PrescriptionsTab prescriptions={branchRx} orders={orders} />}
+        {tab === "repeat" && <RepeatTab prescriptions={branchRx} orders={orders} onPrepare={prepareRepeat} onPause={setRepeatPaused} />}
+        {tab === "overview" && <p className="rounded-lg border border-dashed border-line-strong p-10 text-center text-ink-muted">This tab is being built next.</p>}
       </div>
     </OrdersShell>
   );

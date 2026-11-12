@@ -20,7 +20,7 @@ export function HeroCategoryGrid() {
                 src={c.image as string}
                 alt=""
                 fill
-                sizes="(min-width: 1280px) 140px, (min-width: 640px) 30vw, 45vw"
+                sizes="(min-width: 1536px) 180px, (min-width: 1280px) 150px, (min-width: 640px) 30vw, 45vw"
                 className="object-cover transition-opacity duration-150 group-hover:opacity-90"
               />
               <span className="absolute bottom-2 left-2 right-2 w-fit max-w-full rounded-sm bg-surface-raised px-2 py-1 mz-body-sm font-semibold text-ink shadow-1">

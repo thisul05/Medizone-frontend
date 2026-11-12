@@ -4,7 +4,7 @@ export type ReturnStatus = "requested" | "approved" | "rejected";
 export type WarrantyStatus =
   | "received"
   | "sent_to_supplier"
-  | "repaired"
+  | "under_repair"
   | "replaced"
   | "returned";
 

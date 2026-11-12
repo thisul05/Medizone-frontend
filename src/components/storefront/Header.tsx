@@ -27,13 +27,11 @@ export function Header() {
         <Link href="/" aria-label="Medizone Pharmacy home" className="shrink-0 rounded-md">
           <Logo height={36} priority />
         </Link>
-        <div className="hidden flex-1 md:block">
+        <div className="hidden min-w-0 flex-1 md:block">
           <SearchBox />
         </div>
-        <div className="ml-auto flex items-center gap-1 md:ml-0">
-          <div className="hidden lg:block">
-            <AccountMenu />
-          </div>
+        <div className="ml-auto flex shrink-0 items-center gap-1 md:ml-0">
+          <AccountMenu />
           <CartButton />
           <button
             type="button"

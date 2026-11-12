@@ -58,21 +58,29 @@ export default function WarrantyChecker() {
 
   return (
     <div className="space-y-5">
-      {/* KPI row + New check button */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
-          {KPI.map((s) => (
-            <div key={s.label} className="rounded-lg border border-line bg-surface-raised p-4 shadow-1">
-              <div className="mb-2 flex items-start justify-between">
-                <p className="mz-overline text-ink-muted">{s.label}</p>
-                <Icon name={s.icon} size={15} className="text-ink-subtle" />
-              </div>
-              <p className="mz-kpi text-primary">{s.value}</p>
-              <p className="mz-body-sm mt-1 text-ink-subtle">{s.sub}</p>
-            </div>
-          ))}
+      {/* Title row */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-ink">Warranty checker</h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            Check product coverage before starting a warranty claim.
+          </p>
         </div>
         <Button icon="plus" onClick={handleNewCheck}>New check</Button>
+      </div>
+
+      {/* KPI row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {KPI.map((s) => (
+          <div key={s.label} className="rounded-lg border border-line bg-surface-raised p-4 shadow-1">
+            <div className="mb-2 flex items-start justify-between">
+              <p className="mz-overline text-ink-muted">{s.label}</p>
+              <Icon name={s.icon} size={15} className="text-ink-subtle" />
+            </div>
+            <p className="mz-kpi text-primary">{s.value}</p>
+            <p className="mz-body-sm mt-1 text-ink-subtle">{s.sub}</p>
+          </div>
+        ))}
       </div>
 
       {/* Inner tabs */}

@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, type ReactNode } from "react";
 import { canOpen } from "@/lib/access";
 import { useAuth } from "@/lib/auth";
+import { clearSigningOut, isSigningOut } from "@/lib/auth-store";
 import { isPublicRoute, moduleForPath } from "@/lib/routes";
 import type { ModuleId } from "@/types/roles";
 import { Logo } from "./Logo";
@@ -32,13 +33,19 @@ function useGuard(module: ModuleId | null, enabled: boolean): GuardState {
   }
 
   useEffect(() => {
-    if (state === "signin") {
+    if (state === "ok") {
+      clearSigningOut();
+    } else if (state === "signin") {
+      if (isSigningOut()) {
+        router.replace("/login");
+        return;
+      }
       const here = pathname + (typeof window !== "undefined" ? window.location.search : "");
       router.replace("/login?next=" + encodeURIComponent(here));
     } else if (state === "denied" && module) {
       router.replace("/access-denied?module=" + module);
     }
-  }, [state, module, pathname, router]);
+  }, [state, user, module, pathname, router]);
 
   return state;
 }

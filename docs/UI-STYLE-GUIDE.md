@@ -158,7 +158,7 @@ to a heavier shadow.
 
 Controls: `h-control-sm` 32px (in tables and filters), `h-control-md` 40px
 (default), `h-control-lg` 48px (billing counter, login). Side nav `w-nav`
-248px; content capped at `max-w-content` 1280px.
+248px; content fills the viewport fluidly (`--content-max: 100%`) with responsive gutters.
 
 ---
 
@@ -182,7 +182,7 @@ Controls: `h-control-sm` 32px (in tables and filters), `h-control-md` 40px
 ## 7. Layout
 
 - **Staff app:** side nav on the left (`w-nav bg-surface-nav`), content on
-  `bg-surface-page` up to `max-w-content`, page title `mz-h1` with the primary
+  `bg-surface-page` spanning full width (`w-full`) with responsive padding, page title `mz-h1` with the primary
   action at the **top right**, then the KPI row, then cards and tables.
 - Under 1024px the nav collapses to a top bar; tables scroll horizontally
   inside their card.
@@ -270,7 +270,7 @@ These recreate the owner's physical stickers and are reserved for expiry.
 ### A page skeleton
 
 ```tsx
-<main className="mx-auto max-w-content px-8 py-6">
+<main className="w-full px-4 py-6 sm:px-6 lg:px-8">
   <div className="flex items-center justify-between">
     <h1 className="mz-h1">Staff and payroll</h1>
     <button className="h-control-md px-4 rounded-md bg-primary text-primary-on font-semibold text-sm hover:bg-primary-hover">

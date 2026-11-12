@@ -73,11 +73,11 @@ export const STATUS = {
     rejected: { label: "Rejected", tone: "danger" },
   },
   warranty: {
-    received: { label: "Received", tone: "neutral" },
+    received: { label: "Received", tone: "warning" },
     sent_to_supplier: { label: "Sent to supplier", tone: "info" },
-    repaired: { label: "Repaired", tone: "success" },
+    under_repair: { label: "Under repair", tone: "warning" },
     replaced: { label: "Replaced", tone: "success" },
-    returned: { label: "Returned to customer", tone: "neutral" },
+    returned: { label: "Returned", tone: "neutral" },
   },
 
   // Module 8 — Billing and payments

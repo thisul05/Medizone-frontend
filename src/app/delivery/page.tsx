@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   deliveries as initialDeliveries,
   customerReturns as initialReturns,
@@ -24,6 +25,8 @@ import { Tabs, type TabItem } from "@/components/shared/Tabs";
 
 type Tab = "deliveries" | "cod" | "returns" | "warranty" | "checker";
 
+const VALID_TABS: Tab[] = ["deliveries", "cod", "returns", "warranty", "checker"];
+
 const TABS: TabItem[] = [
   { id: "deliveries", label: "Deliveries" },
   { id: "cod", label: "Cash on Delivery" },
@@ -33,7 +36,10 @@ const TABS: TabItem[] = [
 ];
 
 export default function DeliveryPage() {
-  const [activeTab, setActiveTab] = useState<Tab>("deliveries");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const rawTab = searchParams.get("tab");
+  const activeTab: Tab = VALID_TABS.includes(rawTab as Tab) ? (rawTab as Tab) : "deliveries";
   const [deliveries, setDeliveries] = useState<Delivery[]>(initialDeliveries);
   const [returns, setReturns] = useState<CustomerReturn[]>(initialReturns);
   const [claims, setClaims] = useState<WarrantyClaim[]>(initialClaims);
@@ -94,8 +100,8 @@ export default function DeliveryPage() {
     <div className="flex min-h-screen">
       <Sidebar />
 
-      <div className="flex-1 overflow-auto bg-surface-page">
-        <div className="mx-auto max-w-content px-8 py-6">
+      <div className="min-w-0 flex-1 overflow-auto bg-surface-page">
+        <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
           {/* Page header */}
           <div className="mb-6">
             <h1 className="mz-h1 text-ink">Delivery, Returns &amp; Warranty</h1>
@@ -119,7 +125,7 @@ export default function DeliveryPage() {
           <Tabs
             tabs={TABS}
             value={activeTab}
-            onChange={(id) => setActiveTab(id as Tab)}
+            onChange={(id) => router.replace(`/delivery?tab=${id}`, { scroll: false })}
             label="Delivery module sections"
             idBase="delivery"
             className="mb-5"

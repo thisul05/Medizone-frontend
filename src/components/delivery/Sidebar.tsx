@@ -24,7 +24,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user, can } = useAuth();
+  const { user, can, signOut } = useAuth();
   const isDelivery = pathname === "/delivery";
   const activeTab = searchParams.get("tab") ?? "deliveries";
   const [open, setOpen] = useState(isDelivery);
@@ -137,13 +137,14 @@ export default function Sidebar() {
           <Icon name="info" size={18} />
           Help &amp; support
         </a>
-        <a
-          href="/login"
+        <button
+          type="button"
+          onClick={() => { signOut(); router.push("/login"); }}
           className="flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label text-nav-muted transition-colors duration-150 hover:bg-white/10 hover:text-nav-ink"
         >
           <Icon name="logout" size={18} />
           Log out
-        </a>
+        </button>
         {user && (
           <div className="flex items-center gap-3 px-2 py-1">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e07c2a] mz-label text-white">

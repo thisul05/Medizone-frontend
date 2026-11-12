@@ -46,9 +46,6 @@ function getServerSnapshot(): string {
   return "system:";
 }
 
-// Runs while the HTML is parsed, before first paint, so a saved theme never flashes.
-const NO_FLASH_SCRIPT = `(function(){try{var p=localStorage.getItem("${STORAGE_KEY}");var d=p==="dark"||(p!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);document.currentScript.parentElement.setAttribute("data-theme",d?"dark":"light")}catch(e){}})();`;
-
 interface ThemeContextValue {
   preference: ThemePreference;
   resolved: ResolvedTheme | undefined;
@@ -81,8 +78,7 @@ export function ThemeRoot({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ preference, resolved, setPreference }}>
-      <div className="mz-theme" data-theme={resolved} suppressHydrationWarning>
-        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
+      <div className="mz-theme" data-theme={resolved}>
         {children}
       </div>
     </ThemeContext.Provider>

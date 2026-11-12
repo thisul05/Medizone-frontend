@@ -84,7 +84,7 @@
 
 /*
   Dark theme. ThemeRoot sets data-theme="light" | "dark" on the wrapper from the user's
-  setting (Light, Dark or System), before the page paints.
+  setting (Light, Dark or System) once the browser preference is available.
 */
 .mz-theme[data-theme="dark"] {
     color-scheme: dark;

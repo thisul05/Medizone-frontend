@@ -117,3 +117,29 @@ export function timeOf(isoDateTime: string): string {
   const suffix = h < 12 ? "am" : "pm";
   return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")} ${suffix}`;
 }
+
+/** Customers see friendlier words than staff for the same status. */
+export function customerStatusLabel(order: Pick<Order, "status" | "fulfilment"> & { history?: Order["history"] }): string {
+  const delivered = order.fulfilment !== "collect";
+  // The staff flow ends at "out for delivery". Sent out on an earlier day means it has arrived.
+  const sentOut = order.history?.find((h) => h.status === "out_for_delivery");
+  if (order.status === "out_for_delivery" && sentOut && !sentOut.at.startsWith(TODAY)) return "Delivered";
+  const labels: Record<OrderStatus, string> = {
+    received: "Order placed",
+    preparing: "Being prepared",
+    ready: delivered ? "Packed" : "Ready to collect",
+    collected: "Collected",
+    out_for_delivery: "Out for delivery",
+  };
+  return labels[order.status];
+}
+
+/** Regular-customer discount for a signed-in customer. The demo accounts say it in their title: "Customer (regular, 5%)". */
+export function customerDiscount(jobTitle: string | undefined): 0 | 3 | 5 {
+  const match = jobTitle?.match(/(\d+)%/);
+  const n = match ? Number(match[1]) : 0;
+  return n === 5 || n === 3 ? n : 0;
+}
+
+/** Delivery fee for the pharmacy's own driver. */
+export const DELIVERY_FEE = 350;

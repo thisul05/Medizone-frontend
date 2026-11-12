@@ -13,6 +13,8 @@ export { Logo } from "./Logo";
 export { ProductCard, PRODUCT_GRID, type ProductCardProps, type ProductStock } from "./ProductCard";
 export { StaffTopBar } from "./StaffTopBar";
 export { RouteGuard, AccessGuard } from "./RouteGuard";
+export { AppSidebar } from "./AppSidebar";
+export { AppShell } from "./AppShell";
 export { cx } from "./cx";
 
 /** Card recipe from the design system. */

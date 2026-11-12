@@ -82,56 +82,7 @@
   color-scheme: light;
 }
 
-/*
-  Dark theme. ThemeRoot sets data-theme="light" | "dark" on the wrapper from the user's
-  setting (Light, Dark or System), before the page paints.
-*/
-.mz-theme[data-theme="dark"] {
-    color-scheme: dark;
-    --surface-page: #0b1422;
-    --surface-raised: #121e30;
-    --surface-sunken: #08101b;
-    --surface-hover: #18263b;
-    --border: #24324a;
-    --border-strong: #6b7e99;
-    --ink: #e9eef6;
-    --ink-muted: #a9b6c8;
-    --ink-subtle: #8a9ab0;
-    --ink-disabled: #56657b;
-    --primary: #8fb4ec;
-    --primary-hover: #b0caf2;
-    --on-primary: #0b1422;
-    --primary-tint: #17294a;
-    --primary-tint-ink: #b9d0f3;
-    --link: #8cbcf2;
-    --price: #8cbcf2;
-    --focus-ring: #8cbcf2;
-    --scrim: rgba(0, 0, 0, 0.62);
-    --info-bg: #10243d;
-    --info-ink: #8cbcf2;
-    --info-solid: #5e9be0;
-    --success-bg: #0b2a22;
-    --success-ink: #6fd8b6;
-    --success-solid: #35b893;
-    --warning-bg: #2e2208;
-    --warning-ink: #f3c46b;
-    --warning-solid: #e8a93a;
-    --danger-bg: #3a1210;
-    --danger-ink: #ff9b91;
-    --danger-solid: #ef5a4f;
-    --neutral-bg: #1a2638;
-    --neutral-ink: #b3c0d1;
-    --neutral-solid: #6b7e99;
-    --transit-bg: #0c2a2e;
-    --transit-ink: #74d0dc;
-    --transit-solid: #2bb0c0;
-    --on-solid: #0b1422;
-    --loyalty-bg: #1a2b16;
-    --loyalty-ink: #b4dc8c;
-    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-2: 0 6px 16px rgba(0, 0, 0, 0.55);
-    --shadow-3: 0 20px 48px rgba(0, 0, 0, 0.7);
-}
+/* Dark theme overrides removed to ensure strict consistency with Medizone light design system */
 
 @layer base {
   .mz-theme :where(a, button, input, select, textarea, [tabindex]):focus-visible {

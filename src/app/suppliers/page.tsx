@@ -1,7 +1,15 @@
-export default function Page() {
+import type { Metadata } from "next";
+import { AccessGuard, AppShell } from "@/components/shared";
+import { SuppliersView } from "@/components/suppliers/SuppliersView";
+
+export const metadata: Metadata = { title: "Suppliers & Purchases" };
+
+export default function SuppliersPage() {
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">Module 6: Suppliers and purchases</h1>
-    </main>
+    <AccessGuard module="suppliers">
+      <AppShell>
+        <SuppliersView />
+      </AppShell>
+    </AccessGuard>
   );
 }

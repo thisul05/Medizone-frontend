@@ -64,8 +64,6 @@ const SIGNED_IN_USER = { name: "Kasun Fernando", role: "Senior pharmacist assist
 
 const THEME_OPTIONS: { id: ThemePreference; label: string; icon: IconName }[] = [
   { id: "light", label: "Light", icon: "sun" },
-  { id: "dark", label: "Dark", icon: "moon" },
-  { id: "system", label: "System", icon: "monitor" },
 ];
 
 function ThemeSwitch() {

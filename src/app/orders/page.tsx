@@ -1,7 +1,15 @@
-export default function Page() {
+import type { Metadata } from "next";
+import { AccessGuard, AppShell } from "@/components/shared";
+import { OrdersView } from "@/components/orders/OrdersView";
+
+export const metadata: Metadata = { title: "Prescriptions & Orders" };
+
+export default function OrdersPage() {
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">Module 4: Prescriptions and orders</h1>
-    </main>
+    <AccessGuard module="orders">
+      <AppShell>
+        <OrdersView />
+      </AppShell>
+    </AccessGuard>
   );
 }

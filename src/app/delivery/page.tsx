@@ -20,7 +20,7 @@ import CODPanel from "@/components/delivery/CODPanel";
 import ReturnsTable from "@/components/delivery/ReturnsTable";
 import WarrantyTable from "@/components/delivery/WarrantyTable";
 import WarrantyChecker from "@/components/delivery/WarrantyChecker";
-import Sidebar from "@/components/delivery/Sidebar";
+import { AppShell } from "@/components/shared";
 import { Tabs, type TabItem } from "@/components/shared/Tabs";
 
 type Tab = "deliveries" | "cod" | "returns" | "warranty" | "checker";
@@ -97,70 +97,66 @@ export default function DeliveryPage() {
   ];
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
+    <AppShell>
+      <div className="w-full px-4 py-6 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+        {/* Page header */}
+        <div className="mb-6">
+          <h1 className="mz-h1 text-ink">Delivery, Returns &amp; Warranty</h1>
+          <p className="mt-1 text-sm text-ink-muted">
+            Manage dispatches, customer returns and warranty support in one place.
+          </p>
+        </div>
 
-      <div className="min-w-0 flex-1 overflow-auto bg-surface-page">
-        <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
-          {/* Page header */}
-          <div className="mb-6">
-            <h1 className="mz-h1 text-ink">Delivery, Returns &amp; Warranty</h1>
-            <p className="mt-1 text-sm text-ink-muted">
-              Manage dispatches, customer returns and warranty support in one place.
-            </p>
-          </div>
+        {/* KPI cards */}
+        <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label} className="rounded-lg border border-line bg-surface-raised p-5 shadow-1">
+              <div className="mz-overline mb-2 text-ink-muted">{s.label}</div>
+              <div className={`mz-kpi ${s.color}`}>{s.value}</div>
+              <div className="mz-body-sm mt-1 text-ink-subtle">{s.sub}</div>
+            </div>
+          ))}
+        </div>
 
-          {/* KPI cards */}
-          <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map((s) => (
-              <div key={s.label} className="rounded-lg border border-line bg-surface-raised p-5 shadow-1">
-                <div className="mz-overline mb-2 text-ink-muted">{s.label}</div>
-                <div className={`mz-kpi ${s.color}`}>{s.value}</div>
-                <div className="mz-body-sm mt-1 text-ink-subtle">{s.sub}</div>
-              </div>
-            ))}
-          </div>
+        {/* Tabs */}
+        <Tabs
+          tabs={TABS}
+          value={activeTab}
+          onChange={(id) => router.replace(`/delivery?tab=${id}`, { scroll: false })}
+          label="Delivery module sections"
+          idBase="delivery"
+          className="mb-5"
+        />
 
-          {/* Tabs */}
-          <Tabs
-            tabs={TABS}
-            value={activeTab}
-            onChange={(id) => router.replace(`/delivery?tab=${id}`, { scroll: false })}
-            label="Delivery module sections"
-            idBase="delivery"
-            className="mb-5"
-          />
-
-          {/* Tab content */}
-          <div className="rounded-lg border border-line bg-surface-raised p-5 shadow-1">
-            {activeTab === "deliveries" && (
-              <DeliveryTable
-                deliveries={deliveries}
-                onStatusChange={updateDeliveryStatus}
-                onMethodChange={updateDeliveryMethod}
-              />
-            )}
-            {activeTab === "cod" && (
-              <CODPanel deliveries={deliveries} onToggleCollected={toggleCOD} />
-            )}
-            {activeTab === "returns" && (
-              <ReturnsTable
-                returns={returns}
-                onStatusChange={updateReturnStatus}
-                onAddReturn={addReturn}
-              />
-            )}
-            {activeTab === "warranty" && (
-              <WarrantyTable
-                claims={claims}
-                onStatusChange={updateWarrantyStatus}
-                onAddClaim={addClaim}
-              />
-            )}
-            {activeTab === "checker" && <WarrantyChecker />}
-          </div>
+        {/* Tab content */}
+        <div className="rounded-lg border border-line bg-surface-raised p-5 shadow-1">
+          {activeTab === "deliveries" && (
+            <DeliveryTable
+              deliveries={deliveries}
+              onStatusChange={updateDeliveryStatus}
+              onMethodChange={updateDeliveryMethod}
+            />
+          )}
+          {activeTab === "cod" && (
+            <CODPanel deliveries={deliveries} onToggleCollected={toggleCOD} />
+          )}
+          {activeTab === "returns" && (
+            <ReturnsTable
+              returns={returns}
+              onStatusChange={updateReturnStatus}
+              onAddReturn={addReturn}
+            />
+          )}
+          {activeTab === "warranty" && (
+            <WarrantyTable
+              claims={claims}
+              onStatusChange={updateWarrantyStatus}
+              onAddClaim={addClaim}
+            />
+          )}
+          {activeTab === "checker" && <WarrantyChecker />}
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

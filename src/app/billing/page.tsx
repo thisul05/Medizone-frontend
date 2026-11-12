@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { AppShell } from "@/components/shared";
 import {
   Bill,
   BillLine,
@@ -216,7 +217,8 @@ export default function BillingPage() {
   }, [bills, invoiceSearch]);
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-gray-50 min-h-screen text-gray-800">
+    <AppShell>
+      <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans min-h-screen text-gray-800">
       {/* Top Header & Navigation */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-gray-200 mb-6 gap-4">
         <div>
@@ -923,5 +925,6 @@ export default function BillingPage() {
         </div>
       )}
     </div>
+  </AppShell>
   );
 }

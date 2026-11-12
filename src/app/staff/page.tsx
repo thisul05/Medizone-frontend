@@ -1,14 +1,15 @@
-import StatusBadge from "@/components/shared/StatusBadge";
+import type { Metadata } from "next";
+import { AccessGuard, AppShell } from "@/components/shared";
+import { StaffView } from "@/components/staff/StaffView";
 
-export default function Page() {
+export const metadata: Metadata = { title: "Staff & Payroll" };
+
+export default function StaffPage() {
   return (
-    <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
-      <h1 className="mz-h1">Module 9: Staff and payroll</h1>
-      <div className="mt-4 flex gap-2 rounded-pill bg-success-bg p-4 shadow-1">
-        <StatusBadge kind="attendance" status="present" />
-        <StatusBadge kind="attendance" status="absent" />
-        <StatusBadge kind="attendance" status="partial" />
-      </div>
-    </main>
+    <AccessGuard module="staff">
+      <AppShell>
+        <StaffView />
+      </AppShell>
+    </AccessGuard>
   );
 }

@@ -23,7 +23,7 @@ const LINKS = [
 // Temporary index so everyone can open their module page. Remove before the final demo.
 export default function ModulesPage() {
   return (
-    <main id="main" className="mx-auto max-w-content px-4 py-8 lg:px-8">
+    <main id="main" className="w-full px-4 py-8 sm:px-6 lg:px-8 xl:px-10">
       <h1 className="mz-h1">Medizone modules</h1>
       <p className="mt-1 text-ink-muted">Temporary page for the team. Remove before the final demo.</p>
       <ul className="mt-6 flex flex-col gap-2">

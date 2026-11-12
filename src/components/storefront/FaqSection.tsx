@@ -34,14 +34,14 @@ const FAQS = [
 export function FaqSection() {
   return (
     <Section id="faq" title="Questions and answers">
-      <div className="flex max-w-3xl flex-col divide-y divide-line rounded-lg border border-line bg-surface-raised shadow-1">
+      <div className="flex w-full flex-col divide-y divide-line rounded-lg border border-line bg-surface-raised shadow-1">
         {FAQS.map((f) => (
           <details key={f.q} className="group">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 mz-label text-ink transition-colors duration-150 hover:bg-surface-hover [&::-webkit-details-marker]:hidden">
               <span>{f.q}</span>
               <Icon name="chevron-down" className="text-ink-subtle group-open:rotate-180" />
             </summary>
-            <p className="px-5 pb-5 text-ink-muted">{f.a}</p>
+            <p className="max-w-4xl px-5 pb-5 text-ink-muted">{f.a}</p>
           </details>
         ))}
       </div>

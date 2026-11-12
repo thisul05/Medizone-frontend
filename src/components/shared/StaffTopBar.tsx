@@ -28,12 +28,12 @@ export function StaffTopBar() {
   const onSignOut = () => {
     signOut();
     toast({ tone: "info", title: "You're signed out" });
-    router.push("/login");
+    router.replace("/login");
   };
 
   return (
     <header className="bg-surface-nav text-nav-ink mz-on-nav">
-      <div className="mx-auto flex max-w-content flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 lg:px-8">
+      <div className="flex w-full flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:px-10">
         <Link href="/home" className="rounded-md" aria-label="Medizone Pharmacy, go to home">
           <Logo height={32} />
         </Link>

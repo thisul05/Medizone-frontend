@@ -6,6 +6,8 @@ import { Alert, Button, Icon, Select, cx, useToast } from "@/components/shared";
 import { branches, branchName } from "@/data/branches";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
+import { cartStockIssue } from "@/lib/catalog";
+import { useCatalog } from "@/lib/use-catalog";
 import type { BranchId } from "@/types/roles";
 
 type Method = "pickup" | "delivery";
@@ -33,19 +35,27 @@ function Choice({ name, checked, onChange, title, detail }: { name: string; chec
 /** Mock checkout. Nothing is sent anywhere. */
 export function CartCheckout() {
   const { user } = useAuth();
-  const { clear, setOpen } = useCart();
+  const { clear, setOpen, validateStock, ready, items } = useCart();
   const toast = useToast();
   const router = useRouter();
   const [method, setMethod] = useState<Method>("pickup");
   const [branch, setBranch] = useState<BranchId>(user?.role === "customer" && user.branchId !== "all" ? user.branchId : "b1");
   const [pay, setPay] = useState<Pay>("cash");
   const [placing, setPlacing] = useState(false);
+  const fulfillmentBranch = method === "pickup" ? branch : "all";
+  const { products } = useCatalog(fulfillmentBranch);
+  const stockIssue = ready ? cartStockIssue(items, products) : null;
 
   const isStaffUser = !!user && user.role !== "customer";
   const payOptions: Pay[] = method === "delivery" ? ["cash", "card", "bank", "cod"] : ["cash", "card", "bank"];
   const effectivePay = payOptions.includes(pay) ? pay : "cash";
 
   async function placeOrder() {
+    const issue = validateStock(fulfillmentBranch);
+    if (issue || !items.length) {
+      toast({ tone: "warning", title: issue ?? "Add products to your cart first" });
+      return;
+    }
     if (!user) {
       toast({ tone: "info", title: "Sign in to place your order" });
       setOpen(false);
@@ -55,6 +65,11 @@ export function CartCheckout() {
     setPlacing(true);
     await new Promise((r) => setTimeout(r, 400));
     setPlacing(false);
+    const latestIssue = validateStock(fulfillmentBranch);
+    if (latestIssue) {
+      toast({ tone: "warning", title: latestIssue });
+      return;
+    }
     toast({
       tone: "success",
       title: "Order placed. We'll call you to confirm.",
@@ -98,6 +113,7 @@ export function CartCheckout() {
         </div>
       </fieldset>
 
+      {stockIssue && <Alert tone="warning" title="Check cart availability">{stockIssue}</Alert>}
       {isStaffUser ? (
         <>
           <Alert tone="info">Sign in as a customer to place an order.</Alert>
@@ -106,7 +122,7 @@ export function CartCheckout() {
           </Button>
         </>
       ) : (
-        <Button size="lg" block loading={placing} onClick={placeOrder}>
+        <Button size="lg" block loading={placing} disabled={!ready || !!stockIssue || !items.length} onClick={placeOrder}>
           Place order
         </Button>
       )}

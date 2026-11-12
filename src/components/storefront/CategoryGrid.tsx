@@ -1,14 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { Icon } from "@/components/shared";
-import { categories, countInCategory } from "@/data/storefront";
+import { categories } from "@/data/storefront";
+import { useCatalog } from "@/lib/use-catalog";
 import { Section } from "./Section";
 
 export function CategoryGrid() {
+  const { products } = useCatalog();
   return (
     <Section id="categories" title="Explore our range" subtitle="Ten categories of everyday health products, chosen by our pharmacists.">
       <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {categories.map((c) => {
-          const n = countInCategory(c.id);
+          const n = products.filter((product) => product.categoryId === c.id).length;
           return (
             <li key={c.id}>
               <Link

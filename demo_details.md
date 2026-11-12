@@ -7,7 +7,7 @@ Demo accounts for the IS 3610 Medizone Pharmacy prototype.
 - You can sign in with the **mobile number, email, username or staff id**. Sign-in is not case-sensitive.
 - New customers can create their own account at `/register`. Only the owner creates staff accounts.
 
-This file is generated from `src/data/auth.ts` and the access rules in `src/types/roles.ts`. If you change those, regenerate or update this file.
+This file is generated from `src/data/auth.ts` and the access rules in `src/types/roles.ts`. If you change those, regenerate or update this file. 
 
 ## Staff
 

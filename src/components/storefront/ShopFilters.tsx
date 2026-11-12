@@ -1,7 +1,8 @@
 "use client";
 
 import { Checkbox, Icon, cx } from "@/components/shared";
-import { categories, products } from "@/data/storefront";
+import { categories } from "@/data/storefront";
+import { useCatalog } from "@/lib/use-catalog";
 
 interface ShopFiltersProps {
   category: string | null;
@@ -31,6 +32,7 @@ function CategoryButton({ active, onClick, label, count }: { active: boolean; on
 
 /** Side column at 1024px and up; stacked above the results on smaller screens. */
 export function ShopFilters({ category, offers, inStock, onCategory, onOffers, onInStock }: ShopFiltersProps) {
+  const { products } = useCatalog();
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 rounded-lg border border-line bg-surface-raised p-4">

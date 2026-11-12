@@ -3,11 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useId, useState, type FormEvent, type KeyboardEvent } from "react";
 import { Icon, TextField, cx } from "@/components/shared";
-import { products } from "@/data/storefront";
+import { useCatalog } from "@/lib/use-catalog";
 import { formatLKR } from "@/lib/format";
 
 /** Product search with up to 5 keyboard-accessible suggestions. Submits to /shop?q=. */
 export function SearchBox({ onDone }: { onDone?: () => void }) {
+  const { products } = useCatalog();
   const router = useRouter();
   const listId = useId();
   const [q, setQ] = useState("");

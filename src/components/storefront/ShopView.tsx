@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button, Icon, Select, cx } from "@/components/shared";
-import { getCategory, products } from "@/data/storefront";
+import { getCategory } from "@/data/storefront";
+import { useCatalog } from "@/lib/use-catalog";
 import { ProductGrid } from "./ProductGrid";
 import { CONTAINER } from "./Section";
 import { ShopFilters } from "./ShopFilters";
@@ -20,6 +21,7 @@ const SORTS = [
 
 /** Reads q, category and offers from the URL. Must be rendered inside <Suspense>. */
 export function ShopView() {
+  const { products } = useCatalog();
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -53,7 +55,7 @@ export function ShopView() {
     if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
     if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [q, category, offers, inStock, sort]);
+  }, [products, q, category, offers, inStock, sort]);
 
   const categoryName = category ? getCategory(category)?.name : undefined;
   const heading = q ? `Search results for “${q}”` : categoryName ?? (offers ? "Offers this week" : "All products");

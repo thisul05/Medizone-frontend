@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import { ButtonLink, Icon, cx } from "@/components/shared";
-import { getCategory, getProduct } from "@/data/storefront";
+import { getCategory } from "@/data/storefront";
 import { useCart, MAX_QTY } from "@/lib/cart";
 import { formatLKR } from "@/lib/format";
 import { CartCheckout } from "./CartCheckout";
@@ -13,7 +13,7 @@ const stepBtn =
   "flex size-8 items-center justify-center rounded-md border border-line-strong text-primary-tint-ink transition-colors duration-150 hover:bg-primary-tint disabled:border-line disabled:text-ink-disabled disabled:hover:bg-transparent";
 
 export function CartDrawer() {
-  const { items, subtotal, open, setOpen, setQty, remove, count } = useCart();
+  const { items, subtotal, open, setOpen, setQty, remove, count, getProduct } = useCart();
   const panel = useRef<HTMLDivElement>(null);
   const returnTo = useRef<HTMLElement | null>(null);
 
@@ -90,7 +90,7 @@ export function CartDrawer() {
             <ul className="divide-y divide-line px-5">
               {items.map((item) => {
                 const p = getProduct(item.productId);
-                if (!p) return null;
+                if (!p) return <li key={item.productId} className="flex items-center justify-between gap-3 py-4"><p className="mz-body-sm text-ink-muted">This item is no longer available.</p><button type="button" onClick={() => remove(item.productId)} className="mz-label text-danger-ink hover:underline">Remove item</button></li>;
                 return (
                   <li key={item.productId} className="flex gap-3 py-4">
                     <div className="flex size-14 shrink-0 items-center justify-center rounded-md bg-surface-sunken">
@@ -110,7 +110,7 @@ export function CartDrawer() {
                           <span className="w-6 text-center mz-label mz-num" aria-live="polite" aria-label={`Quantity ${item.qty}`}>
                             {item.qty}
                           </span>
-                          <button type="button" className={stepBtn} disabled={item.qty >= MAX_QTY} onClick={() => setQty(p.id, item.qty + 1)} aria-label={`Increase quantity of ${p.name}`}>
+                          <button type="button" className={stepBtn} disabled={item.qty >= Math.min(MAX_QTY, p.availableQuantity)} onClick={() => setQty(p.id, item.qty + 1)} aria-label={`Increase quantity of ${p.name}`}>
                             <Icon name="plus" size={16} />
                           </button>
                         </div>

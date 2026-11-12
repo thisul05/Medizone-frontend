@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { MOCK_PREVIEW_DATA, type Report } from "@/data/reports";
+import type { ReportPreview } from "@/lib/inventory-reports";
 
 export function ReportDialog({ children, onClose }: { children: ReactNode; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -33,11 +34,11 @@ export function ReportDialog({ children, onClose }: { children: ReactNode; onClo
   );
 }
 
-export function exportReport(report: Report, branch: string, timeframe: string) {
-  const preview = MOCK_PREVIEW_DATA[report.id];
+export function exportReport(report: Report, branch: string, timeframe: string, livePreview?: ReportPreview) {
+  const preview = livePreview ?? MOCK_PREVIEW_DATA[report.id];
   const rows: string[][] = [
     ["Report", report.title], ["Branch", branch], ["Timeframe", timeframe],
-    ["Source", "Mock data — fixed demonstration values"],
+    ["Source", livePreview ? "Saved browser inventory; current stock snapshot, date range applies to adjustments only" : "Mock data — fixed demonstration values"],
     ["Metric", report.stats], ["Status", report.status], [],
     ...(preview ? [preview.headers, ...preview.rows] : [["Description", report.description], ["Comparison", report.trend]]),
   ];

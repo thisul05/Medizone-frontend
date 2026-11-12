@@ -10,7 +10,10 @@ export function ProductGrid({ products }: { products: StoreProduct[] }) {
   const toast = useToast();
 
   function onAdd(p: StoreProduct) {
-    if (!add(p.id)) return;
+    if (!add(p.id)) {
+      toast({ tone: "warning", title: "Unable to add more units", description: "Check the available stock or your cart quantity." });
+      return;
+    }
     toast({
       tone: "success",
       title: `Added to cart: ${p.name}`,

@@ -10,7 +10,7 @@ export default function CustomersLayout({ children }: { children: ReactNode }) {
     <ThemeRoot>
       <CustomersProvider>
         <AppShell>
-          <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto">
+          <div className="flex w-full flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto">
             {children}
           </div>
         </AppShell>

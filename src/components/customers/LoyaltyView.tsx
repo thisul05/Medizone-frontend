@@ -73,8 +73,12 @@ export function LoyaltyView() {
   }
 
   return (
-    <>
-      <PageHeader title="Loyalty points" description="Points balances, how they were earned and every points transaction across all branches." />
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        path="Pharmacy / Customers / Loyalty points"
+        title="Loyalty points"
+        description="Points balances, how they were earned and every points transaction across all branches."
+      />
 
       <KpiGrid label="Loyalty summary">
         <KpiCard label="Total loyalty points" value={formatNumber(totalPoints)} unit="pts" icon="gift" tone="loyalty" hint={`Held by ${customers.filter((c) => c.loyaltyPoints > 0).length} customers`} />
@@ -267,6 +271,6 @@ export function LoyaltyView() {
           />
         )}
       </Card>
-    </>
+    </div>
   );
 }

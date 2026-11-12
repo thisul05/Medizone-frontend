@@ -47,7 +47,7 @@ export function CustomersView() {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <PageHeader
         title="Customer management"
         description="Customer records, regular-customer discounts and loyalty balances for all four branches."
@@ -122,6 +122,6 @@ export function CustomersView() {
           });
         }}
       />
-    </>
+    </div>
   );
 }

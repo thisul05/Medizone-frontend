@@ -46,8 +46,9 @@ export function FeedbackView() {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <PageHeader
+        path="Pharmacy / Customers / Feedback"
         title="Customer feedback"
         description="Ratings and comments from customers. Low ratings are flagged for the branch pharmacist to follow up."
       />
@@ -139,6 +140,6 @@ export function FeedbackView() {
           )}
         </section>
       </div>
-    </>
+    </div>
   );
 }

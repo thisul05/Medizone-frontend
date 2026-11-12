@@ -3,6 +3,8 @@
 import { useState, type ReactNode } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { Icon } from "./Icon";
+import { Logo } from "./Logo";
+import Link from "next/link";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -26,9 +28,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile Header */}
         <div className="flex h-14 items-center justify-between border-b border-slate-200 bg-[#072f68] px-4 text-white lg:hidden">
-          <div className="text-xl font-bold tracking-tight">
-            medizone<span className="text-[#62b126]">.</span>lk
-          </div>
+          <Link href="/home" aria-label="Medizone Pharmacy">
+            <Logo height={26} />
+          </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}

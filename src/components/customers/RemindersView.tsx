@@ -76,15 +76,16 @@ export function RemindersView() {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <PageHeader
+        path="Pharmacy / Customers / Refill reminders"
+        title="Refill reminders"
+        description="Customers whose regular medicines are expected to run out soon, so the branch can remind them to refill."
         eyebrow={
           <Badge tone="loyalty" icon="refresh">
             Rule-based refill prediction
           </Badge>
         }
-        title="Refill reminders"
-        description="Customers whose regular medicines are expected to run out soon, so the branch can remind them to refill."
       />
 
       <div className="flex items-start gap-3 rounded-md bg-(--info-bg) px-4 py-3.5 text-(--info-ink)" role="note">
@@ -166,6 +167,6 @@ export function RemindersView() {
         onClose={() => setPreviewId(undefined)}
         onMarkSent={handleMarkSent}
       />
-    </>
+    </div>
   );
 }

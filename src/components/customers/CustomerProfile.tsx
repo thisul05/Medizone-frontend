@@ -67,8 +67,11 @@ export function CustomerProfile({ customerId }: { customerId: string }) {
   const lastPurchase = myPurchases[0]?.date;
 
   return (
-    <>
-      <BackLink />
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <BackLink />
+        <div className="text-xs font-medium text-slate-500">Pharmacy / Customers / {customer.name}</div>
+      </div>
 
       <Card as="section" aria-labelledby="customer-name" className="p-5 sm:p-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -173,6 +176,6 @@ export function CustomerProfile({ customerId }: { customerId: string }) {
           notify({ tone: "success", title: "Customer details saved", description: `${c.name}'s record is updated.` });
         }}
       />
-    </>
+    </div>
   );
 }

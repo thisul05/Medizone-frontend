@@ -15,11 +15,12 @@ export function StaffHome() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <h1 className="mz-display">
+      <div className="flex flex-col gap-1">
+        <div className="text-xs font-medium text-slate-500 mb-0.5">Staff / Workspace Overview</div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
           {greeting()}, {user.name}
         </h1>
-        <p className="mz-body-lg text-ink-muted">
+        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
           {user.jobTitle} · {branchName(activeBranchId ?? user.branchId)}
         </p>
       </div>

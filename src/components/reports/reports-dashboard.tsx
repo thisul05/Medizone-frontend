@@ -5,7 +5,6 @@ import { branches as pharmacyBranches } from "@/data/branches";
 import { selectInventoryReports } from "@/lib/inventory-reports";
 import { useInventoryState } from "@/lib/use-inventory-state";
 import { ReportDialog, exportReport } from "./report-dialog";
-import MedizoneLogo from "./medizone-logo";
 import ForecastingPanel from "./forecasting-panel";
 import { Search, Filter, FileText, Download, Building2, TrendingUp, ShieldCheck, Eye, CheckCircle2, Clock, ChevronRight, X, Grid, List, ChevronDown, FileSpreadsheet, Printer, reportIcons, ReportIcon } from "./report-icons";
 export default function ReportsDashboard() {
@@ -78,7 +77,7 @@ export default function ReportsDashboard() {
   return (
     <div className="min-h-screen bg-[#f4f7f6] text-slate-800 font-sans flex flex-col">
       {/* Top Banner Notice */}
-      <div className="bg-[#0a2540] text-slate-200 text-xs py-2 px-4 sm:px-6 lg:px-8 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
+      <div className="bg-[#072f68] text-slate-200 text-xs py-2 px-4 sm:px-6 lg:px-8 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 font-medium text-emerald-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -88,7 +87,7 @@ export default function ReportsDashboard() {
         <div className="flex items-center gap-6 text-slate-300">
           <span>Direct Helpline: +94 70 185 5855</span>
           <span>hello@medizone.lk</span>
-          <span className="bg-[#0f385d] px-2.5 py-0.5 rounded text-white text-[11px] font-medium border border-slate-600">
+          <span className="bg-[#05214b] px-2.5 py-0.5 rounded text-white text-[11px] font-medium border border-slate-600">
             Staff Portal Preview
           </span>
         </div>
@@ -97,19 +96,14 @@ export default function ReportsDashboard() {
       {/* Main Header / Branding Navbar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Logo & Portal Title */}
+          {/* Portal Title & Path */}
           <div className="flex items-center gap-3 w-full md:w-auto justify-between">
-            <div className="flex items-center gap-3">
-              <MedizoneLogo />
-              <div>
-                <h1 className="text-lg font-bold text-[#0a2540] leading-tight flex items-center gap-2">
-                  Pharmacy Reports Hub
-                  <span className="text-xs bg-[#e6f4ea] text-[#137333] px-2 py-0.5 rounded-full font-semibold border border-[#ceebd5]">
-                    Demo
-                  </span>
-                </h1>
-                <p className="text-xs text-slate-500">Retail & Clinical Operations Analytics</p>
-              </div>
+            <div>
+              <div className="text-xs font-medium text-slate-500 mb-1">Back Office / Reports</div>
+              <h1 className="text-2xl font-bold text-slate-900 leading-tight">
+                Pharmacy Reports Hub
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5">Retail &amp; Clinical Operations Analytics</p>
             </div>
 
             {/* Mobile View Toggle */}
@@ -117,7 +111,7 @@ export default function ReportsDashboard() {
               <button
                 aria-label="grid view" aria-pressed={viewMode === "grid"} onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-lg border ${
-                  viewMode === 'grid' ? 'bg-[#0a2540] text-white border-[#0a2540]' : 'bg-white text-slate-600 border-slate-200'
+                  viewMode === 'grid' ? 'bg-[#072f68] text-white border-[#072f68]' : 'bg-white text-slate-600 border-slate-200'
                 }`}
               >
                 <Grid className="w-4 h-4" />
@@ -125,7 +119,7 @@ export default function ReportsDashboard() {
               <button
                 aria-label="table view" aria-pressed={viewMode === "table"} onClick={() => setViewMode("table")}
                 className={`p-2 rounded-lg border ${
-                  viewMode === 'table' ? 'bg-[#0a2540] text-white border-[#0a2540]' : 'bg-white text-slate-600 border-slate-200'
+                  viewMode === 'table' ? 'bg-[#072f68] text-white border-[#072f68]' : 'bg-white text-slate-600 border-slate-200'
                 }`}
               >
                 <List className="w-4 h-4" />
@@ -143,7 +137,7 @@ export default function ReportsDashboard() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search reports by title, key metrics, SKU or tag..."
-              className="block w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0a2540] focus:border-transparent transition-all outline-none"
+              className="block w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#072f68] focus:border-transparent transition-all outline-none"
             />
             {searchQuery && (
               <button
@@ -176,7 +170,7 @@ export default function ReportsDashboard() {
             <div className="h-8 w-px bg-slate-200"></div>
 
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[#0a2540] text-emerald-400 font-bold flex items-center justify-center text-xs">
+              <div className="w-8 h-8 rounded-full bg-[#072f68] text-emerald-400 font-bold flex items-center justify-center text-xs">
                 PH
               </div>
               <div className="text-left text-xs">
@@ -189,7 +183,7 @@ export default function ReportsDashboard() {
       </header>
 
       {/* Hero Banner Section (Inspired by uploaded banner) */}
-      <div className="bg-[#0a2540] text-white py-8 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+      <div className="bg-[#072f68] text-white py-8 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
         <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-[#13375b] px-3 py-1 rounded-full text-xs font-semibold text-emerald-300 mb-3 border border-[#1d4c7b]">
@@ -234,7 +228,7 @@ export default function ReportsDashboard() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                     isActive
-                      ? 'bg-[#0a2540] text-white shadow-md'
+                      ? 'bg-[#072f68] text-white shadow-md'
                       : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
                   }`}
                 >
@@ -250,7 +244,7 @@ export default function ReportsDashboard() {
               aria-label="grid view" aria-pressed={viewMode === "grid"} onClick={() => setViewMode("grid")}
               className={`p-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors ${
                 viewMode === 'grid'
-                  ? 'bg-[#0a2540] text-white shadow-sm'
+                  ? 'bg-[#072f68] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -260,7 +254,7 @@ export default function ReportsDashboard() {
               aria-label="table view" aria-pressed={viewMode === "table"} onClick={() => setViewMode("table")}
               className={`p-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors ${
                 viewMode === 'table'
-                  ? 'bg-[#0a2540] text-white shadow-sm'
+                  ? 'bg-[#072f68] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -286,7 +280,7 @@ export default function ReportsDashboard() {
                 setStartDateTime(`${today}T00:00`);
                 setEndDateTime(`${today}T23:59`);
               }}
-              className="rounded-xl bg-[#0a2540] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#0f385d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540]"
+              className="rounded-xl bg-[#072f68] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#05214b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#072f68]"
             >
               Today
             </button>
@@ -302,7 +296,7 @@ export default function ReportsDashboard() {
                   setStartDateTime(value);
                   if (value && endDateTime && value > endDateTime) setEndDateTime(value);
                 }}
-                className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 outline-none focus:ring-2 focus:ring-[#0a2540]"
+                className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 outline-none focus:ring-2 focus:ring-[#072f68]"
               />
             </label>
             <label className="flex min-w-0 flex-col gap-1 text-xs font-medium text-slate-600">
@@ -316,7 +310,7 @@ export default function ReportsDashboard() {
                   setEndDateTime(value);
                   if (value && startDateTime && value < startDateTime) setStartDateTime(value);
                 }}
-                className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 outline-none focus:ring-2 focus:ring-[#0a2540]"
+                className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 outline-none focus:ring-2 focus:ring-[#072f68]"
               />
             </label>
             {(startDateTime || endDateTime) && (
@@ -329,7 +323,7 @@ export default function ReportsDashboard() {
           </div>
 
           <div className="text-xs text-slate-500 w-full md:w-auto text-right font-medium">
-            Showing <span className="font-bold text-[#0a2540]">{filteredReports.length}</span> of {REPORTS_DATA.length} operational reports
+            Showing <span className="font-bold text-[#072f68]">{filteredReports.length}</span> of {REPORTS_DATA.length} operational reports
           </div>
         </div>
 
@@ -359,8 +353,8 @@ export default function ReportsDashboard() {
                     </div>
 
                     {/* Report Title */}
-                    <h3 className="text-base font-bold text-[#0a2540] group-hover:text-blue-700 transition-colors mb-2 flex items-start gap-2.5">
-                      <div className="bg-[#e8f0fe] p-2 rounded-xl text-[#0a2540] shrink-0">
+                    <h3 className="text-base font-bold text-[#072f68] group-hover:text-blue-700 transition-colors mb-2 flex items-start gap-2.5">
+                      <div className="bg-[#e8f0fe] p-2 rounded-xl text-[#072f68] shrink-0">
                         <IconComponent className="w-5 h-5" />
                       </div>
                       <span className="leading-snug">{report.title}</span>
@@ -386,7 +380,7 @@ export default function ReportsDashboard() {
                     {/* Key Stats Indicator */}
                     <div className="bg-[#f8fafc] p-3 rounded-xl border border-slate-100 flex items-center justify-between text-xs">
                       <span className="text-slate-500 font-medium">Metric Preview:</span>
-                      <span className="font-bold text-[#0a2540]">{report.stats}</span>
+                      <span className="font-bold text-[#072f68]">{report.stats}</span>
                     </div>
                   </div>
 
@@ -405,7 +399,7 @@ export default function ReportsDashboard() {
                       </button>
                       <button
                         onClick={() => setActiveReportId(report.id)}
-                        className="px-3 py-1.5 rounded-lg bg-[#0a2540] hover:bg-[#0f385d] text-white font-medium transition-colors flex items-center gap-1 shadow-sm"
+                        className="px-3 py-1.5 rounded-lg bg-[#072f68] hover:bg-[#05214b] text-white font-medium transition-colors flex items-center gap-1 shadow-sm"
                       >
                         <FileText className="w-3.5 h-3.5" /> Run
                       </button>
@@ -420,7 +414,7 @@ export default function ReportsDashboard() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-700">
-                <thead className="bg-[#0a2540] text-white text-xs uppercase font-semibold">
+                <thead className="bg-[#072f68] text-white text-xs uppercase font-semibold">
                   <tr>
                     <th className="py-3.5 px-4">Report Name</th>
                     <th className="py-3.5 px-4">Category</th>
@@ -433,7 +427,7 @@ export default function ReportsDashboard() {
                 <tbody className="divide-y divide-slate-100">
                   {filteredReports.map((report) => (
                     <tr key={report.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-4 font-bold text-[#0a2540] max-w-xs">
+                      <td className="py-4 px-4 font-bold text-[#072f68] max-w-xs">
                         <div className="flex items-center gap-2">
                           <ReportIcon name={report.icon} className="w-4 h-4 text-blue-600 shrink-0" />
                           <span>{report.title}</span>
@@ -459,14 +453,14 @@ export default function ReportsDashboard() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setActiveReportId(report.id)}
-                            className="p-1.5 text-slate-600 hover:text-[#0a2540] hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-600 hover:text-[#072f68] hover:bg-slate-100 rounded-lg transition-colors"
                             title="View Preview"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setActiveReportId(report.id)}
-                            className="px-3 py-1 bg-[#0a2540] text-white rounded-lg hover:bg-[#0f385d] font-medium flex items-center gap-1"
+                            className="px-3 py-1 bg-[#072f68] text-white rounded-lg hover:bg-[#05214b] font-medium flex items-center gap-1"
                           >
                             Generate <ChevronRight className="w-3 h-3" />
                           </button>
@@ -486,7 +480,7 @@ export default function ReportsDashboard() {
             <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
               <Search className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-[#0a2540] mb-1">No matching pharmacy reports found</h3>
+            <h3 className="text-base font-bold text-[#072f68] mb-1">No matching pharmacy reports found</h3>
             <p className="text-xs text-slate-500 mb-4">
               Try adjusting your search query, clearing category filters, or clearing the date and time range.
             </p>
@@ -497,7 +491,7 @@ export default function ReportsDashboard() {
                 setStartDateTime('');
                 setEndDateTime('');
               }}
-              className="px-4 py-2 bg-[#0a2540] text-white rounded-xl text-xs font-semibold hover:bg-[#0f385d]"
+              className="px-4 py-2 bg-[#072f68] text-white rounded-xl text-xs font-semibold hover:bg-[#05214b]"
             >
               Reset All Filters
             </button>
@@ -513,7 +507,7 @@ export default function ReportsDashboard() {
         <ReportDialog onClose={() => setActiveReportId(null)}>
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="bg-[#0a2540] text-white p-5 flex items-center justify-between border-b border-slate-800">
+            <div className="bg-[#072f68] text-white p-5 flex items-center justify-between border-b border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="bg-white/10 p-2.5 rounded-xl text-emerald-400">
                   <ReportIcon name={activeReportModal.icon} className="w-6 h-6" />
@@ -566,7 +560,7 @@ export default function ReportsDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-[#e8f0fe] p-4 rounded-xl border border-[#c2e7ff]">
                   <p className="text-xs text-blue-700 font-semibold uppercase">Total Reported Volume</p>
-                  <p className="text-xl font-extrabold text-[#0a2540] mt-1">{activeReportModal.stats}</p>
+                  <p className="text-xl font-extrabold text-[#072f68] mt-1">{activeReportModal.stats}</p>
                 </div>
                 <div className="bg-[#e6f4ea] p-4 rounded-xl border border-[#ceebd5]">
                   <p className="text-xs text-[#137333] font-semibold uppercase">Verification Status</p>
@@ -631,7 +625,7 @@ export default function ReportsDashboard() {
               </span>
               <button
                 aria-label="Close preview" onClick={() => setActiveReportId(null)}
-                className="px-5 py-2 bg-[#0a2540] hover:bg-[#0f385d] text-white rounded-xl text-xs font-semibold shadow-sm transition-colors"
+                className="px-5 py-2 bg-[#072f68] hover:bg-[#05214b] text-white rounded-xl text-xs font-semibold shadow-sm transition-colors"
               >
                 Close Preview
               </button>
@@ -643,7 +637,7 @@ export default function ReportsDashboard() {
       {/* Modern Footer */}
       <footer className="bg-white border-t border-slate-200 py-6 mt-12">
         <div className="w-full px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
-          <p className="font-semibold text-[#0a2540]">
+          <p className="font-semibold text-[#072f68]">
             Medizone Pharmacy Management System — Reports & Operational Analytics
           </p>
           <p className="mt-1 text-slate-400">

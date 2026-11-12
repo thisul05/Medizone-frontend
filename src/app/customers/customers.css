@@ -1,13 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=Fredoka:wght@400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
 /*
-  Medizone design tokens (from the Medizone design system), scoped to .mz-theme so they
-  only apply inside the Customers module. When the team adds these tokens to globals.css,
-  this block can be removed and the components will keep working unchanged.
-  Note: --radius-sm/md/lg also retune Tailwind's rounded-sm/md/lg inside the module.
-
-  Borrowed from the live medizone.lk website: Fredoka for headings, its blue (#16589b) for
-  links and prices, its green (#71b54b) for discount pills, and pill-shaped buttons.
+  Medizone design tokens aligned with global Medizone light design system.
 */
 .mz-theme {
   --logo-navy: #072f68;
@@ -32,11 +26,11 @@
   --on-primary: #ffffff;
   --primary-tint: #e7eef8;
   --primary-tint-ink: #072f68;
-  --link: #16589b;
-  --price: #16589b;
-  --brand-green: #71b54b;
+  --link: #1d5aa6;
+  --price: #1d5aa6;
+  --brand-green: #62b126;
   --on-brand-green: #072f68;
-  --focus-ring: #2e6fc0;
+  --focus-ring: #072f68;
   --focus-ring-nav: #ffffff;
   --scrim: rgba(8, 16, 27, 0.55);
   --info-bg: #e6f0fb;
@@ -70,7 +64,7 @@
 
   --mz-font-sans: Figtree, "Noto Sans Sinhala", "Noto Sans Tamil", system-ui, sans-serif;
   --mz-font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
-  --mz-font-display: Fredoka, Figtree, system-ui, sans-serif;
+  --mz-font-display: Figtree, system-ui, sans-serif;
 
   min-height: 100vh;
   background: var(--surface-page);
@@ -93,8 +87,8 @@
     outline-color: var(--focus-ring-nav);
   }
   .mz-theme :where(h1, h2, h3) {
-    font-family: var(--mz-font-display);
-    letter-spacing: 0;
+    font-family: var(--mz-font-sans);
+    letter-spacing: -0.015em;
   }
   .mz-theme .mz-mono {
     font-family: var(--mz-font-mono);

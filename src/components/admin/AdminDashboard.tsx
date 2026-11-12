@@ -102,10 +102,10 @@ export function AdminDashboard() {
       {/* Top Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="text-xs font-medium text-slate-500">
+          <div className="text-xs font-medium text-slate-500 mb-1">
             Dashboard / Overview
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">

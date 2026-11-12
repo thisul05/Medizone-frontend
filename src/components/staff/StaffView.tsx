@@ -51,11 +51,11 @@ export function StaffView() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="text-xs font-medium text-slate-500">Back Office / Staff &amp; Payroll</div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1">
+          <div className="text-xs font-medium text-slate-500 mb-1">Back Office / Staff &amp; payroll</div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Staff &amp; Payroll Management
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Manage pharmacy personnel, daily attendance tracking and monthly payroll disbursements.
           </p>
         </div>

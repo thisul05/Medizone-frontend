@@ -1,7 +1,14 @@
-export default function Page() {
+"use client";
+
+import { Suspense } from "react";
+import { StaffOrders } from "@/components/orders/StaffOrders";
+
+// Module 4: Prescriptions and orders. Staff see the Orders page.
+// (Customers will see My Orders here once that page is built.)
+export default function OrdersPage() {
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">Module 4: Prescriptions and orders</h1>
-    </main>
+    <Suspense>
+      <StaffOrders />
+    </Suspense>
   );
 }

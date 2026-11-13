@@ -7,6 +7,7 @@ import { ButtonLink, Icon, useToast } from "@/components/shared";
 import { useCustomerLogout } from "@/lib/account/logout";
 import { useAccount } from "@/lib/account/use-account";
 import { useAuth } from "@/lib/auth";
+import { defaultRouteFor } from "@/components/auth/useRedirectIfSignedIn";
 
 const menuItem =
   "flex w-full items-center gap-2 px-4 py-2.5 text-left text-ink transition-colors duration-150 hover:bg-surface-hover focus-visible:bg-surface-hover";
@@ -126,8 +127,8 @@ export function AccountMenu() {
             <p className="truncate mz-label text-ink">{user.name}</p>
             <p className="truncate mz-caption text-ink-muted">{user.jobTitle}</p>
           </div>
-          <Link href="/home" className={menuItem} onClick={close}>
-            <Icon name="home" size={20} /> Go to home
+          <Link href={defaultRouteFor(user.role)} className={menuItem} onClick={close}>
+            <Icon name="arrow-left" size={20} /> Return to workspace
           </Link>
           {user.role === "customer" && (
             <Link href="/orders" className={menuItem} onClick={close}>

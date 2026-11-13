@@ -46,7 +46,7 @@ export function CustomersView() {
   return (
     <>
       <PageHeader
-        breadcrumb={[{ label: "Dashboard", href: "/home" }, { label: "Customers" }]}
+        breadcrumb={[{ label: "Pharmacy" }, { label: "Customers" }]}
         title="Customer Management"
         description="View and manage registered customer information"
         action={

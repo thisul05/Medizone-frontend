@@ -7,6 +7,7 @@ import { Logo } from "@/components/shared/Logo";
 import { Icon, type IconName } from "@/components/shared/Icon";
 import { useAuth } from "@/lib/auth";
 import { branches } from "@/data/branches";
+import { defaultRouteFor } from "@/components/auth/useRedirectIfSignedIn";
 import type { BranchId, ModuleId } from "@/types/roles";
 
 type NavEntry = { id: ModuleId; label: string; icon: IconName; href: string };
@@ -54,7 +55,7 @@ export default function Sidebar() {
     <aside className="mz-on-nav sticky top-0 flex h-screen w-nav shrink-0 flex-col bg-surface-nav text-nav-ink select-none overflow-hidden">
       {/* Brand Header */}
       <div className="px-4 pb-2 pt-3.5">
-        <Link href={can("admin") ? "/admin" : "/home"} className="block">
+        <Link href={user ? defaultRouteFor(user.role) : "/login"} className="block">
           <Logo height={26} priority />
         </Link>
       </div>
@@ -124,16 +125,6 @@ export default function Sidebar() {
             label="Dashboard"
             href="/admin"
             active={pathname === "/admin" || pathname.startsWith("/admin/")}
-          />
-        )}
-
-        {/* Non-admin staff Home link */}
-        {!can("admin") && (
-          <NavItem
-            icon="home"
-            label="Home"
-            href="/home"
-            active={pathname === "/home"}
           />
         )}
 

@@ -11,7 +11,7 @@ export function StaffHome() {
   const { user, activeBranchId } = useAuth();
   if (!user) return null;
   const modules = modulesFor(user.role);
-  const fullAccess = user.role === "owner" || user.role === "senior_pharmacist";
+  const fullAccess = user.role === "owner";
 
   return (
     <div className="flex flex-col gap-8">
@@ -28,10 +28,7 @@ export function StaffHome() {
         <h2 id="modules-title" className="mz-h2">Your modules</h2>
         <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => (
-            <li key={m.id} className="flex flex-col gap-4 rounded-lg border border-line bg-surface-raised p-5 shadow-1">
-              <span className="flex size-11 items-center justify-center rounded-pill bg-primary-tint text-primary-tint-ink">
-                <Icon name={m.icon} />
-              </span>
+            <li key={m.id} className="flex flex-col gap-4 rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
               <div className="flex flex-1 flex-col gap-1">
                 <h3 className="mz-h3">{m.label}</h3>
                 <p className="text-ink-muted">{m.description}</p>

@@ -95,7 +95,7 @@ function InventoryWorkspace() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="mb-2 flex items-center gap-2 mz-body-sm text-ink-muted"><span>Pharmacy operations</span><Icon name="chevron-right" size={14} /><span>Inventory</span></p>
+          <p className="mz-body-sm text-ink-muted mb-1">Pharmacy / Inventory</p>
           <div className="flex flex-wrap items-center gap-3"><h1 className="mz-h1">Products and inventory</h1><Badge tone="brand" icon="store">{branchName(branchId)}</Badge></div>
           <p className="mt-2 max-w-2xl text-ink-muted">Keep track of products, batch stock and expiry dates across your pharmacy.</p>
         </div>
@@ -164,11 +164,16 @@ function InventoryWorkspace() {
   );
 }
 
-function SummaryCard({ label, value, description, icon, tone = "brand", onClick }: { label: string; value: string; description: string; icon: IconName; tone?: "brand" | "warning" | "danger"; onClick?: () => void }) {
-  const iconTone = tone === "warning" ? "bg-warning-bg text-warning-ink" : tone === "danger" ? "bg-danger-bg text-danger-ink" : "bg-primary-tint text-primary-tint-ink";
-  const content = <><div className="flex items-center justify-between gap-3"><p className="mz-label text-ink-muted">{label}</p><span className={`flex size-9 items-center justify-center rounded-md ${iconTone}`}><Icon name={icon} size={19} /></span></div><p className="mt-3 break-words mz-kpi text-ink">{value}</p><p className="mt-1 mz-body-sm text-ink-muted">{description}</p></>;
-  const className = "rounded-lg border border-line bg-surface-raised p-5 text-left shadow-1";
-  return onClick ? <button type="button" onClick={onClick} className={`${className} transition-colors duration-150 hover:border-line-strong`}>{content}</button> : <div className={className}>{content}</div>;
+function SummaryCard({ label, value, description, onClick }: { label: string; value: string; description: string; icon?: IconName; tone?: "brand" | "warning" | "danger"; onClick?: () => void }) {
+  const content = (
+    <>
+      <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">{label}</p>
+      <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums break-words">{value}</p>
+      <p className="mt-1 text-xs text-[#46566d]">{description}</p>
+    </>
+  );
+  const className = "rounded-xl border border-gray-200/80 bg-white p-5 text-left shadow-xs";
+  return onClick ? <button type="button" onClick={onClick} className={`${className} transition-all duration-150 hover:border-gray-300 cursor-pointer`}>{content}</button> : <div className={className}>{content}</div>;
 }
 
 function ExpiryLegend() {

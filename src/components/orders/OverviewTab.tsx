@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Badge, Button, Icon, Select, TextField, cx } from "@/components/shared";
 import StatusBadge from "@/components/shared/StatusBadge";
-import { posBills } from "@/data/orders";
+import { POS_BILLS as posBills } from "@/lib/orders-store";
 import { formatDate, formatLKR } from "@/lib/format";
 import { PAY_LABELS, SOURCE_LABELS, daysFromToday, orderCode, orderTotals, timeOf } from "@/lib/orders";
 import type { Order, OrderSource } from "@/types/orders";

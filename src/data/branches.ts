@@ -22,6 +22,6 @@ export function getBranch(id: BranchId): Branch | undefined {
 }
 
 export function branchName(id: BranchId | "all"): string {
-  if (id === "all") return "-";
+  if (id === "all") return "All branches";
   return getBranch(id)?.name ?? id;
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useId, useState, type ReactNode } from "react";
 import { ButtonLink, Icon, cx } from "@/components/shared";
+import { defaultRouteFor } from "@/components/auth/useRedirectIfSignedIn";
 import { useAuth } from "@/lib/auth";
 import { orderCode } from "@/lib/orders";
 import { useAccount, type AccountData } from "@/lib/account/use-account";
@@ -113,7 +114,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
           <EmptyState
             icon="lock"
             title="My Account is for customers"
-            action={<ButtonLink href="/home" icon="home">Go to staff home</ButtonLink>}
+            action={<ButtonLink href={user ? defaultRouteFor(user.role) : "/login"} icon="arrow-left">Return to your workspace</ButtonLink>}
           >
             You are signed in with a staff account. Customer account pages show a customer&apos;s own orders and details, so they are not available to staff.
           </EmptyState>

@@ -11,7 +11,7 @@ export default function SuppliersSidebar({
 }: SuppliersSidebarProps) {
 
   return (
-    <aside className="w-64 min-h-screen bg-[#0B2545] text-white flex flex-col p-5 shrink-0 select-none">
+    <aside className="w-64 min-h-screen bg-[#072f68] text-white flex flex-col p-5 shrink-0 select-none">
       {/* Medizone Brand / Logo Placeholder */}
       <div className="mb-6 rounded-lg border border-dashed border-sky-400/40 bg-white/5 p-4 text-center">
         <span className="text-xs font-mono text-sky-200 block tracking-wider">
@@ -23,7 +23,7 @@ export default function SuppliersSidebar({
       </div>
 
       {/* Branch Selector Box */}
-      <div className="mb-8 rounded-lg bg-[#143259] p-3 border border-white/10">
+      <div className="mb-8 rounded-lg bg-[#052350] p-3 border border-white/10">
         <div className="text-[10px] font-bold tracking-wider text-sky-300 uppercase">
           Branch
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Alert, Button, Icon, useToast } from "@/components/shared";
 import { useAuth } from "@/lib/auth";
@@ -47,6 +48,9 @@ export function CartCheckout() {
           Proceed to checkout
         </Button>
       )}
+      <Link href="/orders/cart" onClick={() => setOpen(false)} className="self-center mz-label text-link hover:underline">
+        View full cart
+      </Link>
       <p className="flex items-center gap-1.5 mz-body-sm text-ink-muted">
         <Icon name="lock" size={16} />
         Choose delivery and payment on the next step.

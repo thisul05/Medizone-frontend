@@ -47,7 +47,10 @@ export default function Sidebar() {
           <Icon name="logout" size={18} />
           Log out
         </Link>
-        <div className="flex items-center gap-3 px-2 py-1">
+        <Link
+          href="/profile"
+          className="flex items-center gap-3 px-2 py-1 rounded-md hover:bg-white/10 transition-colors"
+        >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-nav-active mz-label">
             KF
           </div>
@@ -55,7 +58,7 @@ export default function Sidebar() {
             <p className="mz-label text-nav-ink truncate">Kasun Fernando</p>
             <p className="mz-caption text-nav-muted truncate">Senior pharmacist</p>
           </div>
-        </div>
+        </Link>
       </div>
     </aside>
   );
@@ -70,9 +73,8 @@ function NavItem({ icon, label, href, pathname }: { icon: IconName; label: strin
   return (
     <Link
       href={href}
-      className={`mb-0.5 flex h-10 items-center gap-3 rounded-md px-2.5 mz-label transition-colors duration-150 ${
-        active ? "bg-nav-active text-nav-ink" : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
-      }`}
+      className={`mb-0.5 flex h-10 items-center gap-3 rounded-md px-2.5 mz-label transition-colors duration-150 ${active ? "bg-nav-active text-nav-ink" : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
+        }`}
     >
       <Icon name={icon} size={18} />
       {label}

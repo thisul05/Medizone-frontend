@@ -20,9 +20,9 @@ interface TabsProps<T extends string> {
   className?: string;
 }
 
-const underlineTab = "relative inline-flex h-12 flex-none cursor-pointer items-center gap-2 px-4 text-sm font-medium transition-colors";
-const underlineOn = "font-semibold text-(--heading) after:absolute after:right-0 after:-bottom-px after:left-0 after:h-[3px] after:bg-(--heading)";
-const underlineOff = "text-(--ink-muted) hover:text-(--heading)";
+const underlineTab = "relative inline-flex h-11 flex-none cursor-pointer items-center gap-2 px-4 text-sm font-medium transition-colors";
+const underlineOn = "font-semibold text-[#072f68] after:absolute after:right-0 after:-bottom-px after:left-0 after:h-[2px] after:bg-[#072f68]";
+const underlineOff = "text-[#46566d] hover:text-[#072f68]";
 
 export function Tabs<T extends string>({ tabs, value, onChange, variant = "underline", label, idPrefix, className = "" }: TabsProps<T>) {
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -46,8 +46,8 @@ export function Tabs<T extends string>({ tabs, value, onChange, variant = "under
       aria-label={label}
       className={
         pill
-          ? `inline-flex max-w-full gap-1 overflow-x-auto rounded-md bg-(--soft-bg) p-1 ${className}`
-          : `flex gap-2 overflow-x-auto border-b border-(--border) ${className}`
+          ? `inline-flex max-w-full gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1 ${className}`
+          : `flex gap-2 overflow-x-auto border-b border-gray-200 ${className}`
       }
     >
       {tabs.map((tab, i) => {

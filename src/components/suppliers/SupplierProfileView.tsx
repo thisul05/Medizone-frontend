@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { Supplier, PurchaseOrder, ReturnNote } from "@/types/suppliers";
 import { formatLKR, formatDate, orderTotal } from "@/lib/suppliers";
 
@@ -33,7 +34,7 @@ export default function SupplierProfileView({
       <div>
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#185394] hover:text-[#0B2545] cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#185394] hover:text-[#072f68] cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -74,7 +75,7 @@ export default function SupplierProfileView({
           </button>
           <button
             onClick={() => onCreatePO(supplier)}
-            className="inline-flex items-center gap-2 bg-[#0B2545] hover:bg-[#143259] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#072f68] hover:bg-[#052350] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -135,11 +136,11 @@ export default function SupplierProfileView({
         <h2 className="text-sm font-bold text-slate-900">Payment stage</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
           {/* Step 1 */}
-          <div className="border-t-2 border-[#0B2545] pt-3">
+          <div className="border-t-2 border-[#072f68] pt-3">
             <h3 className="text-xs font-bold text-slate-900">Cash on delivery</h3>
             <p className="text-xs text-slate-500 mt-1">New supplier, no credit.</p>
             <div className="mt-2 text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              ✓ Reached
+              <Check className="w-3.5 h-3.5" /> Reached
             </div>
           </div>
 
@@ -147,7 +148,7 @@ export default function SupplierProfileView({
           <div
             className={`border-t-2 pt-3 ${
               supplier.paymentStage === "post_dated_cheque" || supplier.paymentStage === "credit"
-                ? "border-[#0B2545]"
+                ? "border-[#072f68]"
                 : "border-slate-200"
             }`}
           >
@@ -156,16 +157,20 @@ export default function SupplierProfileView({
               7 to 10 days credit after a few months of payment history.
             </p>
             <div className="mt-2 text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              {supplier.paymentStage === "post_dated_cheque" || supplier.paymentStage === "credit"
-                ? "✓ Reached"
-                : "Upcoming"}
+              {supplier.paymentStage === "post_dated_cheque" || supplier.paymentStage === "credit" ? (
+                <>
+                  <Check className="w-3.5 h-3.5" /> Reached
+                </>
+              ) : (
+                "Upcoming"
+              )}
             </div>
           </div>
 
           {/* Step 3 */}
           <div
             className={`border-t-2 pt-3 ${
-              supplier.paymentStage === "credit" ? "border-[#0B2545]" : "border-slate-200"
+              supplier.paymentStage === "credit" ? "border-[#072f68]" : "border-slate-200"
             }`}
           >
             <h3 className="text-xs font-bold text-slate-900">Credit</h3>
@@ -173,7 +178,13 @@ export default function SupplierProfileView({
               30 to 35 days after 4 to 5 months of smooth cheque clearance.
             </p>
             <div className="mt-2 text-xs font-semibold text-sky-700 flex items-center gap-1">
-              {supplier.paymentStage === "credit" ? "✓ Current stage" : "Target stage"}
+              {supplier.paymentStage === "credit" ? (
+                <>
+                  <Check className="w-3.5 h-3.5" /> Current stage
+                </>
+              ) : (
+                "Target stage"
+              )}
             </div>
           </div>
         </div>

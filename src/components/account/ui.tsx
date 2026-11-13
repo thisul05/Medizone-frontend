@@ -41,27 +41,14 @@ export function Panel({ title, action, children, className, bodyClassName, id }:
   );
 }
 
-export function StatCard({ icon, label, value, hint, tone = "brand" }: {
-  icon: IconName; label: string; value: ReactNode; hint?: ReactNode; tone?: "brand" | "loyalty" | "warning" | "success" | "danger" | "info";
+export function StatCard({ label, value, hint }: {
+  icon?: IconName; label: string; value: ReactNode; hint?: ReactNode; tone?: "brand" | "loyalty" | "warning" | "success" | "danger" | "info";
 }) {
-  const tint = {
-    brand: "bg-primary-tint text-primary-tint-ink",
-    loyalty: "bg-loyalty-bg text-loyalty-ink",
-    warning: "bg-warning-bg text-warning-ink",
-    success: "bg-success-bg text-success-ink",
-    danger: "bg-danger-bg text-danger-ink",
-    info: "bg-info-bg text-info-ink",
-  }[tone];
   return (
-    <div className={cx(PANEL, "flex items-start gap-3 p-4")}>
-      <span className={cx("flex size-10 shrink-0 items-center justify-center rounded-md", tint)}>
-        <Icon name={icon} />
-      </span>
-      <div className="flex min-w-0 flex-col">
-        <p className="mz-body-sm text-ink-muted">{label}</p>
-        <p className="mz-h2 mz-num text-ink">{value}</p>
-        {hint && <p className="mz-body-sm text-ink-muted">{hint}</p>}
-      </div>
+    <div className={cx(PANEL, "flex flex-col p-5")}>
+      <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">{label}</p>
+      <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">{value}</p>
+      {hint && <p className="mt-1 text-xs text-[#46566d]">{hint}</p>}
     </div>
   );
 }

@@ -1,31 +1,30 @@
 "use client";
+
 import { useState } from "react";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/shared/Logo";
 import { Icon, type IconName } from "@/components/shared/Icon";
 import { useAuth } from "@/lib/auth";
+import { branches } from "@/data/branches";
+import { defaultRouteFor } from "@/components/auth/useRedirectIfSignedIn";
+import type { BranchId, ModuleId } from "@/types/roles";
 
-const DELIVERY_SUBITEMS = [
-  { id: "deliveries", label: "Deliveries" },
-  { id: "cod", label: "Cash on Delivery" },
-  { id: "returns", label: "Customer Returns" },
-  { id: "warranty", label: "Warranty Claims" },
-  { id: "checker", label: "Warranty Check" },
-] as const;
+type NavEntry = { id: ModuleId; label: string; icon: IconName; href: string };
 
-// Customers (Module 5) pages. Profile pages (/customers/[id]) belong to "All Customers".
-const CUSTOMER_SUBITEMS = [
-  { href: "/customers", label: "All Customers" },
-  { href: "/customers/loyalty", label: "Loyalty Points" },
-  { href: "/customers/feedback", label: "Feedback" },
-  { href: "/customers/reminders", label: "Refill Reminders" },
-] as const;
+const PHARMACY_NAV: NavEntry[] = [
+  { id: "orders", label: "Orders", icon: "clipboard", href: "/orders" },
+  { id: "inventory", label: "Inventory", icon: "package", href: "/inventory" },
+  { id: "customers", label: "Customers", icon: "users", href: "/customers" },
+  { id: "billing", label: "Billing", icon: "receipt", href: "/billing" },
+];
 
-function activeCustomerPage(pathname: string): string {
-  const section = CUSTOMER_SUBITEMS.find((item) => item.href !== "/customers" && (pathname === item.href || pathname.startsWith(item.href + "/")));
-  return section ? section.href : "/customers";
-}
+const BACK_OFFICE_NAV: NavEntry[] = [
+  { id: "suppliers", label: "Suppliers", icon: "building", href: "/suppliers" },
+  { id: "delivery", label: "Delivery & warranty", icon: "truck", href: "/delivery" },
+  { id: "staff", label: "Staff & payroll", icon: "id-card", href: "/staff" },
+  { id: "reports", label: "Reports", icon: "chart", href: "/reports" },
+];
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
@@ -35,200 +34,166 @@ function getInitials(name: string) {
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const { user, can, signOut } = useAuth();
-  const isDelivery = pathname === "/delivery";
-  const activeTab = searchParams.get("tab") ?? "deliveries";
-  const [open, setOpen] = useState(isDelivery);
+  const { user, can, activeBranchId, setActiveBranch, signOut } = useAuth();
+  const [branchOpen, setBranchOpen] = useState(false);
 
-  // Customers dropdown: same behaviour as Delivery & warranty, and it opens by itself
-  // whenever the route moves into /customers.
-  const isCustomers = pathname === "/customers" || pathname.startsWith("/customers/");
-  const [customersOpen, setCustomersOpen] = useState(isCustomers);
-  const [wasCustomers, setWasCustomers] = useState(isCustomers);
-  if (isCustomers !== wasCustomers) {
-    setWasCustomers(isCustomers);
-    if (isCustomers) setCustomersOpen(true);
-  }
-  const activeCustomerHref = activeCustomerPage(pathname);
+  const pharmacyItems = PHARMACY_NAV.filter((m) => can(m.id));
+  const backOfficeItems = BACK_OFFICE_NAV.filter((m) => can(m.id));
 
-  const handleCustomersToggle = () => {
-    if (!isCustomers) {
-      router.push("/customers");
-      setCustomersOpen(true);
-    } else {
-      setCustomersOpen((v) => !v);
-    }
+  const currentBranchLabel =
+    !activeBranchId || activeBranchId === "all"
+      ? "All branches"
+      : branches.find((b) => b.id === activeBranchId)?.area || "Select branch";
+
+  const handleBranchSelect = (id: BranchId | "all") => {
+    setActiveBranch(id);
+    setBranchOpen(false);
   };
-
-  const handleDeliveryToggle = () => {
-    if (!isDelivery) {
-      router.push("/delivery?tab=deliveries");
-      setOpen(true);
-    } else {
-      setOpen((v) => !v);
-    }
-  };
-
-  const showPharmacySection = can("orders") || can("billing") || can("inventory") || can("customers");
-  const showBackOfficeSection = can("suppliers") || can("delivery") || can("staff") || can("reports");
 
   return (
-    <aside className="mz-on-nav sticky top-0 flex h-screen w-nav shrink-0 flex-col bg-surface-nav text-nav-ink">
-      {/* Logo */}
-      <div className="px-5 pb-4 pt-5">
-        <Logo height={28} priority />
+    <aside className="mz-on-nav sticky top-0 flex h-screen w-nav shrink-0 flex-col bg-surface-nav text-nav-ink select-none overflow-hidden">
+      {/* Brand Header */}
+      <div className="px-4 pb-2 pt-3.5">
+        <Link href={user ? defaultRouteFor(user.role) : "/login"} className="block">
+          <Logo height={26} priority />
+        </Link>
       </div>
 
-      {/* Branch selector */}
-      <div className="mx-3 mb-4 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-nav-muted">
-        <Icon name="store" size={16} />
-        <span className="mz-label">Miriswattha, Piliyandala</span>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-3 pb-4">
-        <NavItem icon="home" label="Home" href="/home" active={pathname === "/home"} />
-        {can("admin") && (
-          <NavItem icon="dashboard" label="Dashboard" href="/admin" active={pathname === "/admin"} />
-        )}
-
-        {showPharmacySection && <SectionLabel>Pharmacy</SectionLabel>}
-        {can("orders") && (
-          <NavItem icon="clipboard" label="Orders" href="/orders" active={pathname === "/orders"} />
-        )}
-        {can("billing") && (
-          <NavItem icon="receipt" label="Billing" href="/billing" active={pathname === "/billing"} />
-        )}
-        {can("inventory") && (
-          <NavItem icon="package" label="Inventory" href="/inventory" active={pathname === "/inventory"} />
-        )}
-        {can("customers") && (
-          <div className="mb-0.5">
-            <button
-              type="button"
-              onClick={handleCustomersToggle}
-              aria-expanded={customersOpen}
-              className={`flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label transition-colors duration-150 ${
-                isCustomers
-                  ? "bg-nav-active text-nav-ink"
-                  : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
-              }`}
-            >
-              <Icon name="users" size={18} />
-              <span className="flex-1 text-left">Customers</span>
-              <Icon
-                name="chevron-down"
-                size={14}
-                className={`shrink-0 transition-transform duration-200 ${customersOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {customersOpen && (
-              <div className="ml-7 mt-0.5 space-y-0.5">
-                {CUSTOMER_SUBITEMS.map((item) => {
-                  const active = isCustomers && activeCustomerHref === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      className={`flex h-8 items-center rounded-md px-2.5 text-sm transition-colors duration-150 ${
-                        active
-                          ? "bg-white/15 font-semibold text-nav-ink"
-                          : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {showBackOfficeSection && <SectionLabel>Back Office</SectionLabel>}
-        {can("suppliers") && (
-          <NavItem icon="building" label="Suppliers" href="/suppliers" active={pathname === "/suppliers"} />
-        )}
-
-        {can("delivery") && (
-          <div className="mb-0.5">
-            <button
-              type="button"
-              onClick={handleDeliveryToggle}
-              className={`flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label transition-colors duration-150 ${
-                isDelivery
-                  ? "bg-nav-active text-nav-ink"
-                  : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
-              }`}
-            >
-              <Icon name="truck" size={18} />
-              <span className="flex-1 text-left">Delivery &amp; warranty</span>
-              <Icon
-                name="chevron-down"
-                size={14}
-                className={`shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {open && (
-              <div className="ml-7 mt-0.5 space-y-0.5">
-                {DELIVERY_SUBITEMS.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/delivery?tab=${item.id}`}
-                    className={`flex h-8 items-center rounded-md px-2.5 text-sm transition-colors duration-150 ${
-                      isDelivery && activeTab === item.id
-                        ? "bg-white/15 font-semibold text-nav-ink"
-                        : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {can("staff") && (
-          <NavItem icon="users" label="Staff & payroll" href="/staff" active={pathname === "/staff"} />
-        )}
-        {can("reports") && (
-          <NavItem icon="chart" label="Reports" href="/reports" active={pathname === "/reports"} />
-        )}
-      </nav>
-
-      {/* Bottom: Help + Logout + User */}
-      <div className="border-t border-white/10 px-3 py-3 space-y-1">
-        <a
-          href="/help"
-          className="flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label text-nav-muted transition-colors duration-150 hover:bg-white/10 hover:text-nav-ink"
-        >
-          <Icon name="info" size={18} />
-          Help &amp; support
-        </a>
+      {/* Branch Selector */}
+      <div className="relative mx-2.5 mb-2">
         <button
           type="button"
-          onClick={() => { signOut(); router.push("/login"); }}
-          className="flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label text-nav-muted transition-colors duration-150 hover:bg-white/10 hover:text-nav-ink"
+          onClick={() => user?.role === "owner" && setBranchOpen((prev) => !prev)}
+          className={`flex w-full items-center justify-between gap-2 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs text-nav-muted transition-colors ${
+            user?.role === "owner" ? "hover:bg-white/15 cursor-pointer" : "cursor-default"
+          }`}
+          aria-expanded={branchOpen}
         >
-          <Icon name="logout" size={18} />
-          Log out
+          <div className="flex items-center gap-2 truncate">
+            <Icon name="store" size={14} className="shrink-0 text-nav-muted" />
+            <span className="truncate font-medium text-white/90 text-xs">{currentBranchLabel}</span>
+          </div>
+          {user?.role === "owner" && (
+            <Icon
+              name="chevron-down"
+              size={12}
+              className={`shrink-0 transition-transform duration-200 text-nav-muted ${
+                branchOpen ? "rotate-180" : ""
+              }`}
+            />
+          )}
         </button>
+
+        {branchOpen && user?.role === "owner" && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-white/10 bg-[#062452] py-1 shadow-lg backdrop-blur-md">
+            <button
+              type="button"
+              onClick={() => handleBranchSelect("all")}
+              className={`flex w-full items-center px-3 py-1.5 text-xs font-medium transition-colors ${
+                !activeBranchId || activeBranchId === "all"
+                  ? "bg-white/15 text-white"
+                  : "text-nav-muted hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              All branches
+            </button>
+            {branches.map((b) => (
+              <button
+                key={b.id}
+                type="button"
+                onClick={() => handleBranchSelect(b.id)}
+                className={`flex w-full items-center px-3 py-1.5 text-xs font-medium transition-colors ${
+                  activeBranchId === b.id
+                    ? "bg-white/15 text-white"
+                    : "text-nav-muted hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {b.name} ({b.area})
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Navigation List */}
+      <nav className="flex-1 overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2.5 space-y-0.5">
+        {/* Dashboard is strictly for Owner */}
+        {can("admin") && (
+          <NavItem
+            icon="dashboard"
+            label="Dashboard"
+            href="/admin"
+            active={pathname === "/admin" || pathname.startsWith("/admin/")}
+          />
+        )}
+
+        {/* Pharmacy Group */}
+        {pharmacyItems.length > 0 && <SectionLabel>PHARMACY</SectionLabel>}
+        {pharmacyItems.map((m) => (
+          <NavItem
+            key={m.id}
+            icon={m.icon}
+            label={m.label}
+            href={m.href}
+            active={pathname === m.href || pathname.startsWith(m.href + "/")}
+          />
+        ))}
+
+        {/* Back Office Group */}
+        {backOfficeItems.length > 0 && <SectionLabel>BACK OFFICE</SectionLabel>}
+        {backOfficeItems.map((m) => (
+          <NavItem
+            key={m.id}
+            icon={m.icon}
+            label={m.label}
+            href={m.href}
+            active={pathname === m.href || pathname.startsWith(m.href + "/")}
+          />
+        ))}
+      </nav>
+
+      {/* Bottom: Logout and Profile */}
+      <div className="border-t border-white/10 px-2.5 py-2 space-y-1">
+        <button
+          type="button"
+          onClick={() => {
+            signOut();
+            router.push("/login");
+          }}
+          className="flex h-8 w-full items-center gap-2.5 rounded-lg px-2 text-xs font-medium text-nav-muted transition-colors duration-150 hover:bg-white/10 hover:text-white cursor-pointer"
+        >
+          <Icon name="logout" size={16} />
+          <span>Log out</span>
+        </button>
+
         {user && (
-          <div className="flex items-center gap-3 px-2 py-1">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e07c2a] mz-label text-white">
+          <Link
+            href="/profile"
+            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors cursor-pointer group ${
+              pathname === "/profile"
+                ? "bg-white/20 text-white font-semibold shadow-xs"
+                : "bg-white/5 hover:bg-white/10 text-white/90 hover:text-white"
+            }`}
+            title="View your user profile"
+          >
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#133e7c] text-[11px] font-bold text-white border border-white/20 group-hover:border-white/40 transition-colors">
               {getInitials(user.name)}
             </div>
-            <div className="min-w-0">
-              <div className="mz-label text-nav-ink truncate">{user.name}</div>
-              <div className="mz-caption text-nav-muted truncate">{user.jobTitle}</div>
+            <div className="min-w-0 flex-1">
+              <div className="text-white truncate text-xs font-medium leading-tight group-hover:underline">
+                {user.name}
+              </div>
+              <div className="text-nav-muted truncate text-[10px] leading-tight">
+                {user.role === "owner" ? "Owner" : user.jobTitle}
+              </div>
             </div>
-          </div>
+            <Icon
+              name="chevron-right"
+              size={12}
+              className="text-nav-muted/60 group-hover:text-white transition-colors shrink-0"
+            />
+          </Link>
         )}
       </div>
     </aside>
@@ -237,7 +202,9 @@ export default function Sidebar() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mz-overline mb-1 mt-4 px-2 text-nav-muted">{children}</p>
+    <p className="mb-0.5 mt-2 px-2 text-[10px] font-bold tracking-wider text-nav-muted/80 uppercase">
+      {children}
+    </p>
   );
 }
 
@@ -253,16 +220,16 @@ function NavItem({
   active: boolean;
 }) {
   return (
-    <a
+    <Link
       href={href}
-      className={`mb-0.5 flex h-10 items-center gap-3 rounded-md px-2.5 mz-label transition-colors duration-150 ${
+      className={`flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-xs transition-all duration-150 ${
         active
-          ? "bg-nav-active text-nav-ink"
-          : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
+          ? "bg-white/20 text-white font-semibold shadow-xs"
+          : "text-nav-muted hover:bg-white/10 hover:text-white font-medium"
       }`}
     >
-      <Icon name={icon} size={18} />
-      {label}
-    </a>
+      <Icon name={icon} size={16} className={active ? "text-white" : "text-nav-muted"} />
+      <span>{label}</span>
+    </Link>
   );
 }

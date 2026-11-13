@@ -6,6 +6,7 @@ import { categories } from "@/data/storefront";
 import { useCustomerLogout } from "@/lib/account/logout";
 import { useAccount } from "@/lib/account/use-account";
 import { useAuth } from "@/lib/auth";
+import { defaultRouteFor } from "@/components/auth/useRedirectIfSignedIn";
 import { NAV_LINKS } from "./nav-links";
 import { SearchBox } from "./SearchBox";
 import { CONTAINER } from "./Section";
@@ -76,8 +77,8 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
           ) : ready && user ? (
             <>
               <p className="px-3 mz-label">Signed in as {user.name}</p>
-              <Link href="/home" className={linkClass} onClick={onClose}>
-                <Icon name="home" /> Go to home
+              <Link href={defaultRouteFor(user.role)} className={linkClass} onClick={onClose}>
+                <Icon name="arrow-left" /> Return to workspace
               </Link>
               <Link href="/profile" className={linkClass} onClick={onClose}>
                 <Icon name="user" /> Profile

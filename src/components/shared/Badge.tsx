@@ -63,13 +63,13 @@ export function Badge({ tone = "neutral", variant = "soft", icon, dot, children,
   return (
     <span
       className={cx(
-        "inline-flex h-6 items-center gap-1 whitespace-nowrap rounded-sm px-2 mz-caption",
+        "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-xs font-semibold shrink-0",
         palette[tone],
         className,
       )}
     >
-      {dot && <span aria-hidden className={cx("size-1.5 rounded-pill", variant === "solid" ? "bg-on-solid" : DOT[tone])} />}
-      {icon && <Icon name={icon} size={16} />}
+      {dot && <span aria-hidden className={cx("size-1.5 rounded-full shrink-0", variant === "solid" ? "bg-on-solid" : DOT[tone])} />}
+      {icon && <Icon name={icon} size={14} />}
       {children}
     </span>
   );

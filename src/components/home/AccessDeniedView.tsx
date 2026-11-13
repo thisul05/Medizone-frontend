@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { ButtonLink, Icon } from "@/components/shared";
 import { useAuth } from "@/lib/auth";
 import { MODULES, ROLE_LABELS } from "@/types/roles";
+import { defaultRouteFor } from "@/components/auth/useRedirectIfSignedIn";
 import { SignedInShell } from "./SignedInShell";
 
 /** Reads ?module=. Must be rendered inside <Suspense>. */
@@ -23,8 +24,8 @@ export function AccessDeniedView() {
         <p className="mz-body-lg text-ink-muted">
           Your role ({role}) can&apos;t open {mod ? mod.label : "this module"}. Ask the owner if you need access.
         </p>
-        <ButtonLink href="/home" icon="home" className="mt-2">
-          Go to home
+        <ButtonLink href={user ? defaultRouteFor(user.role) : "/login"} icon="arrow-left" className="mt-2">
+          Return to your workspace
         </ButtonLink>
       </div>
     </SignedInShell>

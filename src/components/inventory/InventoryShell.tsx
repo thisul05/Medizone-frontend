@@ -1,46 +1,68 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Sidebar from "@/components/delivery/Sidebar";
 import { Icon } from "@/components/shared/Icon";
-import { StaffTopBar } from "@/components/shared/StaffTopBar";
-import { InventorySidebar } from "./InventorySidebar";
 
-/** Module navigation follows the signed-in account's permissions. */
+/** Module navigation follows the signed-in account's permissions with the unified Sidebar. */
 export function InventoryShell({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-surface-page text-ink">
+    <div className="flex min-h-screen bg-[#f5f7fa] text-[#0e1b2e]">
       <a
         href="#main"
         className="sr-only z-50 rounded-md bg-surface-raised p-3 text-link focus:not-sr-only focus:absolute focus:left-4 focus:top-4"
       >
         Skip to inventory
       </a>
-      <aside className="sticky top-0 hidden h-dvh w-nav shrink-0 lg:block" aria-label="Workspace sidebar">
-        <InventorySidebar />
-      </aside>
+
+      {/* Desktop Permanent Unified Sidebar */}
+      <div className="hidden shrink-0 lg:block">
+        <Sidebar />
+      </div>
+
       <div className="flex min-w-0 flex-1 flex-col">
-        <StaffTopBar />
-        <div className="mz-on-nav bg-surface-nav px-4 pb-3 text-nav-ink lg:hidden">
-          <button
-            type="button"
-            aria-expanded={navOpen}
-            aria-controls="inventory-mobile-navigation"
-            onClick={() => setNavOpen((open) => !open)}
-            className="flex h-control-md items-center gap-2 rounded-md px-3 mz-label text-nav-ink transition-colors duration-150 hover:bg-nav-active"
-          >
-            <Icon name={navOpen ? "x" : "menu"} size={20} />
-            {navOpen ? "Close navigation" : "Browse modules"}
-          </button>
-          {navOpen && (
-            <div id="inventory-mobile-navigation" className="h-[min(75dvh,740px)]">
-              <InventorySidebar onNavigate={() => setNavOpen(false)} />
+        {/* Mobile Header Bar */}
+        <header className="flex h-14 items-center justify-between border-b border-gray-200 bg-[#072f68] px-4 text-white lg:hidden">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setNavOpen(true)}
+              className="rounded-md p-1.5 hover:bg-white/10"
+              aria-label="Open sidebar"
+            >
+              <Icon name="menu" size={20} />
+            </button>
+            <span className="font-bold text-base tracking-tight">medizone.lk</span>
+          </div>
+          <span className="text-xs text-white/80 font-medium">Inventory</span>
+        </header>
+
+        {/* Mobile Navigation Drawer */}
+        {navOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden flex">
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs"
+              onClick={() => setNavOpen(false)}
+            />
+            <div className="relative z-10 w-nav max-w-[85vw] h-full shadow-2xl">
+              <Sidebar />
+              <button
+                type="button"
+                onClick={() => setNavOpen(false)}
+                className="absolute top-4 right-3 p-1.5 text-white/80 hover:text-white rounded-md bg-white/10"
+              >
+                <Icon name="x" size={18} />
+              </button>
             </div>
-          )}
-        </div>
-        <main id="main" className="mx-auto w-full max-w-content flex-1 px-4 py-6 lg:px-8">
-          {children}
+          </div>
+        )}
+
+        <main id="main" className="min-w-0 flex-1 overflow-auto">
+          <div className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>

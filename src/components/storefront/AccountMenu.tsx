@@ -64,6 +64,11 @@ export function AccountMenu() {
           <Link href="/home" className={menuItem} onClick={() => setOpen(false)}>
             <Icon name="home" size={20} /> Go to home
           </Link>
+          {user.role === "customer" && (
+            <Link href="/orders" className={menuItem} onClick={() => setOpen(false)}>
+              <Icon name="clipboard" size={20} /> My orders
+            </Link>
+          )}
           <Link href="/profile" className={menuItem} onClick={() => setOpen(false)}>
             <Icon name="user" size={20} /> Profile
           </Link>

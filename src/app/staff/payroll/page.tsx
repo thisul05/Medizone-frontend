@@ -70,6 +70,9 @@ export default function MonthlyPayrollPage() {
               <ButtonLink href="/staff/salary-rates" variant="secondary" size="md">
                 Salary rates
               </ButtonLink>
+              <Button variant="primary" size="md" icon="printer" onClick={() => window.print()}>
+                Print payslips
+              </Button>
             </div>
           </div>
 

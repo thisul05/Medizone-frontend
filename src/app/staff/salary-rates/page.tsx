@@ -7,7 +7,7 @@ import { useToast } from "@/components/shared/Toast";
 import { useStaff } from "@/components/staff/StaffContext";
 import { WORKING_DAYS } from "@/data/staff";
 import { branchName } from "@/data/branches";
-import { formatLKR, formatDate } from "@/lib/format";
+import { formatLKR } from "@/lib/format";
 
 export default function SalaryRatesPage() {
   const toast = useToast();

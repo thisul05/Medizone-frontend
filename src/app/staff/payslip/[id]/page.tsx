@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/shared/Button";
-import { Icon } from "@/components/shared/Icon";
 import { useStaff } from "@/components/staff/StaffContext";
 import { daysPresent, WORKING_DAYS } from "@/data/staff";
 import { branchName } from "@/data/branches";

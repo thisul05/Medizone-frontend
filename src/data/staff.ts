@@ -20,7 +20,7 @@ export interface AttendanceRecord {
   timeOut?: string;
 }
 
-const WORKING_DAYS = 30;
+const WORKING_DAYS = 26;
 
 export { WORKING_DAYS };
 
@@ -57,7 +57,7 @@ export const staffMembers: StaffMember[] = [
 
   /* ── Accounts (2 for all branches) ─────────────────────────── */
   { id: "EMP-018", name: "Harshani Wickramasinghe", nic: "199390123456", dateOfBirth: "1993-04-11", role: "Accounts Officer", branch: "all", mobile: "0718765401", email: "harshani@medizone.lk", dailyRate: 2800, joinedDate: "2020-08-15" },
-  { id: "EMP-019", name: "Isuru Weerasinghe", nic: "199501234567", dateOfBirth: "1995-09-03", role: "Accountant Clerk", branch: "all", mobile: "0756789001", dailyRate: 2800, joinedDate: "2021-11-20" },
+  { id: "EMP-019", name: "Isuru Weerasinghe", nic: "199501234567", dateOfBirth: "1995-09-03", role: "Accounts Officer", branch: "all", mobile: "0756789001", dailyRate: 2800, joinedDate: "2021-11-20" },
 ];
 
 const ABSENT_MAP: Record<string, number[]> = {
@@ -130,5 +130,4 @@ export const STAFF_ROLES = [
   "Pharmacist Assistant",
   "Purchasing Manager",
   "Accounts Officer",
-  "Accountant Clerk",
 ];

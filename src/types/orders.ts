@@ -55,6 +55,10 @@ export interface Order {
   items: OrderItem[];
   fulfilment: Fulfilment;
   address?: string;
+  /** Online orders: the customer's email, if given at checkout. */
+  email?: string;
+  /** Online home delivery: the time window the customer picked, "Tomorrow, 9 am – 1 pm". */
+  deliverySlot?: string;
   /** ISO date and time the customer expects it ready. */
   readyBy?: string;
   payMethod: OrderPayMethod;

@@ -3,9 +3,9 @@
 // A small browser store so orders stay the same across pages: a customer's checkout appears in
 // the staff queue, and status changes show in My Orders. Saved in localStorage; nothing is sent anywhere.
 import { useSyncExternalStore } from "react";
-import { orders as seedOrders, prescriptions as seedPrescriptions } from "@/data/orders";
+import { orders as seedOrders, posBills as seedPosBills, prescriptions as seedPrescriptions } from "@/data/orders";
 import { readItem, writeItem } from "@/lib/auth-store";
-import { nextRepeat, nextStatus, TODAY } from "@/lib/orders";
+import { SEED_SHIFT, nextRepeat, nextStatus, shiftDates, TODAY } from "@/lib/orders";
 import type { Order, Prescription } from "@/types/orders";
 
 interface OrdersState {
@@ -13,8 +13,12 @@ interface OrdersState {
   prescriptions: Prescription[];
 }
 
-const KEY = "mz.orders.v1";
-const SEED: OrdersState = { orders: seedOrders, prescriptions: seedPrescriptions };
+// v2: sample dates now follow the real calendar, so older saved copies are replaced once.
+const KEY = "mz.orders.v2";
+const SEED: OrdersState = shiftDates({ orders: seedOrders, prescriptions: seedPrescriptions }, SEED_SHIFT);
+
+/** Counter (POS) bills for Labels and Overview, dated around today like the orders. */
+export const POS_BILLS = shiftDates(seedPosBills, SEED_SHIFT);
 
 let cache: OrdersState | undefined;
 const listeners = new Set<() => void>();

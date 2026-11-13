@@ -129,6 +129,11 @@ export function AccountMenu() {
           <Link href="/home" className={menuItem} onClick={close}>
             <Icon name="home" size={20} /> Go to home
           </Link>
+          {user.role === "customer" && (
+            <Link href="/orders" className={menuItem} onClick={close}>
+              <Icon name="clipboard" size={20} /> My orders
+            </Link>
+          )}
           <Link href="/profile" className={menuItem} onClick={close}>
             <Icon name="user" size={20} /> Profile
           </Link>

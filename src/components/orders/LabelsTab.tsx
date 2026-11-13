@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Alert, Button, CARD, Icon, Select, TextField, cx, useToast } from "@/components/shared";
 import { branchName } from "@/data/branches";
-import { posBills } from "@/data/orders";
+import { POS_BILLS as posBills } from "@/lib/orders-store";
 import { formatLKR } from "@/lib/format";
 import { WHEN_LABELS, labelText, orderCode } from "@/lib/orders";
 import type { Order, OrderItem } from "@/types/orders";

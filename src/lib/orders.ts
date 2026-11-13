@@ -3,8 +3,34 @@ import { branchName } from "@/data/branches";
 import { formatLKR } from "@/lib/format";
 import type { Order, OrderItem, OrderStatus, RepeatEvery, WhenToTake } from "@/types/orders";
 
-/** "Today" in the prototype, the same date Module 5 uses. */
-export const TODAY = "2026-11-06";
+/** The day the sample data was written for. */
+export const SEED_DAY = "2026-11-06";
+
+/** A date as "YYYY-MM-DD" in the browser's time zone (Sri Lanka for the pharmacy). */
+export function localISO(d: Date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** Today's real date in the browser. While rendering on the server it is SEED_DAY, like Module 5's fallback. */
+export const TODAY = typeof window === "undefined" ? SEED_DAY : localISO();
+
+/** Move every "YYYY-MM-DD..." string inside sample data by the same number of days, so the samples stay "recent". */
+export function shiftDates<T>(value: T, days: number): T {
+  if (!days) return value;
+  if (typeof value === "string") {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+    if (!m) return value;
+    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]) + days);
+    return (localISO(d) + value.slice(10)) as T;
+  }
+  if (Array.isArray(value)) return value.map((v) => shiftDates(v, days)) as T;
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, shiftDates(v, days)])) as T;
+  return value;
+}
+
+/** Days between the sample-data day and today. */
+export const SEED_SHIFT = Math.round((Date.parse(TODAY) - Date.parse(SEED_DAY)) / 86_400_000);
 
 /** "ord-01" -> "ORD-01". */
 export const orderCode = (id: string) => id.toUpperCase();

@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Alert, Button, ButtonLink, CARD, Icon, Select, TextField, cx, useToast, type IconName } from "@/components/shared";
 import { branches, branchName } from "@/data/branches";
 import { getCategory } from "@/data/storefront";
 import { useAuth } from "@/lib/auth";
 import { getCustomerProfile } from "@/lib/auth-store";
 import { useCart } from "@/lib/cart";
-import { formatLKR } from "@/lib/format";
+import { formatLKR, formatPhone } from "@/lib/format";
 import { DELIVERY_FEE, customerDiscount, orderTotals } from "@/lib/orders";
 import { useOrders } from "@/lib/orders-store";
 import type { OrderItem } from "@/types/orders";
@@ -29,6 +29,19 @@ function Choice({ checked, onChange, title, detail, price, icon }: { checked: bo
         {price && <span className={cx("mt-1 mz-label", price === "Free" && "text-success-ink")}>{price}</span>}
       </span>
     </label>
+  );
+}
+
+/** One of the three small boxes in "Delivery details" on the review step. */
+function DetailTile({ icon, label, children }: { icon: IconName; label: string; children: ReactNode }) {
+  return (
+    <div className="flex gap-3 rounded-md border border-line bg-surface-sunken p-3">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary-tint text-primary-tint-ink"><Icon name={icon} size={16} /></span>
+      <div className="flex min-w-0 flex-col">
+        <span className="mz-caption text-ink-muted">{label}</span>
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -54,10 +67,11 @@ export function CheckoutView() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [placing, setPlacing] = useState(false);
 
-  const items: OrderItem[] = cart.items.flatMap((i) => {
+  const lines = cart.items.flatMap((i) => {
     const p = cart.getProduct(i.productId);
-    return p ? [{ name: p.name, qty: i.qty, unitPrice: p.price, productId: p.id, needsLabel: false }] : [];
+    return p ? [{ product: p, qty: i.qty }] : [];
   });
+  const items: OrderItem[] = lines.map(({ product: p, qty }) => ({ name: p.name, qty, unitPrice: p.price, productId: p.id, needsLabel: false }));
   const discountPercent = customerDiscount(user?.jobTitle);
   const totals = orderTotals({ items, discountPercent, deliveryFee: method === "delivery" ? DELIVERY_FEE : 0 });
   const payMethod: Pay = method === "pickup" && pay === "cod" ? "pay_at_counter" : method === "delivery" && pay === "pay_at_counter" ? "cod" : pay;
@@ -90,8 +104,9 @@ export function CheckoutView() {
     setPlacing(true);
     await new Promise((r) => setTimeout(r, 400));
     const id = addOrder({
-      source: "online", customerId: user?.customerId ?? user?.id ?? "guest", customerName: name.trim(), phone: phone.replace(/\D/g, ""),
+      source: "online", customerId: user?.customerId ?? user?.id ?? "guest", customerName: name.trim(), phone: phone.replace(/\D/g, ""), email: email.trim() || undefined,
       branchId, items, fulfilment: method === "delivery" ? "own_driver" : "collect", address: method === "delivery" ? address.trim() : undefined,
+      deliverySlot: method === "delivery" ? slot : undefined,
       payMethod, paymentState: "pending", discountPercent, deliveryFee: totals.deliveryFee, note: [method === "delivery" ? slot : "", note.trim()].filter(Boolean).join(" · ") || undefined,
     });
     cart.clear();
@@ -108,7 +123,7 @@ export function CheckoutView() {
               {step > i + 1 ? <Icon name="check" size={14} /> : i + 1}
             </span>
             <span className={cx("mz-label", step < i + 1 && "text-ink-muted")}>{s}</span>
-            {i < steps.length - 1 && <span className="mx-2 h-0.5 w-16 bg-line" />}
+            {i < steps.length - 1 && <span className={cx("mx-2 h-0.5 w-16", step > 1 ? "bg-success-solid" : "bg-line")} />}
           </li>
         ))}
       </ol>
@@ -141,61 +156,109 @@ export function CheckoutView() {
           </div>
         ) : (
           <div className="flex min-w-0 flex-col gap-6">
-            <section className={cx(CARD, "flex flex-col gap-2")}>
+            <section className={cx(CARD, "flex flex-col gap-4")}>
               <div className="flex justify-between"><h2 className="mz-h3">Delivery details</h2><button type="button" className="mz-label text-link" onClick={() => setStep(1)}>Edit</button></div>
-              <p>{name} · {phone}{email.trim() && ` · ${email.trim()}`}</p>
-              <p className="text-ink-muted">{method === "delivery" ? `Home delivery by our driver to ${address} · ${slot}` : `Pick up at ${branchName(branchId)} branch`}</p>
-              {note && <p className="text-ink-muted">Note: {note}</p>}
+              <div className="grid gap-3 md:grid-cols-3">
+                <DetailTile icon="user" label="Contact">
+                  <span className="mz-label">{name}</span>
+                  <span className="mz-body-sm text-ink-muted">{formatPhone(phone)}{email.trim() && ` · ${email.trim()}`}</span>
+                </DetailTile>
+                {method === "delivery" ? (
+                  <>
+                    <DetailTile icon="map-pin" label="Address"><span className="mz-label">{address}</span></DetailTile>
+                    <DetailTile icon="truck" label="Delivery">
+                      <span className="mz-label">Home delivery by pharmacy driver</span>
+                      <span className="mz-body-sm text-ink-muted">{slot}</span>
+                    </DetailTile>
+                  </>
+                ) : (
+                  <DetailTile icon="store" label="Pick up">
+                    <span className="mz-label">{branchName(branchId)} branch</span>
+                    <span className="mz-body-sm text-ink-muted">Ready within 2 hours</span>
+                  </DetailTile>
+                )}
+              </div>
+              {note.trim() && <p className="mz-body-sm"><span className="text-ink-muted">Note for the driver:</span> {note.trim()}</p>}
             </section>
+
             <section className={cx(CARD, "flex flex-col gap-3")}>
               <div className="flex justify-between"><h2 className="mz-h3">Items ({items.length})</h2><button type="button" className="mz-label text-link" onClick={() => cart.setOpen(true)}>Edit cart</button></div>
-              {items.map((i) => (
-                <p key={i.name} className="flex justify-between gap-4 border-b border-line pb-2 last:border-0"><span>{i.name} <span className="text-ink-muted">× {i.qty}</span></span><span className="mz-num">{formatLKR(i.qty * i.unitPrice)}</span></p>
-              ))}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-surface-sunken mz-overline text-ink-muted">
+                      <th className="rounded-l-md px-3 py-2 font-semibold">Product</th>
+                      <th className="px-3 py-2 font-semibold">Qty</th>
+                      <th className="px-3 py-2 font-semibold">Price</th>
+                      <th className="rounded-r-md px-3 py-2 text-right font-semibold">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {lines.map(({ product: p, qty }) => (
+                      <tr key={p.id}>
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-3">
+                            <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-surface-sunken"><Icon name={getCategory(p.categoryId)?.icon ?? "package"} size={18} className="text-ink-subtle" /></span>
+                            <span className="flex flex-col"><span className="mz-label">{p.name}</span>{p.brand && <span className="mz-caption text-ink-muted">{p.brand}</span>}</span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-3 mz-num">{qty}</td>
+                        <td className="whitespace-nowrap px-3 py-3 text-ink-muted mz-num">{formatLKR(p.price)}</td>
+                        <td className="whitespace-nowrap px-3 py-3 text-right mz-label mz-num">{formatLKR(p.price * qty)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </section>
+
             <section className={cx(CARD, "flex flex-col gap-3")}>
               <h2 className="mz-h3">How would you like to pay?</h2>
-              <Choice checked={payMethod === "card"} onChange={() => setPay("card")} title="Visa or Mastercard" detail="You complete the card payment in the secure PayHere step after placing the order" />
+              <Choice icon="card" checked={payMethod === "card"} onChange={() => setPay("card")} title="Visa or Mastercard" detail="You complete the card payment in the secure PayHere step after placing the order" />
               {method === "delivery" ? (
-                <Choice checked={payMethod === "cod"} onChange={() => setPay("cod")} title="Cash on delivery" detail="Pay our driver in cash when your order arrives" />
+                <Choice icon="banknote" checked={payMethod === "cod"} onChange={() => setPay("cod")} title="Cash on delivery" detail="Pay our driver in cash when your order arrives" />
               ) : (
-                <Choice checked={payMethod === "pay_at_counter"} onChange={() => setPay("pay_at_counter")} title="Pay at the branch" detail="Pay by cash or card when you collect" />
+                <Choice icon="store" checked={payMethod === "pay_at_counter"} onChange={() => setPay("pay_at_counter")} title="Pay at the branch" detail="Pay by cash or card when you collect" />
               )}
             </section>
+
+            <p className="flex items-center gap-2 rounded-md bg-info-bg px-4 py-3 mz-body-sm text-info-ink">
+              <Icon name="info" size={16} />After you place the order, the pharmacy prepares it and you can follow its status in My orders.
+            </p>
           </div>
         )}
 
         <aside className={cx(CARD, "flex h-fit flex-col gap-2")}>
-          <h2 className="mb-1 mz-h3">Order summary</h2>
-          <ul className="mb-2 flex flex-col gap-3 border-b border-line pb-4">
-            {cart.items.map((i) => {
-              const p = cart.getProduct(i.productId);
-              if (!p) return null;
-              return (
-                <li key={i.productId} className="flex items-center gap-3">
+          <h2 className="mb-1 mz-h3">{step === 1 ? "Order summary" : "Price details"}</h2>
+          {step === 1 && (
+            <ul className="mb-2 flex flex-col gap-3 border-b border-line pb-4">
+              {lines.map(({ product: p, qty }) => (
+                <li key={p.id} className="flex items-center gap-3">
                   <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-surface-sunken">
                     <Icon name={getCategory(p.categoryId)?.icon ?? "package"} size={20} className="text-ink-subtle" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="line-clamp-2 mz-label">{p.name}</span>
-                    <span className="mz-caption text-ink-muted">Qty {i.qty}</span>
+                    <span className="mz-caption text-ink-muted">Qty {qty}</span>
                   </span>
-                  <span className="mz-label mz-num">{formatLKR(p.price * i.qty)}</span>
+                  <span className="mz-label mz-num">{formatLKR(p.price * qty)}</span>
                 </li>
-              );
-            })}
-          </ul>
+              ))}
+            </ul>
+          )}
           <p className="flex justify-between"><span className="text-ink-muted">Subtotal ({items.length} items)</span><span className="mz-num">{formatLKR(totals.subtotal)}</span></p>
           {discountPercent > 0 && <p className="flex justify-between"><span className="text-ink-muted">Regular customer discount ({discountPercent}%)</span><span className="mz-num text-success-ink">− {formatLKR(totals.discount)}</span></p>}
           <p className="flex justify-between"><span className="text-ink-muted">{method === "delivery" ? "Home delivery" : "Pick up"}</span><span className="mz-num">{method === "delivery" ? formatLKR(DELIVERY_FEE) : "Free"}</span></p>
-          <p className="flex justify-between border-t border-line pt-2 mz-label"><span>Total</span><span className="mz-price mz-num">{formatLKR(totals.total)}</span></p>
+          <p className="flex justify-between border-t border-line pt-2 mz-label"><span>{step === 1 ? "Total" : "Total to pay"}</span><span className="mz-price mz-num">{formatLKR(totals.total)}</span></p>
           {step === 1 ? (
             <Button size="lg" block iconRight="arrow-right" className="mt-2" onClick={next}>Continue to review</Button>
           ) : (
-            <Button size="lg" block className="mt-2" loading={placing} onClick={place}>Place order</Button>
+            <>
+              <Button size="lg" block className="mt-2" loading={placing} onClick={place}>Place order</Button>
+              <button type="button" className="mt-1 self-center mz-body-sm text-link hover:underline" onClick={() => setStep(1)}>← Back to delivery</button>
+            </>
           )}
-          {step === 2 && <Button variant="ghost" block onClick={() => setStep(1)}>Back to delivery</Button>}
-          <p className="mt-1 flex items-center gap-1.5 mz-body-sm text-ink-muted"><Icon name="lock" size={14} />Prescription medicines are not sold online. Send your prescription on WhatsApp instead.</p>
+          {step === 1 && <p className="mt-1 flex items-center gap-1.5 mz-body-sm text-ink-muted"><Icon name="lock" size={14} />Prescription medicines are not sold online. Send your prescription on WhatsApp instead.</p>}
         </aside>
       </div>
     </div>

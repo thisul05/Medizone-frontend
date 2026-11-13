@@ -48,19 +48,22 @@ export default function ShortExpiryTab({
     switch (tag) {
       case "red":
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-600 text-white">
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0" />
             Red · {months} month{months > 1 ? "s" : ""}
           </span>
         );
       case "orange":
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-600 text-white">
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-orange-500 shrink-0" />
             Orange · {months} months
           </span>
         );
       case "yellow":
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-500 text-white">
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
             Yellow · {months} months
           </span>
         );
@@ -71,28 +74,22 @@ export default function ShortExpiryTab({
     switch (status) {
       case "to_return":
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-            </svg>
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
             To return
           </span>
         );
       case "sent_to_supplier":
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky-500 shrink-0" />
             Sent
           </span>
         );
       case "credit_received":
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
             Credit note
           </span>
         );
@@ -139,32 +136,45 @@ export default function ShortExpiryTab({
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm">
-          <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-xs">
+          <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">
             Items to return
           </p>
-          <p className="text-3xl font-extrabold text-slate-900 mt-2">{itemsToReturnCount}</p>
+          <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
+            {itemsToReturnCount}
+          </p>
+          <p className="mt-1 text-xs text-[#46566d]">
+            Batches marked for supplier credit claim
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm">
-          <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-xs">
+          <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">
             Deadlines in the next 30 days
           </p>
-          <p className="text-3xl font-extrabold text-slate-900 mt-2">
+          <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-amber-700 tabular-nums">
             {deadlines30DaysCount}
+          </p>
+          <p className="mt-1 text-xs text-[#46566d]">
+            Urgent returns before credit eligibility expires
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm">
-          <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-xs">
+          <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">
             Awaiting credit
           </p>
-          <p className="text-3xl font-extrabold text-slate-900 mt-2">{awaitingCreditCount}</p>
+          <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
+            {awaitingCreditCount}
+          </p>
+          <p className="mt-1 text-xs text-[#46566d]">
+            Dispatched to suppliers for credit note
+          </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-gray-200/80 p-4 shadow-xs flex items-center justify-between">
         <div className="w-full sm:w-60">
           <label className="block text-xs font-semibold text-slate-600 mb-1">
             Credit status

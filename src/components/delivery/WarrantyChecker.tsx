@@ -70,15 +70,15 @@ export default function WarrantyChecker() {
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {KPI.map((s) => (
-          <div key={s.label} className="rounded-lg border border-line bg-surface-raised p-4 shadow-1">
-            <div className="mb-2 flex items-start justify-between">
-              <p className="mz-overline text-ink-muted">{s.label}</p>
+          <div key={s.label} className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
+            <div className="flex items-start justify-between">
+              <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">{s.label}</p>
               <Icon name={s.icon} size={15} className="text-ink-subtle" />
             </div>
-            <p className="mz-kpi text-primary">{s.value}</p>
-            <p className="mz-body-sm mt-1 text-ink-subtle">{s.sub}</p>
+            <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#072f68] tabular-nums">{s.value}</p>
+            <p className="mt-1 text-xs text-[#46566d]">{s.sub}</p>
           </div>
         ))}
       </div>

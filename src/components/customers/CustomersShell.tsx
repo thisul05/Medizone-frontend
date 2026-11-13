@@ -87,8 +87,8 @@ export function CustomersShell({ children }: { children: ReactNode }) {
           </div>
         ) : null}
 
-        <main id="main" className="min-w-0 flex-1">
-          <div className="flex w-full flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</div>
+        <main id="main" className="min-w-0 flex-1 overflow-auto">
+          <div className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6">{children}</div>
         </main>
       </div>
     </div>

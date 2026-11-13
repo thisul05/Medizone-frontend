@@ -49,7 +49,7 @@ export function ProductCard({
   const [failed, setFailed] = useState(false);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface-raised shadow-1 transition-shadow duration-150 hover:shadow-2">
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-xs transition-shadow duration-150 hover:shadow-md">
       <div className="relative flex aspect-[4/3] items-center justify-center bg-surface-sunken">
         {image && !failed ? (
           <Image

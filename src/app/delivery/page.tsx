@@ -142,36 +142,36 @@ export default function DeliveryPage() {
         )}
 
         <main id="main" className="min-w-0 flex-1 overflow-auto">
-          <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
+          <div className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6">
             {/* Page header */}
-            <div className="mb-6">
-              <p className="mz-body-sm text-ink-muted mb-1">Back Office / Delivery &amp; Warranty</p>
-              <h1 className="mz-h1 text-ink">Delivery, Returns &amp; Warranty</h1>
-              <p className="mt-1 text-sm text-ink-muted">
+            <div className="mb-2">
+              <p className="text-xs font-medium text-gray-500 mb-1">Back Office / Delivery &amp; Warranty</p>
+              <h1 className="text-2xl font-bold tracking-tight text-[#0e1b2e]">Delivery, Returns &amp; Warranty</h1>
+              <p className="mt-1 text-xs sm:text-sm text-[#46566d]">
                 Manage dispatches, customer returns and warranty support in one place.
               </p>
             </div>
 
-          {/* KPI cards */}
-          <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map((s) => (
-              <div key={s.label} className="rounded-lg border border-line bg-surface-raised p-5 shadow-1">
-                <div className="mz-overline mb-2 text-ink-muted">{s.label}</div>
-                <div className={`mz-kpi ${s.color}`}>{s.value}</div>
-                <div className="mz-body-sm mt-1 text-ink-subtle">{s.sub}</div>
-              </div>
-            ))}
-          </div>
+            {/* KPI cards */}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {stats.map((s) => (
+                <div key={s.label} className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
+                  <div className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">{s.label}</div>
+                  <div className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">{s.value}</div>
+                  <div className="mt-1 text-xs text-[#46566d]">{s.sub}</div>
+                </div>
+              ))}
+            </div>
 
-          {/* Tabs */}
-          <Tabs
-            tabs={TABS}
-            value={activeTab}
-            onChange={(id) => router.replace(`/delivery?tab=${id}`, { scroll: false })}
-            label="Delivery module sections"
-            idBase="delivery"
-            className="mb-5"
-          />
+            {/* Tabs */}
+            <Tabs
+              tabs={TABS}
+              value={activeTab}
+              onChange={(id) => router.replace(`/delivery?tab=${id}`, { scroll: false })}
+              label="Delivery module sections"
+              idBase="delivery"
+              className="mb-2"
+            />
 
           {/* Tab content */}
           <div className="rounded-lg border border-line bg-surface-raised p-5 shadow-1">

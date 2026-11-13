@@ -250,20 +250,18 @@ export default function BillingPage() {
           </div>
         )}
 
-        <main id="main" className="flex-1 p-5 sm:p-6 lg:p-8">
-          <div className="mx-auto max-w-[1400px] space-y-6">
+        <main id="main" className="min-w-0 flex-1 overflow-auto">
+          <div className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6">
             {/* Top Header & Navigation */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-gray-200 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <p className="text-xs font-medium text-gray-500 mb-1">
-                  Pharmacy <span className="text-gray-400 mx-1">/</span> Billing &amp; Counter POS
+                  Pharmacy / Billing &amp; Counter POS
                 </p>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#072f68]">
-                    Billing &amp; Point of Sale
-                  </h1>
-                </div>
-                <p className="text-xs sm:text-sm text-[#46566d] mt-0.5">
+                <h1 className="text-2xl font-bold tracking-tight text-[#0e1b2e]">
+                  Billing &amp; Point of Sale
+                </h1>
+                <p className="mt-1 text-xs sm:text-sm text-[#46566d]">
                   Counter POS checkout, customer loyalty discounts, and daily cash reconciliation.
                 </p>
               </div>
@@ -282,13 +280,13 @@ export default function BillingPage() {
                   ))}
                 </select>
 
-                <div className="bg-gray-200/80 p-1 rounded-xl flex space-x-1">
+                <div className="bg-white border border-gray-200/80 p-1 rounded-xl flex space-x-1 shadow-xs">
                   <button
                     onClick={() => setActiveTab("pos")}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === "pos"
                         ? "bg-[#072f68] text-white shadow-xs"
-                        : "text-gray-700 hover:text-black hover:bg-white/50"
+                        : "text-gray-700 hover:text-black hover:bg-gray-50"
                     }`}
                   >
                     POS Terminal
@@ -298,7 +296,7 @@ export default function BillingPage() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === "summary"
                         ? "bg-[#072f68] text-white shadow-xs"
-                        : "text-gray-700 hover:text-black hover:bg-white/50"
+                        : "text-gray-700 hover:text-black hover:bg-gray-50"
                     }`}
                   >
                     Daily Summary
@@ -308,7 +306,7 @@ export default function BillingPage() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === "invoices"
                         ? "bg-[#072f68] text-white shadow-xs"
-                        : "text-gray-700 hover:text-black hover:bg-white/50"
+                        : "text-gray-700 hover:text-black hover:bg-gray-50"
                     }`}
                   >
                     Invoices Archive ({bills.length})

@@ -58,13 +58,13 @@ interface KpiCardProps {
 /** Summary card: muted label, large bold navy number. */
 export function KpiCard({ label, value, unit, hint }: KpiCardProps) {
   return (
-    <div className={`${cardClass} flex min-w-0 flex-col gap-2 px-5 py-5`}>
-      <span className="text-xs font-medium text-[#46566d]">{label}</span>
-      <div className="text-2xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
+    <div className={`${cardClass} flex min-w-0 flex-col px-5 py-5`}>
+      <span className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">{label}</span>
+      <div className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
         {value}
         {unit ? <span className="ml-1 text-base font-semibold">{unit}</span> : null}
       </div>
-      {hint ? <p className="text-xs text-[#46566d]">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-[#46566d]">{hint}</p> : null}
     </div>
   );
 }

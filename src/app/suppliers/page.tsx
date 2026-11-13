@@ -149,19 +149,19 @@ export default function SuppliersPage() {
           </div>
         )}
 
-        <main id="main" className="flex-1 p-5 sm:p-6 lg:p-8">
-          <div className="mx-auto max-w-[1400px] space-y-6">
+        <main id="main" className="min-w-0 flex-1 overflow-auto">
+          <div className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6">
             {/* Header: Breadcrumbs & Title */}
             <div>
               <p className="text-xs font-medium text-gray-500 mb-1">
-                Back Office <span className="text-gray-400 mx-1">/</span> Suppliers &amp; Purchases
+                Back Office / Suppliers &amp; Purchases
               </p>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight text-[#072f68]">
+                  <h1 className="text-2xl font-bold tracking-tight text-[#0e1b2e]">
                     Suppliers &amp; Purchases
                   </h1>
-                  <p className="text-xs sm:text-sm text-[#46566d] mt-0.5">
+                  <p className="mt-1 text-xs sm:text-sm text-[#46566d]">
                     Manage pharmaceutical distributors, purchase orders, goods receipts, short-expiry returns, and invoice payments.
                   </p>
                 </div>
@@ -170,14 +170,14 @@ export default function SuppliersPage() {
                   <button
                     type="button"
                     onClick={() => setIsCreatingPO(true)}
-                    className="rounded-lg bg-[#072f68] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#052350]"
+                    className="rounded-lg bg-[#072f68] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#052350] cursor-pointer"
                   >
                     + New purchase order
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsAddSupplierOpen(true)}
-                    className="rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-xs font-semibold text-gray-700 shadow-xs transition-colors hover:bg-gray-50"
+                    className="rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-xs font-semibold text-gray-700 shadow-xs transition-colors hover:bg-gray-50 cursor-pointer"
                   >
                     Add supplier
                   </button>

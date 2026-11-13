@@ -64,16 +64,16 @@ export default function StaffListPage() {
         )}
 
         <main id="main" className="min-w-0 flex-1 overflow-auto">
-          <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <p className="mz-body-sm text-ink-muted mb-1">Back Office / Staff &amp; Payroll</p>
-                <h1 className="mz-h1 text-ink">Staff &amp; Payroll</h1>
-                <p className="mt-1 mz-body-sm text-ink-muted">
+                <p className="text-xs font-medium text-gray-500 mb-1">Back Office / Staff &amp; Payroll</p>
+                <h1 className="text-2xl font-bold tracking-tight text-[#0e1b2e]">Staff &amp; Payroll</h1>
+                <p className="mt-1 text-xs sm:text-sm text-[#46566d]">
                   {staff.length} active staff members across all branches.
                 </p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <ButtonLink href="/staff/attendance" variant="secondary" size="md">
                   Attendance
                 </ButtonLink>
@@ -86,19 +86,20 @@ export default function StaffListPage() {
               </div>
             </div>
 
-          <div className="rounded-lg border border-line bg-surface-raised shadow-1 overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-line bg-surface-sunken">
-                  <th className="px-4 py-3 mz-label text-ink-muted">Staff ID</th>
-                  <th className="px-4 py-3 mz-label text-ink-muted">Name</th>
-                  <th className="px-4 py-3 mz-label text-ink-muted">Role</th>
-                  <th className="px-4 py-3 mz-label text-ink-muted">Branch</th>
-                  <th className="px-4 py-3 mz-label text-ink-muted">Mobile</th>
-                  <th className="px-4 py-3 mz-label text-ink-muted">Joined date</th>
-                  <th className="px-4 py-3 mz-label text-ink-muted text-center">Actions</th>
-                </tr>
-              </thead>
+            <div className="rounded-xl border border-gray-200/80 bg-white shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-gray-200/80 bg-gray-50/70">
+                      <th className="px-4 py-3 font-semibold text-gray-600">Staff ID</th>
+                      <th className="px-4 py-3 font-semibold text-gray-600">Name</th>
+                      <th className="px-4 py-3 font-semibold text-gray-600">Role</th>
+                      <th className="px-4 py-3 font-semibold text-gray-600">Branch</th>
+                      <th className="px-4 py-3 font-semibold text-gray-600">Mobile</th>
+                      <th className="px-4 py-3 font-semibold text-gray-600">Joined date</th>
+                      <th className="px-4 py-3 font-semibold text-gray-600 text-center">Actions</th>
+                    </tr>
+                  </thead>
               <tbody>
                 {staff.map((s) => (
                   <tr key={s.id} className="border-b border-line last:border-b-0 hover:bg-surface-hover transition-colors duration-150">
@@ -133,7 +134,8 @@ export default function StaffListPage() {
             </table>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
     </div>
   </div>
 );

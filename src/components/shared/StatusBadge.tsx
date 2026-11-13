@@ -36,9 +36,9 @@ export default function StatusBadge({ kind, status, dot = true }: Props) {
   const { label, tone } = getStatus(kind, status);
   return (
     <span
-      className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-pill text-xs font-semibold ${TONE_CLASS[tone]}`}
+      className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 ${TONE_CLASS[tone]}`}
     >
-      {dot && <span className={`h-1.5 w-1.5 rounded-pill ${DOT_CLASS[tone]}`} aria-hidden="true" />}
+      {dot && <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${DOT_CLASS[tone]}`} aria-hidden="true" />}
       {label}
     </span>
   );

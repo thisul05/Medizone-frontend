@@ -140,16 +140,16 @@ export default function ReportsDashboard() {
       )}
 
       {/* Page Header: Breadcrumbs, Title, Search & Branch */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+      <div className="w-full max-w-7xl mx-auto px-5 pt-6 pb-2 sm:px-6 lg:px-8">
         <p className="text-xs font-medium text-gray-500 mb-1">
-          Back Office <span className="text-gray-400 mx-1">/</span> Reports &amp; Analytics
+          Back Office / Reports &amp; Analytics
         </p>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-gray-200">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#072f68]">
+            <h1 className="text-2xl font-bold tracking-tight text-[#0e1b2e]">
               Reports &amp; Analytics Hub
             </h1>
-            <p className="text-xs sm:text-sm text-[#46566d] mt-0.5">
+            <p className="mt-1 text-xs sm:text-sm text-[#46566d]">
               Sales audit, inventory valuation, narcotic register verification, and clinical compliance.
             </p>
           </div>
@@ -201,9 +201,9 @@ export default function ReportsDashboard() {
       </div>
 
       {/* Main Content Area */}
-      <main className="w-full px-4 sm:px-6 lg:px-8 py-6 flex-1">
+      <main className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6 flex-1">
         {/* Category Navigation Pills */}
-        <div className="flex items-center justify-between gap-4 mb-6 overflow-x-auto pb-2 scrollbar-none">
+        <div className="flex items-center justify-between gap-4 overflow-x-auto pb-2 scrollbar-none">
           <div className="flex items-center gap-2 min-w-max">
             {categories.map((cat) => {
               const isActive = selectedCategory === cat;
@@ -211,7 +211,7 @@ export default function ReportsDashboard() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={`h-8 px-3.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     isActive
                       ? "bg-[#072f68] text-white shadow-xs"
                       : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
@@ -338,14 +338,25 @@ export default function ReportsDashboard() {
                   <div className="p-5">
                     {/* Top Row: Category & Status */}
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded">
                         {report.category}
                       </span>
                       <span
-                        className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${getBadgeStyle(
+                        className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold whitespace-nowrap border ${getBadgeStyle(
                           report.statusColor
                         )}`}
                       >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full shrink-0 ${
+                            report.statusColor === "green"
+                              ? "bg-emerald-500"
+                              : report.statusColor === "amber"
+                              ? "bg-amber-500"
+                              : report.statusColor === "blue"
+                              ? "bg-sky-500"
+                              : "bg-gray-400"
+                          }`}
+                        />
                         {report.status}
                       </span>
                     </div>

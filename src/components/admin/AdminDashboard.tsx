@@ -172,44 +172,44 @@ export function AdminDashboard() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {/* Metric 1 */}
               <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
-                <p className="text-xs font-medium text-[#46566d]">Today&apos;s sales</p>
-                <p className="mt-2 text-2xl font-bold tracking-tight text-[#0e1b2e]">
+                <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">Today&apos;s sales</p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
                   LKR 128,450
                 </p>
-                <p className="mt-2 text-xs font-semibold text-emerald-600">
+                <p className="mt-1 text-xs font-semibold text-emerald-600">
                   +12.8% vs yesterday
                 </p>
               </div>
 
               {/* Metric 2 */}
               <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
-                <p className="text-xs font-medium text-[#46566d]">Total orders</p>
-                <p className="mt-2 text-2xl font-bold tracking-tight text-[#0e1b2e]">
+                <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">Total orders</p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
                   48
                 </p>
-                <p className="mt-2 text-xs text-[#46566d]">
-                  <span className="font-medium text-gray-800">36</span> in-store · <span className="font-medium text-gray-800">12</span> online
+                <p className="mt-1 text-xs text-[#46566d]">
+                  <span className="font-semibold text-gray-800">36</span> in-store · <span className="font-semibold text-gray-800">12</span> online
                 </p>
               </div>
 
               {/* Metric 3 */}
               <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
-                <p className="text-xs font-medium text-[#46566d]">Pending prescriptions</p>
-                <p className="mt-2 text-2xl font-bold tracking-tight text-[#0e1b2e]">
+                <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">Pending prescriptions</p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
                   08
                 </p>
-                <p className="mt-2 text-xs text-[#46566d]">
+                <p className="mt-1 text-xs text-[#46566d]">
                   Awaiting pharmacist review
                 </p>
               </div>
 
               {/* Metric 4 */}
               <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
-                <p className="text-xs font-medium text-[#46566d]">Low-stock items</p>
-                <p className="mt-2 text-2xl font-bold tracking-tight text-[#0e1b2e]">
+                <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">Low-stock items</p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
                   12
                 </p>
-                <p className="mt-2 text-xs font-medium text-[#b45309]">
+                <p className="mt-1 text-xs font-semibold text-amber-700">
                   4 items need urgent restocking
                 </p>
               </div>
@@ -371,14 +371,23 @@ export function AdminDashboard() {
                           </td>
                           <td className="py-3 px-3 text-center">
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
+                              className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold whitespace-nowrap ${
                                 order.statusTone === "green"
                                   ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
                                   : order.statusTone === "blue"
-                                  ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                                  ? "bg-sky-50 text-sky-700 border border-sky-200/60"
                                   : "bg-amber-50 text-amber-700 border border-amber-200/60"
                               }`}
                             >
+                              <span
+                                className={`h-1.5 w-1.5 rounded-full shrink-0 ${
+                                  order.statusTone === "green"
+                                    ? "bg-emerald-500"
+                                    : order.statusTone === "blue"
+                                    ? "bg-sky-500"
+                                    : "bg-amber-500"
+                                }`}
+                              />
                               {order.status}
                             </span>
                           </td>
@@ -428,14 +437,23 @@ export function AdminDashboard() {
                           </p>
                         </div>
                         <span
-                          className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold ${
+                          className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 ${
                             item.tone === "red"
-                              ? "bg-rose-50 text-rose-700 border border-rose-200/60"
+                              ? "bg-red-50 text-red-700 border border-red-200/60"
                               : item.tone === "orange"
                               ? "bg-orange-50 text-orange-700 border border-orange-200/60"
                               : "bg-amber-50 text-amber-700 border border-amber-200/60"
                           }`}
                         >
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full shrink-0 ${
+                              item.tone === "red"
+                                ? "bg-red-500"
+                                : item.tone === "orange"
+                                ? "bg-orange-500"
+                                : "bg-amber-500"
+                            }`}
+                          />
                           {item.badge}
                         </span>
                       </div>

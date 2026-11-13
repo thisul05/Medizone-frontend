@@ -59,8 +59,10 @@ export function InventoryShell({ children }: { children: ReactNode }) {
           </div>
         )}
 
-        <main id="main" className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 lg:px-8">
-          {children}
+        <main id="main" className="min-w-0 flex-1 overflow-auto">
+          <div className="w-full max-w-7xl mx-auto px-5 py-6 sm:px-6 lg:px-8 space-y-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>

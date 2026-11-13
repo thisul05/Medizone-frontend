@@ -49,11 +49,11 @@ export function StaffOrders() {
 
   return (
     <OrdersShell>
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <p className="mz-body-sm text-ink-muted">Pharmacy / Orders</p>
-          <h1 className="mz-h1">Orders</h1>
-          <p className="text-ink-muted">{SUBTITLES[tab]}</p>
+          <p className="text-xs font-medium text-gray-500 mb-1">Pharmacy / Orders</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#0e1b2e]">Orders</h1>
+          <p className="mt-1 text-xs sm:text-sm text-[#46566d]">{SUBTITLES[tab]}</p>
         </div>
         <ButtonLink href="/orders/new" icon="plus">
           New order

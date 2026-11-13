@@ -34,41 +34,22 @@ export default function SuppliersListTab({
     switch (stage) {
       case "credit":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
             Credit
           </span>
         );
       case "post_dated_cheque":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">
-            <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky-500 shrink-0" />
             Post-dated cheque
           </span>
         );
       case "cash_on_delivery":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-            <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-              <path
-                fillRule="evenodd"
-                d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <span className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/60 whitespace-nowrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
             Cash on delivery
           </span>
         );
@@ -87,34 +68,45 @@ export default function SuppliersListTab({
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm">
-          <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-xs">
+          <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">
             Suppliers
           </p>
-          <p className="text-3xl font-extrabold text-slate-900 mt-2">{suppliers.length}</p>
+          <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
+            {suppliers.length}
+          </p>
+          <p className="mt-1 text-xs text-[#46566d]">
+            Active pharmaceutical distributors
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm">
-          <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-xs">
+          <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">
             Orders Awaiting Delivery
           </p>
-          <p className="text-3xl font-extrabold text-slate-900 mt-2">
+          <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums">
             {ordersAwaitingCount}
+          </p>
+          <p className="mt-1 text-xs text-[#46566d]">
+            Purchase orders in transit or partial
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm">
-          <p className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-xs">
+          <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">
             Payments Overdue
           </p>
-          <p className="text-3xl font-extrabold text-red-600 mt-2">
+          <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-red-600 tabular-nums">
             {paymentsOverdueCount}
+          </p>
+          <p className="mt-1 text-xs font-medium text-red-600">
+            {paymentsOverdueCount > 0 ? "Requires immediate settlement" : "All payments up to date"}
           </p>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
+      <div className="bg-white rounded-xl border border-gray-200/80 p-4 shadow-xs flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="w-full sm:w-80">
           <label className="block text-xs font-semibold text-slate-600 mb-1">Search</label>
           <div className="relative">

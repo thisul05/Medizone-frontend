@@ -58,7 +58,7 @@ export function Footer() {
           <Column title="Customers">
             <li><Link href="/register" className={link}>Create account</Link></li>
             <li><Link href="/login" className={link}>Sign in</Link></li>
-            <li><Link href="/home" className={link}>My account</Link></li>
+            <li><Link href="/account" className={link}>My account</Link></li>
             <li><FooterCartLink className={link} /></li>
           </Column>
           <Column title="About">

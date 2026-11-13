@@ -1,3 +1,5 @@
+import { customers as allCustomers } from "./customers";
+
 export type PayMethod = "cash" | "card" | "bank_transfer" | "cod" | "payhere";
 
 export interface ProductItem {
@@ -85,14 +87,13 @@ export const mockCatalogProducts: ProductItem[] = [
 ];
 
 // Module 5: Linked Customers with Regular Loyalty Discounts (3% or 5%)
-export const mockCustomersList: CustomerProfile[] = [
-  { id: "CUST-01", name: "Sunil Perera", phone: "0712345678", loyaltyPoints: 245, discountPercent: 5 },
-  { id: "CUST-02", name: "Nimali Silva", phone: "0779876543", loyaltyPoints: 120, discountPercent: 3 },
-  { id: "CUST-03", name: "Kamal Gunaratne", phone: "0751122334", loyaltyPoints: 380, discountPercent: 5 },
-  { id: "CUST-04", name: "Priya Fernando", phone: "0788899001", loyaltyPoints: 85, discountPercent: 3 },
-  { id: "CUST-05", name: "Anura Wickramasinghe", phone: "0725566778", loyaltyPoints: 490, discountPercent: 5 },
-  { id: "CUST-06", name: "Dilani Jayawardena", phone: "0764433221", loyaltyPoints: 60, discountPercent: 3 },
-];
+export const mockCustomersList: CustomerProfile[] = allCustomers.map((c) => ({
+  id: c.id,
+  name: c.name,
+  phone: c.phone,
+  loyaltyPoints: c.loyaltyPoints,
+  discountPercent: (c.isRegular ? c.discountPercent : 0) as 0 | 3 | 5,
+}));
 
 // Initial Mock Bills: 10 sample bills for daily reconciliation and invoice archives
 export const initialBills: Bill[] = [
@@ -100,9 +101,9 @@ export const initialBills: Bill[] = [
     id: "BILL-1001",
     branchId: "b1",
     branchName: "Colombo Main Branch",
-    customerId: "CUST-01",
+    customerId: "cus-01",
     customerName: "Sunil Perera",
-    customerPhone: "0712345678",
+    customerPhone: "0771234567",
     date: "2026-11-12",
     lines: [
       { productId: "P001", productName: "Panadol Extra 500mg (10s)", qty: 2, unitPrice: 50.0 },

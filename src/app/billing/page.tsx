@@ -18,6 +18,14 @@ import {
   billTotals,
 } from "@/data/billing";
 
+function normalizePhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.startsWith("94") && digits.length === 11) {
+    return "0" + digits.slice(2);
+  }
+  return digits;
+}
+
 export default function BillingPage() {
   const { user, activeBranchId } = useAuth();
   const toast = useToast();
@@ -54,22 +62,44 @@ export default function BillingPage() {
     });
   }, [productSearch, selectedCategory]);
 
-  // Customer Lookup Logic
+  // Customer Lookup Logic (supports "077 123 4567", "0771234567", "+94 77 123 4567", ID or name)
   const handleCustomerLookup = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const cleanPhone = phoneSearch.trim();
-    if (!cleanPhone) {
+    const cleanQuery = phoneSearch.trim();
+    if (!cleanQuery) {
       setLookupMessage({ text: "Please enter a mobile phone number to search.", type: "error" });
       return;
     }
-    const found = mockCustomersList.find((c) => c.phone === cleanPhone);
+    const queryDigits = normalizePhone(cleanQuery);
+
+    const found = mockCustomersList.find((c) => {
+      const cDigits = normalizePhone(c.phone);
+      if (queryDigits && cDigits && queryDigits === cDigits) return true;
+      if (c.phone === cleanQuery) return true;
+      if (c.id.toLowerCase() === cleanQuery.toLowerCase()) return true;
+      const normId = c.id.toLowerCase().replace(/[^a-z0-9]/g, "");
+      const normQueryId = cleanQuery.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (normId && normQueryId && normId === normQueryId) return true;
+      if (normQueryId.replace(/0+/g, "") === normId.replace(/0+/g, "")) return true;
+      if (c.name.toLowerCase() === cleanQuery.toLowerCase()) return true;
+      return false;
+    });
+
     if (found) {
       setSelectedCustomer(found);
-      setLookupMessage({
-        text: `Customer found: ${found.name} (${found.discountPercent}% VIP discount applied). Loyalty Points: ${found.loyaltyPoints}`,
-        type: "success",
-      });
-      toast({ tone: "success", title: `${found.name} verified: ${found.discountPercent}% discount applied` });
+      if (found.discountPercent > 0) {
+        setLookupMessage({
+          text: `Customer found: ${found.name} (${found.discountPercent}% VIP discount applied). Loyalty Points: ${found.loyaltyPoints}`,
+          type: "success",
+        });
+        toast({ tone: "success", title: `${found.name} verified: ${found.discountPercent}% discount applied` });
+      } else {
+        setLookupMessage({
+          text: `Customer found: ${found.name} (Non-regular customer, 0% discount). Loyalty Points: ${found.loyaltyPoints}`,
+          type: "success",
+        });
+        toast({ tone: "info", title: `${found.name} verified (0% discount)` });
+      }
     } else {
       setSelectedCustomer(null);
       setLookupMessage({
@@ -327,8 +357,16 @@ export default function BillingPage() {
                         Customer Loyalty Lookup
                       </h2>
                       {selectedCustomer && (
-                        <span className="text-xs bg-emerald-50 text-emerald-800 border border-emerald-200/60 font-bold px-2 py-0.5 rounded-full">
-                          {selectedCustomer.discountPercent}% Discount Qualified
+                        <span
+                          className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
+                            selectedCustomer.discountPercent > 0
+                              ? "bg-emerald-50 text-emerald-800 border-emerald-200/60"
+                              : "bg-blue-50 text-blue-800 border-blue-200/60"
+                          }`}
+                        >
+                          {selectedCustomer.discountPercent > 0
+                            ? `${selectedCustomer.discountPercent}% Discount Qualified`
+                            : "Registered Customer (0% Discount)"}
                         </span>
                       )}
                     </div>
@@ -336,7 +374,7 @@ export default function BillingPage() {
                     <form onSubmit={handleCustomerLookup} className="flex gap-2">
                       <input
                         type="text"
-                        placeholder="Enter customer mobile (e.g. 0712345678, 0779876543)"
+                        placeholder="Enter customer mobile (e.g. 077 123 4567, 0771234567)"
                         value={phoneSearch}
                         onChange={(e) => setPhoneSearch(e.target.value)}
                         className="border border-gray-300 rounded-lg px-3 py-2 flex-1 text-xs focus:ring-2 focus:ring-[#072f68] outline-none"

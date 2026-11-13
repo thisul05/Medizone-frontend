@@ -1,63 +1,67 @@
 import Link from "next/link";
-import { getBranchName } from "@/data/customers";
-import { RATING_LABELS, formatDate } from "@/lib/customers";
+import { formatDate, isLowRating } from "@/lib/customers";
 import type { Customer, CustomerFeedback } from "@/types/customers";
 import { CustomerAvatar } from "./CustomerBadges";
 import { StarRatingDisplay } from "./StarRating";
-import { Badge, type BadgeTone } from "./ui/Badge";
-import { cardClass } from "./ui/Card";
-
-function ratingTone(rating: number): BadgeTone {
-  if (rating >= 4) return "success";
-  if (rating === 3) return "neutral";
-  return "danger";
-}
 
 interface FeedbackCardProps {
   entry: CustomerFeedback;
   customer?: Customer;
-  /** Hide the customer link on the customer's own profile. */
-  hideCustomer?: boolean;
-  isNew?: boolean;
+  /**
+   * list: Customer Feedback page (avatar, name and date, stars on the right).
+   * profile: Customer Profile tab (stars and date on top, customer and order underneath).
+   */
+  variant?: "list" | "profile";
 }
 
-export function FeedbackCard({ entry, customer, hideCustomer, isNew }: FeedbackCardProps) {
+/** One read-only review. Staff cannot edit or delete feedback. */
+export function FeedbackCard({ entry, customer, variant = "list" }: FeedbackCardProps) {
   const name = customer?.name ?? "Unknown customer";
-  return (
-    <article className={`${cardClass} flex flex-col gap-3 p-5 ${isNew ? "ring-2 ring-(--focus-ring)" : ""}`}>
-      <div className="flex flex-wrap items-start gap-3">
-        {!hideCustomer ? <CustomerAvatar name={name} /> : null}
-        <div className="min-w-0 flex-1">
-          {!hideCustomer ? (
-            customer ? (
-              <Link href={`/customers/${customer.id}`} className="font-semibold text-(--ink) underline-offset-2 hover:text-(--link) hover:underline">
-                {name}
-              </Link>
-            ) : (
-              <span className="font-semibold">{name}</span>
-            )
-          ) : null}
-          <p className="text-[13px] leading-[18px] text-(--ink-muted)">
-            {formatDate(entry.date)} · {getBranchName(entry.branchId)} · <span className="mz-mono">{entry.id}</span>
-          </p>
+  const low = isLowRating(entry.rating);
+
+  if (variant === "profile") {
+    return (
+      <article className="rounded-md border border-(--border) bg-(--surface-page) px-4 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-4">
+            <StarRatingDisplay value={entry.rating} size={20} />
+            <span className="text-sm font-semibold text-(--heading) tabular-nums">{entry.rating}/5</span>
+          </div>
+          <span className="text-[13px] text-(--ink-muted)">{formatDate(entry.date)}</span>
         </div>
-        <div className="flex items-center gap-2">
-          {isNew ? <Badge tone="info" icon="check">New</Badge> : null}
-          <Badge tone={ratingTone(entry.rating)} icon={entry.rating <= 2 ? "alertCircle" : "star"}>
-            {RATING_LABELS[entry.rating]}
-          </Badge>
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <StarRatingDisplay value={entry.rating} size={18} />
-        <span className="text-sm font-semibold text-(--ink-muted) tabular-nums">{entry.rating} / 5</span>
-      </div>
-      <p className="text-(--ink)">{entry.comment}</p>
-      {entry.rating <= 2 ? (
-        <p className="flex items-center gap-1.5 text-[13px] font-medium text-(--danger-ink)">
-          <span aria-hidden>•</span> Needs follow-up by the branch pharmacist
+        <p className="mt-3 text-sm leading-6 text-(--ink)">{entry.comment}</p>
+        <p className="mt-3 text-xs text-(--ink-muted)">
+          {name} · {entry.orderId ? `Order ${entry.orderId}` : "General feedback"}
         </p>
-      ) : null}
+      </article>
+    );
+  }
+
+  return (
+    <article className="rounded-md border border-(--border) bg-(--surface-raised) px-4 py-3">
+      <div className="flex items-start gap-3">
+        <CustomerAvatar name={name} size="sm" />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+            <div className="min-w-0">
+              {customer ? (
+                <Link href={`/customers/${customer.id}?tab=feedback`} className="text-sm font-semibold text-(--ink) underline-offset-2 hover:text-(--heading) hover:underline">
+                  {name}
+                </Link>
+              ) : (
+                <span className="text-sm font-semibold">{name}</span>
+              )}
+              <p className="text-xs text-(--ink-muted)">{formatDate(entry.date)}</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <StarRatingDisplay value={entry.rating} size={17} />
+              <span className="w-7 text-right text-xs font-medium text-(--ink) tabular-nums">{entry.rating}/5</span>
+            </div>
+          </div>
+          <p className="mt-1.5 text-[13px] leading-[19px] text-(--ink)">{entry.comment}</p>
+          {low ? <p className="mt-1.5 text-xs font-medium text-(--danger-ink)">Low rating · follow up with the branch pharmacist</p> : null}
+        </div>
+      </div>
     </article>
   );
 }

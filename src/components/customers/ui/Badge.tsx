@@ -20,11 +20,13 @@ const tones: Record<BadgeTone, string> = {
   warning: "bg-(--warning-bg) text-(--warning-ink)",
   danger: "bg-(--danger-bg) text-(--danger-ink)",
   transit: "bg-(--transit-bg) text-(--transit-ink)",
-  brand: "bg-(--primary-tint) text-(--primary-tint-ink)",
+  // "Regular" in the design: pale navy tint with navy text
+  brand: "bg-(--primary-tint) text-(--heading)",
   loyalty: "bg-(--loyalty-bg) text-(--loyalty-ink)",
-  // Solid green pill like the % badges on medizone.lk (navy text keeps 5:1 contrast).
-  discount: "bg-(--brand-green) text-(--on-brand-green) font-bold",
-  outline: "bg-(--surface-raised) text-(--ink-muted) shadow-[inset_0_0_0_1px_var(--border-strong)]",
+  // 3% / 5% discount: pale green
+  discount: "bg-(--success-bg) text-(--success-ink)",
+  // "Non-Regular": grey
+  outline: "bg-(--neutral-bg) text-(--ink-muted)",
 };
 
 interface BadgeProps {
@@ -34,13 +36,11 @@ interface BadgeProps {
   className?: string;
 }
 
-/** Status is never colour alone: every badge has words, and usually an icon. */
+/** Small rounded-rectangle label (Figma). Status always has words, never colour alone. */
 export function Badge({ tone = "neutral", icon, children, className = "" }: BadgeProps) {
   return (
-    <span
-      className={`inline-flex h-6 items-center gap-1 rounded-full pr-2.5 pl-2 text-xs font-semibold whitespace-nowrap ${tones[tone]} ${className}`}
-    >
-      {icon ? <Icon name={icon} size={14} strokeWidth={2.25} /> : null}
+    <span className={`inline-flex h-6 items-center gap-1 rounded-[5px] px-2.5 text-xs font-semibold whitespace-nowrap ${tones[tone]} ${className}`}>
+      {icon ? <Icon name={icon} size={13} strokeWidth={2.25} /> : null}
       {children}
     </span>
   );

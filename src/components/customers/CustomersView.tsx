@@ -1,27 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { normalizePhone } from "@/lib/customers";
-import type { BranchId, Customer } from "@/types/customers";
+import { formatCustomerId, matchesCustomerSearch } from "@/lib/customers";
+import type { BranchId } from "@/types/customers";
 import { CustomerFilters, type CustomerTypeFilter } from "./CustomerFilters";
 import { CustomerFormModal } from "./CustomerFormModal";
 import { CustomerSummaryCards } from "./CustomerSummaryCards";
 import { CustomerTable } from "./CustomerTable";
 import { useCustomers } from "./CustomersProvider";
 import { Button } from "./ui/Button";
-import { Card } from "./ui/Card";
+import { Card, FootNote } from "./ui/Card";
 import { EmptyState } from "./ui/EmptyState";
 import { PageHeader } from "./ui/PageHeader";
+import { Pagination, usePagination } from "./ui/Pagination";
 
-export function matchesCustomerSearch(customer: Pick<Customer, "name" | "phone">, query: string): boolean {
-  const q = query.trim().toLowerCase();
-  if (!q) return true;
-  const digits = normalizePhone(q);
-  return customer.name.toLowerCase().includes(q) || (digits.length >= 3 && customer.phone.includes(digits));
-}
+const PAGE_SIZE = 8;
 
 export function CustomersView() {
-  const { customers, feedback, notify } = useCustomers();
+  const { customers, feedback, notify, storageNotice } = useCustomers();
   const [search, setSearch] = useState("");
   const [type, setType] = useState<CustomerTypeFilter>("all");
   const [branch, setBranch] = useState<BranchId | "all">("all");
@@ -39,6 +35,7 @@ export function CustomersView() {
   };
   const visible = searched.filter((c) => type === "all" || (type === "regular" ? c.isRegular : !c.isRegular));
   const filtersActive = search.trim() !== "" || type !== "all" || branch !== "all";
+  const pager = usePagination(visible, PAGE_SIZE, `${search}|${type}|${branch}|${lastAddedId ?? ""}`);
 
   function clearFilters() {
     setSearch("");
@@ -49,26 +46,25 @@ export function CustomersView() {
   return (
     <>
       <PageHeader
-        title="Customer management"
-        description="Customer records, regular-customer discounts and loyalty balances for all four branches."
+        breadcrumb={[{ label: "Dashboard", href: "/home" }, { label: "Customers" }]}
+        title="Customer Management"
+        description="View and manage registered customer information"
         action={
-          <Button icon="plus" onClick={() => setAdding(true)}>
-            Add customer
+          <Button onClick={() => setAdding(true)} className="px-7">
+            + Add Customer
           </Button>
         }
       />
 
+      {storageNotice ? (
+        <p role="alert" className="rounded-md border border-(--warning-solid)/40 bg-(--warning-bg) px-4 py-2.5 text-sm text-(--warning-ink)">
+          {storageNotice}
+        </p>
+      ) : null}
+
       <CustomerSummaryCards customers={customers} feedback={feedback} />
 
-      <Card as="section" aria-labelledby="customer-list-title" className="overflow-hidden">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 px-5 pt-4">
-          <h2 id="customer-list-title" className="text-lg leading-6 font-semibold">
-            Customers
-          </h2>
-          <p className="text-[13px] text-(--ink-muted)" aria-live="polite">
-            Showing {visible.length} of {customers.length} customers
-          </p>
-        </div>
+      <Card as="section" aria-label="Customer list" className="overflow-hidden">
         <CustomerFilters
           search={search}
           onSearchChange={setSearch}
@@ -79,23 +75,28 @@ export function CustomersView() {
           counts={counts}
         />
         {visible.length > 0 ? (
-          <CustomerTable customers={visible} highlightId={lastAddedId} />
+          <>
+            <CustomerTable customers={pager.visible} highlightId={lastAddedId} />
+            <div className="mt-1 border-t border-(--border)">
+              <Pagination {...pager} onPageChange={pager.setPage} noun="customers" />
+            </div>
+          </>
         ) : customers.length === 0 ? (
           <EmptyState
             icon="users"
             title="No customers yet"
-            description="Customers you add here are shared with Billing, Orders and Delivery."
-            action={
-              <Button icon="plus" onClick={() => setAdding(true)}>
-                Add customer
-              </Button>
-            }
+            description="Customers registered on Medizone.lk or added by staff will appear here."
+            action={<Button onClick={() => setAdding(true)}>+ Add Customer</Button>}
           />
         ) : (
           <EmptyState
             icon="search"
-            title="No customers match these filters"
-            description={search.trim() ? `Nothing found for "${search.trim()}". Check the spelling or search by phone number.` : "Try another customer type or branch."}
+            title="No customers found"
+            description={
+              search.trim()
+                ? `No customer matches "${search.trim()}". Check the spelling, or search by phone number.`
+                : "No customers match the selected filters."
+            }
             action={
               filtersActive ? (
                 <Button variant="secondary" onClick={clearFilters}>
@@ -106,6 +107,7 @@ export function CustomersView() {
           />
         )}
       </Card>
+      <FootNote>Customer records: Medizone.lk registration or manual staff entry.</FootNote>
 
       <CustomerFormModal
         open={adding}
@@ -116,8 +118,8 @@ export function CustomersView() {
           setLastAddedId(customer.id);
           notify({
             tone: "success",
-            title: "Customer added",
-            description: `${customer.name} (${customer.id}) is now in the customer list.`,
+            title: "Customer added successfully",
+            description: `${customer.name} (${formatCustomerId(customer.id)}) is now at the top of the customer list.`,
             action: { label: "View profile", href: `/customers/${customer.id}` },
           });
         }}

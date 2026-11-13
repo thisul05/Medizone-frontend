@@ -1,13 +1,15 @@
 import type { ReactNode } from "react";
 import { Icon, type IconName } from "./Icon";
 
-export const cardClass = "rounded-lg border border-(--border) bg-(--surface-raised) shadow-(--shadow-1)";
+/** White card with a subtle grey border, as in the Figma design. */
+export const cardClass = "rounded-md border border-(--border) bg-(--surface-raised)";
 
 interface CardProps {
   children: ReactNode;
   className?: string;
   as?: "div" | "section" | "article";
   "aria-labelledby"?: string;
+  "aria-label"?: string;
 }
 
 export function Card({ children, className = "", as: Tag = "div", ...rest }: CardProps) {
@@ -23,68 +25,59 @@ interface CardHeaderProps {
   id?: string;
   description?: ReactNode;
   action?: ReactNode;
+  icon?: IconName;
 }
 
-export function CardHeader({ title, id, description, action }: CardHeaderProps) {
+/** Navy card title with an optional muted subtitle and a right-hand slot (search, count, note). */
+export function CardHeader({ title, id, description, action, icon }: CardHeaderProps) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-3 border-b border-(--border) px-5 py-4">
+    <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5 pb-4">
       <div className="min-w-0">
-        <h2 id={id} className="text-lg leading-6 font-semibold text-(--ink)">
+        <h2 id={id} className="flex items-center gap-2 text-lg leading-6 font-bold text-(--heading)">
+          {icon ? (
+            <span className="grid size-5 place-items-center rounded-full bg-(--heading) text-white">
+              <Icon name={icon} size={13} strokeWidth={2.5} />
+            </span>
+          ) : null}
           {title}
         </h2>
-        {description ? <p className="mt-0.5 text-[13px] leading-[18px] text-(--ink-muted)">{description}</p> : null}
+        {description ? <p className="mt-1 text-[13px] leading-[18px] text-(--ink-muted)">{description}</p> : null}
       </div>
-      {action}
+      {action ? <div className="flex min-w-0 items-center gap-3">{action}</div> : null}
     </div>
   );
 }
-
-type KpiTone = "neutral" | "success" | "warning" | "danger" | "loyalty";
-
-const kpiIconTones: Record<KpiTone, string> = {
-  neutral: "bg-(--primary-tint) text-(--primary-tint-ink)",
-  success: "bg-(--success-bg) text-(--success-ink)",
-  warning: "bg-(--warning-bg) text-(--warning-ink)",
-  danger: "bg-(--danger-bg) text-(--danger-ink)",
-  loyalty: "bg-(--loyalty-bg) text-(--loyalty-ink)",
-};
 
 interface KpiCardProps {
   label: string;
   value: ReactNode;
   unit?: string;
-  icon?: IconName;
-  tone?: KpiTone;
   hint?: ReactNode;
 }
 
-/** One headline number with its label and where it comes from. */
-export function KpiCard({ label, value, unit, icon, tone = "neutral", hint }: KpiCardProps) {
+/** Summary card: muted label, large bold navy number (Figma). */
+export function KpiCard({ label, value, unit, hint }: KpiCardProps) {
   return (
-    <div className={`${cardClass} flex min-w-0 flex-col gap-2 p-5`}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] leading-[14px] font-bold tracking-[0.08em] text-(--ink-muted) uppercase">
-          {label}
-        </span>
-        {icon ? (
-          <span className={`grid size-8 place-items-center rounded-sm ${kpiIconTones[tone]}`}>
-            <Icon name={icon} size={18} />
-          </span>
-        ) : null}
-      </div>
-      <div className="text-[30px] leading-9 font-semibold tracking-[-0.01em] text-(--ink) tabular-nums">
+    <div className={`${cardClass} flex min-w-0 flex-col gap-2 px-5 py-5`}>
+      <span className="text-sm leading-5 text-(--ink-muted)">{label}</span>
+      <div className="text-[28px] leading-9 font-bold text-(--heading) tabular-nums">
         {value}
-        {unit ? <span className="ml-1.5 text-[15px] font-medium tracking-normal text-(--ink-muted)">{unit}</span> : null}
+        {unit ? <span className="ml-1 text-base font-semibold">{unit}</span> : null}
       </div>
       {hint ? <p className="text-[13px] leading-[18px] text-(--ink-muted)">{hint}</p> : null}
     </div>
   );
 }
 
-export function KpiGrid({ children, label }: { children: ReactNode; label: string }) {
+export function KpiGrid({ children, label, columns = 4 }: { children: ReactNode; label: string; columns?: 3 | 4 }) {
   return (
-    <section aria-label={label} className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section aria-label={label} className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${columns === 3 ? "lg:grid-cols-3" : "xl:grid-cols-4"}`}>
       {children}
     </section>
   );
+}
+
+/** Small muted note under a card, e.g. "Frontend simulation only. No real messages are sent." */
+export function FootNote({ children }: { children: ReactNode }) {
+  return <p className="-mt-2 text-xs leading-4 text-(--ink-muted)">{children}</p>;
 }

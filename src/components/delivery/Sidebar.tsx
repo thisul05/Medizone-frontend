@@ -14,6 +14,19 @@ const DELIVERY_SUBITEMS = [
   { id: "checker", label: "Warranty Check" },
 ] as const;
 
+// Customers (Module 5) pages. Profile pages (/customers/[id]) belong to "All Customers".
+const CUSTOMER_SUBITEMS = [
+  { href: "/customers", label: "All Customers" },
+  { href: "/customers/loyalty", label: "Loyalty Points" },
+  { href: "/customers/feedback", label: "Feedback" },
+  { href: "/customers/reminders", label: "Refill Reminders" },
+] as const;
+
+function activeCustomerPage(pathname: string): string {
+  const section = CUSTOMER_SUBITEMS.find((item) => item.href !== "/customers" && (pathname === item.href || pathname.startsWith(item.href + "/")));
+  return section ? section.href : "/customers";
+}
+
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
@@ -28,6 +41,26 @@ export default function Sidebar() {
   const isDelivery = pathname === "/delivery";
   const activeTab = searchParams.get("tab") ?? "deliveries";
   const [open, setOpen] = useState(isDelivery);
+
+  // Customers dropdown: same behaviour as Delivery & warranty, and it opens by itself
+  // whenever the route moves into /customers.
+  const isCustomers = pathname === "/customers" || pathname.startsWith("/customers/");
+  const [customersOpen, setCustomersOpen] = useState(isCustomers);
+  const [wasCustomers, setWasCustomers] = useState(isCustomers);
+  if (isCustomers !== wasCustomers) {
+    setWasCustomers(isCustomers);
+    if (isCustomers) setCustomersOpen(true);
+  }
+  const activeCustomerHref = activeCustomerPage(pathname);
+
+  const handleCustomersToggle = () => {
+    if (!isCustomers) {
+      router.push("/customers");
+      setCustomersOpen(true);
+    } else {
+      setCustomersOpen((v) => !v);
+    }
+  };
 
   const handleDeliveryToggle = () => {
     if (!isDelivery) {
@@ -72,7 +105,48 @@ export default function Sidebar() {
           <NavItem icon="package" label="Inventory" href="/inventory" active={pathname === "/inventory"} />
         )}
         {can("customers") && (
-          <NavItem icon="users" label="Customers" href="/customers" active={pathname === "/customers"} />
+          <div className="mb-0.5">
+            <button
+              type="button"
+              onClick={handleCustomersToggle}
+              aria-expanded={customersOpen}
+              className={`flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label transition-colors duration-150 ${
+                isCustomers
+                  ? "bg-nav-active text-nav-ink"
+                  : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
+              }`}
+            >
+              <Icon name="users" size={18} />
+              <span className="flex-1 text-left">Customers</span>
+              <Icon
+                name="chevron-down"
+                size={14}
+                className={`shrink-0 transition-transform duration-200 ${customersOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {customersOpen && (
+              <div className="ml-7 mt-0.5 space-y-0.5">
+                {CUSTOMER_SUBITEMS.map((item) => {
+                  const active = isCustomers && activeCustomerHref === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex h-8 items-center rounded-md px-2.5 text-sm transition-colors duration-150 ${
+                        active
+                          ? "bg-white/15 font-semibold text-nav-ink"
+                          : "text-nav-muted hover:bg-white/10 hover:text-nav-ink"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
 
         {showBackOfficeSection && <SectionLabel>Back Office</SectionLabel>}

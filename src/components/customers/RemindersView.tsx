@@ -1,71 +1,57 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { branches, getBranchName } from "@/data/customers";
-import { PROTOTYPE_TODAY, REMINDER_LAPSE_DAYS, REMINDER_WINDOW_DAYS, formatDate } from "@/lib/customers";
+import { branches } from "@/data/customers";
+import { REMINDER_LAPSE_DAYS, REMINDER_WINDOW_DAYS, formatDate, matchesCustomerSearch } from "@/lib/customers";
 import type { BranchId, RefillReminder, ReminderStatus } from "@/types/customers";
 import { useCustomers } from "./CustomersProvider";
-import { matchesCustomerSearch } from "./CustomersView";
-import { ReminderPreviewModal, type ReminderChannel } from "./ReminderPreviewModal";
-import { ReminderTable } from "./ReminderTable";
-import { Badge } from "./ui/Badge";
+import { ReminderPreviewModal } from "./ReminderPreviewModal";
+import { ReminderTable, STATUS_LABEL } from "./ReminderTable";
 import { Button } from "./ui/Button";
-import { Card, KpiCard, KpiGrid } from "./ui/Card";
+import { Card, CardHeader, FootNote, KpiCard, KpiGrid } from "./ui/Card";
 import { EmptyState } from "./ui/EmptyState";
-import { SearchInput, SelectField } from "./ui/Field";
+import { InlineSelect, SearchInput, SelectField } from "./ui/Field";
 import { Icon } from "./ui/Icon";
 import { PageHeader } from "./ui/PageHeader";
-import { Tabs } from "./ui/Tabs";
+import { Pagination, usePagination } from "./ui/Pagination";
 
-type StatusFilter = "to_send" | ReminderStatus | "all";
-
-const FILTER_LABELS: Record<StatusFilter, string> = {
-  to_send: "To send",
-  due_soon: "Due within 7 days",
-  overdue: "Overdue",
-  upcoming: "Upcoming",
-  sent: "Sent",
-  all: "All",
-};
-
-function matchesStatus(r: RefillReminder, f: StatusFilter): boolean {
-  if (f === "all") return true;
-  if (f === "to_send") return r.status === "due_soon" || r.status === "overdue";
-  return r.status === f;
-}
+type StatusFilter = "all" | ReminderStatus;
+const PAGE_SIZE = 8;
 
 export function RemindersView() {
-  const { reminders, getCustomer, markReminderSent, notify } = useCustomers();
+  const { reminders, getCustomer, markReminderSent, notify, today } = useCustomers();
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<StatusFilter>("to_send");
+  const [status, setStatus] = useState<StatusFilter>("all");
   const [branch, setBranch] = useState<BranchId | "all">("all");
   const [previewId, setPreviewId] = useState<string>();
 
   const preview = reminders.find((r) => r.id === previewId);
   const count = (s: ReminderStatus) => reminders.filter((r) => r.status === s).length;
 
-  const searched = useMemo(
+  const visible = useMemo(
     () =>
       reminders.filter((r) => {
+        if (status !== "all" && r.status !== status) return false;
         const c = getCustomer(r.customerId);
         if (branch !== "all" && c?.branchId !== branch) return false;
         const q = search.trim().toLowerCase();
         if (!q) return true;
         return (c ? matchesCustomerSearch(c, search) : false) || r.medicine.toLowerCase().includes(q);
       }),
-    [reminders, getCustomer, search, branch],
+    [reminders, getCustomer, search, status, branch],
   );
-  const visible = searched.filter((r) => matchesStatus(r, status));
+  const pager = usePagination(visible, PAGE_SIZE, `${search}|${status}|${branch}`);
+  const filtered = search.trim() !== "" || status !== "all" || branch !== "all";
 
-  function handleMarkSent(r: RefillReminder, channel?: ReminderChannel) {
+  function handleMarkSent(r: RefillReminder) {
+    if (r.status === "sent") return;
     markReminderSent(r.id);
     setPreviewId(undefined);
     const name = getCustomer(r.customerId)?.name ?? "the customer";
-    const via = channel === "whatsapp" ? " by WhatsApp" : channel === "sms" ? " by SMS" : "";
     notify({
       tone: "success",
       title: "Reminder marked as sent",
-      description: `${r.medicine} reminder for ${name}${via}. Simulated only: no message was sent.`,
+      description: `${r.medicine} reminder for ${name}. Frontend simulation only: no message was sent.`,
     });
   }
 
@@ -78,87 +64,78 @@ export function RemindersView() {
   return (
     <>
       <PageHeader
-        eyebrow={
-          <Badge tone="loyalty" icon="refresh">
-            Rule-based refill prediction
-          </Badge>
-        }
-        title="Refill reminders"
-        description="Customers whose regular medicines are expected to run out soon, so the branch can remind them to refill."
+        breadcrumb={[{ label: "Customers", href: "/customers" }, { label: "Refill Reminders" }]}
+        title="Refill Reminder Management"
+        description="Monitor upcoming medicine refills for registered customers"
+        action={<span className="rounded-md bg-(--primary-tint) px-3 py-2 text-xs font-semibold text-(--heading)">Rule-Based Refill Prediction</span>}
       />
 
-      <div className="flex items-start gap-3 rounded-md bg-(--info-bg) px-4 py-3.5 text-(--info-ink)" role="note">
-        <Icon name="info" size={20} className="mt-px" />
-        <div className="text-sm leading-5 text-(--ink)">
-          <p className="font-bold text-(--info-ink)">How the prediction works</p>
-          <p className="mt-0.5">
-            <strong>Expected refill date = purchase date + days of supply</strong>, using each customer&apos;s latest purchase of a medicine.
-            Refills due within {REMINDER_WINDOW_DAYS} days are highlighted. Refills more than {REMINDER_LAPSE_DAYS} days late are treated as
-            stopped and hidden. This is a fixed rule, not a machine learning model. Dates are as of {formatDate(PROTOTYPE_TODAY)}.
-          </p>
-        </div>
-      </div>
-
       <KpiGrid label="Reminder summary">
-        <KpiCard label="Due within 7 days" value={count("due_soon")} icon="clock" tone="warning" hint="Not yet reminded" />
-        <KpiCard label="Overdue" value={count("overdue")} icon="alertCircle" tone="danger" hint={`Up to ${REMINDER_LAPSE_DAYS} days past the refill date`} />
-        <KpiCard label="Reminders sent" value={count("sent")} icon="send" hint="Marked as sent in this prototype" />
-        <KpiCard label="Upcoming" value={count("upcoming")} icon="calendar" tone="loyalty" hint={`More than ${REMINDER_WINDOW_DAYS} days away`} />
+        <KpiCard label="Total Reminders" value={reminders.length} />
+        <KpiCard label={`Due Within ${REMINDER_WINDOW_DAYS} Days`} value={count("due_soon")} />
+        <KpiCard label="Overdue" value={count("overdue")} />
+        <KpiCard label="Sent" value={count("sent")} />
       </KpiGrid>
 
+      <div className="flex items-start gap-3 rounded-md bg-(--primary-tint) px-4 py-3 text-sm text-(--heading)" role="note">
+        <span className="mt-0.5 grid size-5 flex-none place-items-center rounded-full bg-(--heading) text-white">
+          <Icon name="info" size={13} strokeWidth={2.5} />
+        </span>
+        <p>
+          <span className="font-medium">Expected Refill Date = Last Purchase Date + Days of Medicine Supply</span>
+          <span className="block text-xs text-(--ink-muted)">
+            A fixed rule, not an AI model. Due Soon: within {REMINDER_WINDOW_DAYS} days. Overdue: the date has passed (refills more than {REMINDER_LAPSE_DAYS} days late are treated as
+            stopped and hidden). Sent reminders stay Sent.
+          </span>
+        </p>
+      </div>
+
       <Card as="section" aria-labelledby="reminders-title" className="overflow-hidden">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 px-5 pt-4">
-          <h2 id="reminders-title" className="text-lg leading-6 font-semibold">
-            Reminder list
-          </h2>
-          <p className="text-[13px] text-(--ink-muted)" aria-live="polite">
-            Showing {visible.length} of {reminders.length}
-          </p>
-        </div>
-        <div className="flex flex-col gap-3 border-b border-(--border) px-5 py-4">
-          <div className="flex flex-col gap-3 md:flex-row">
-            <SearchInput label="Search reminders" placeholder="Customer name, phone or medicine" value={search} onChange={setSearch} className="md:w-80" />
+        <CardHeader id="reminders-title" title="Refill Reminders" action={<span className="text-xs text-(--ink-muted)">As of {formatDate(today)}</span>} />
+        <div className="flex flex-col gap-3 px-5 pb-4 lg:flex-row lg:items-center">
+          <SearchInput label="Search by customer or medicine" placeholder="Search by customer or medicine" value={search} onChange={setSearch} className="lg:w-[46%] lg:max-w-[480px]" />
+          <div className="flex flex-col gap-3 sm:flex-row lg:ml-auto">
             <SelectField
               label="Branch"
               labelHidden
               value={branch}
               onChange={(e) => setBranch(e.target.value as BranchId | "all")}
-              options={[{ value: "all", label: "All branches" }, ...branches.map((b) => ({ value: b.id, label: getBranchName(b.id) }))]}
-              containerClassName="md:ml-auto md:w-48"
+              options={[{ value: "all", label: "All branches" }, ...branches.map((b) => ({ value: b.id, label: b.name }))]}
+              containerClassName="sm:w-48"
+            />
+            <InlineSelect
+              label="Status"
+              value={status}
+              onChange={(v) => setStatus(v as StatusFilter)}
+              options={[
+                { value: "all", label: "All" },
+                ...(["upcoming", "due_soon", "overdue", "sent"] as ReminderStatus[]).map((s) => ({ value: s, label: `${STATUS_LABEL[s]} (${count(s)})` })),
+              ]}
+              className="sm:w-[300px]"
             />
           </div>
-          <Tabs<StatusFilter>
-            variant="pill"
-            label="Reminder status"
-            idPrefix="reminder-status"
-            value={status}
-            onChange={setStatus}
-            tabs={(["to_send", "due_soon", "overdue", "upcoming", "sent", "all"] as StatusFilter[]).map((f) => ({
-              id: f,
-              label: FILTER_LABELS[f],
-              count: searched.filter((r) => matchesStatus(r, f)).length,
-            }))}
-          />
         </div>
         {visible.length > 0 ? (
-          <ReminderTable reminders={visible} getCustomer={getCustomer} onPreview={(r) => setPreviewId(r.id)} onMarkSent={handleMarkSent} />
+          <>
+            <ReminderTable reminders={pager.visible} getCustomer={getCustomer} onPreview={(r) => setPreviewId(r.id)} onMarkSent={handleMarkSent} />
+            <Pagination {...pager} onPageChange={pager.setPage} noun="reminders" />
+          </>
         ) : (
           <EmptyState
-            icon={status === "to_send" ? "checkCircle" : "search"}
-            title={status === "to_send" && !search.trim() && branch === "all" ? "All due reminders are sent" : "No reminders match these filters"}
-            description={
-              status === "to_send" && !search.trim() && branch === "all"
-                ? "Nobody is due for a refill in the next 7 days without a reminder."
-                : "Try another status, branch or search."
-            }
+            icon={reminders.length === 0 ? "checkCircle" : "search"}
+            title={reminders.length === 0 ? "No refill reminders" : "No reminders match these filters"}
+            description={reminders.length === 0 ? "No customer has a regular medicine due for a refill." : "Try another status, branch or search."}
             action={
-              <Button variant="secondary" onClick={clearFilters}>
-                Show all reminders
-              </Button>
+              filtered ? (
+                <Button variant="secondary" onClick={clearFilters}>
+                  Show all reminders
+                </Button>
+              ) : undefined
             }
           />
         )}
       </Card>
+      <FootNote>Frontend simulation only. No real messages are sent.</FootNote>
 
       <ReminderPreviewModal
         reminder={preview}

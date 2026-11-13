@@ -168,17 +168,32 @@ export default function Sidebar() {
         </button>
 
         {user && (
-          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-white/5">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#133e7c] text-[11px] font-bold text-white border border-white/20">
+          <Link
+            href="/profile"
+            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors cursor-pointer group ${
+              pathname === "/profile"
+                ? "bg-white/20 text-white font-semibold shadow-xs"
+                : "bg-white/5 hover:bg-white/10 text-white/90 hover:text-white"
+            }`}
+            title="View your user profile"
+          >
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#133e7c] text-[11px] font-bold text-white border border-white/20 group-hover:border-white/40 transition-colors">
               {getInitials(user.name)}
             </div>
-            <div className="min-w-0">
-              <div className="text-white truncate text-xs font-medium leading-tight">{user.name}</div>
+            <div className="min-w-0 flex-1">
+              <div className="text-white truncate text-xs font-medium leading-tight group-hover:underline">
+                {user.name}
+              </div>
               <div className="text-nav-muted truncate text-[10px] leading-tight">
                 {user.role === "owner" ? "Owner" : user.jobTitle}
               </div>
             </div>
-          </div>
+            <Icon
+              name="chevron-right"
+              size={12}
+              className="text-nav-muted/60 group-hover:text-white transition-colors shrink-0"
+            />
+          </Link>
         )}
       </div>
     </aside>

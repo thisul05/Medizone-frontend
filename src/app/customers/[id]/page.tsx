@@ -3,6 +3,9 @@ import { Suspense } from "react";
 import { CustomerProfile } from "@/components/customers/CustomerProfile";
 import { ProfileSkeleton } from "@/components/customers/ProfileSkeleton";
 
+// Signed-in page: RouteGuard renders it only in the browser, after the session is read.
+export const instant = false;
+
 export const metadata: Metadata = {
   title: "Customer profile · Medizone",
 };

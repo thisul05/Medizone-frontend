@@ -1,19 +1,20 @@
 "use client";
 
-// Session state for the Customers module. Lives in src/app/customers/layout.tsx, so everything
-// added on one page (customers, feedback, points, sent reminders) shows on the others until refresh.
+// Shared state for the Customers module. Lives in src/app/customers/layout.tsx so every page
+// (customer list, profile, loyalty, feedback, reminders) reads the same records.
+// Changes are saved in this browser (src/lib/customers-store.ts) and survive a refresh.
 
 import Link from "next/link";
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { prescriptions as seedPrescriptions, purchases as seedPurchases } from "@/data/customers";
 import {
-  customers as initialCustomers,
-  feedback as initialFeedback,
-  loyaltyTransactions as initialTransactions,
-  prescriptions as initialPrescriptions,
-  purchases as initialPurchases,
-  sentReminders as initialSent,
-} from "@/data/customers";
-import { PROTOTYPE_TODAY, buildRefillReminders, calculateLoyaltyPoints, formatLKR, normalizePhone } from "@/lib/customers";
+  getCustomerSnapshot,
+  getServerCustomerSnapshot,
+  resetCustomerState,
+  subscribeCustomers,
+  updateCustomerState,
+} from "@/lib/customers-store";
+import { PROTOTYPE_TODAY, buildRefillReminders, calculateLoyaltyPoints, formatLKR, getTodayISO, normalizePhone } from "@/lib/customers";
 import type {
   Customer,
   CustomerFeedback,
@@ -37,12 +38,16 @@ interface ToastMessage {
 }
 
 interface CustomersContextValue {
+  /** Today's date (local), used for reminder statuses and "this month" figures. */
+  today: string;
   customers: Customer[];
   purchases: Purchase[];
   prescriptions: StoredPrescription[];
   loyaltyTransactions: LoyaltyTransaction[];
   feedback: CustomerFeedback[];
   reminders: RefillReminder[];
+  /** Set when saved browser data could not be read or written. */
+  storageNotice: string | null;
   getCustomer: (id: string) => Customer | undefined;
   isPhoneTaken: (phone: string, exceptCustomerId?: string) => boolean;
   addCustomer: (input: CustomerInput) => Customer;
@@ -50,6 +55,7 @@ interface CustomersContextValue {
   addFeedback: (input: FeedbackInput) => CustomerFeedback;
   recordPurchasePoints: (customerId: string, amountPaid: number) => LoyaltyTransaction | null;
   markReminderSent: (reminderId: string) => void;
+  resetDemoData: () => void;
   notify: (toast: Omit<ToastMessage, "id">) => void;
 }
 
@@ -70,24 +76,29 @@ function cleanInput(input: CustomerInput): CustomerInput {
     name: input.name.trim().replace(/\s+/g, " "),
     phone: normalizePhone(input.phone),
     email: input.email?.trim() || undefined,
-    address: input.address.trim(),
+    address: input.address?.trim() || undefined,
     branchId: input.branchId,
     isRegular: input.isRegular,
     discountPercent: input.isRegular ? input.discountPercent : 0,
   };
 }
 
+// Today's date only changes at midnight; re-read it when the tab becomes visible again.
+function subscribeToday(onChange: () => void) {
+  document.addEventListener("visibilitychange", onChange);
+  return () => document.removeEventListener("visibilitychange", onChange);
+}
+
 export function CustomersProvider({ children }: { children: ReactNode }) {
-  const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
-  const [purchases] = useState<Purchase[]>(initialPurchases);
-  const [prescriptions] = useState<StoredPrescription[]>(initialPrescriptions);
-  const [loyaltyTransactions, setLoyaltyTransactions] = useState<LoyaltyTransaction[]>(initialTransactions);
-  const [feedback, setFeedback] = useState<CustomerFeedback[]>(initialFeedback);
-  const [sent, setSent] = useState<Record<string, string>>(initialSent);
+  const { state, notice } = useSyncExternalStore(subscribeCustomers, getCustomerSnapshot, getServerCustomerSnapshot);
+  const today = useSyncExternalStore(subscribeToday, () => getTodayISO(), () => PROTOTYPE_TODAY);
+  const { customers, loyaltyTransactions, feedback, sentReminders } = state;
+  const purchases = seedPurchases;
+  const prescriptions = seedPrescriptions;
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const toastCounter = useRef(0);
 
-  const reminders = useMemo(() => buildRefillReminders(purchases, sent), [purchases, sent]);
+  const reminders = useMemo(() => buildRefillReminders(purchases, sentReminders, today), [purchases, sentReminders, today]);
 
   const dismissToast = useCallback((id: number) => {
     setToasts((list) => list.filter((t) => t.id !== id));
@@ -115,65 +126,70 @@ export function CustomersProvider({ children }: { children: ReactNode }) {
 
   const addCustomer = useCallback(
     (input: CustomerInput) => {
-      const id = `cus-${String(nextNumber(customers.map((c) => c.id), /^cus-(\d+)$/)).padStart(2, "0")}`;
-      const customer: Customer = { ...cleanInput(input), id, loyaltyPoints: 0, joinedOn: PROTOTYPE_TODAY };
-      setCustomers((list) => [customer, ...list]);
+      const current = getCustomerSnapshot().state;
+      const id = `cus-${String(nextNumber(current.customers.map((c) => c.id), /^cus-(\d+)$/)).padStart(2, "0")}`;
+      // New customers start with 0 points and no invented history.
+      const customer: Customer = { ...cleanInput(input), id, loyaltyPoints: 0, joinedOn: getTodayISO(), registeredVia: "staff" };
+      updateCustomerState((s) => ({ ...s, customers: [customer, ...s.customers] }));
       return customer;
     },
-    [customers],
+    [],
   );
 
   const updateCustomer = useCallback((id: string, input: CustomerInput) => {
-    setCustomers((list) => list.map((c) => (c.id === id ? { ...c, ...cleanInput(input) } : c)));
+    updateCustomerState((s) => ({ ...s, customers: s.customers.map((c) => (c.id === id ? { ...c, ...cleanInput(input) } : c)) }));
   }, []);
 
-  const addFeedback = useCallback(
-    (input: FeedbackInput) => {
-      const n = nextNumber(feedback.map((f) => f.id), /^FB-(\d+)$/);
-      const entry: CustomerFeedback = {
-        ...input,
-        comment: input.comment.trim(),
-        id: `FB-${String(n).padStart(3, "0")}`,
-        date: PROTOTYPE_TODAY,
-      };
-      setFeedback((list) => [entry, ...list]);
-      return entry;
-    },
-    [feedback],
-  );
+  const addFeedback = useCallback((input: FeedbackInput) => {
+    const current = getCustomerSnapshot().state;
+    const n = nextNumber(current.feedback.map((f) => f.id), /^FB-(\d+)$/);
+    const entry: CustomerFeedback = {
+      ...input,
+      comment: input.comment.trim(),
+      id: `FB-${String(n).padStart(3, "0")}`,
+      date: getTodayISO(),
+    };
+    updateCustomerState((s) => ({ ...s, feedback: [entry, ...s.feedback] }));
+    return entry;
+  }, []);
 
-  const recordPurchasePoints = useCallback(
-    (customerId: string, amountPaid: number) => {
-      const points = calculateLoyaltyPoints(amountPaid);
-      if (points <= 0) return null;
-      const n = nextNumber(loyaltyTransactions.map((t) => t.id), /^LT-(\d+)$/);
-      const txn: LoyaltyTransaction = {
-        id: `LT-${String(n).padStart(4, "0")}`,
-        customerId,
-        date: PROTOTYPE_TODAY,
-        type: "earned",
-        points,
-        description: `Earned on counter purchase of ${formatLKR(amountPaid)}`,
-      };
-      setLoyaltyTransactions((list) => [txn, ...list]);
-      setCustomers((list) => list.map((c) => (c.id === customerId ? { ...c, loyaltyPoints: c.loyaltyPoints + points } : c)));
-      return txn;
-    },
-    [loyaltyTransactions],
-  );
+  const recordPurchasePoints = useCallback((customerId: string, amountPaid: number) => {
+    const points = calculateLoyaltyPoints(amountPaid);
+    if (points <= 0) return null;
+    const current = getCustomerSnapshot().state;
+    const n = nextNumber(current.loyaltyTransactions.map((t) => t.id), /^LT-(\d+)$/);
+    const txn: LoyaltyTransaction = {
+      id: `LT-${String(n).padStart(4, "0")}`,
+      customerId,
+      date: getTodayISO(),
+      type: "earned",
+      points,
+      description: `Earned on counter purchase of ${formatLKR(amountPaid)}`,
+    };
+    updateCustomerState((s) => ({
+      ...s,
+      loyaltyTransactions: [txn, ...s.loyaltyTransactions],
+      customers: s.customers.map((c) => (c.id === customerId ? { ...c, loyaltyPoints: c.loyaltyPoints + points } : c)),
+    }));
+    return txn;
+  }, []);
 
   const markReminderSent = useCallback((reminderId: string) => {
-    setSent((map) => ({ ...map, [reminderId]: PROTOTYPE_TODAY }));
+    updateCustomerState((s) => (s.sentReminders[reminderId] ? s : { ...s, sentReminders: { ...s.sentReminders, [reminderId]: getTodayISO() } }));
   }, []);
+
+  const resetDemoData = useCallback(() => resetCustomerState(), []);
 
   const value = useMemo<CustomersContextValue>(
     () => ({
+      today,
       customers,
       purchases,
       prescriptions,
       loyaltyTransactions,
       feedback,
       reminders,
+      storageNotice: notice,
       getCustomer,
       isPhoneTaken,
       addCustomer,
@@ -181,9 +197,10 @@ export function CustomersProvider({ children }: { children: ReactNode }) {
       addFeedback,
       recordPurchasePoints,
       markReminderSent,
+      resetDemoData,
       notify,
     }),
-    [customers, purchases, prescriptions, loyaltyTransactions, feedback, reminders, getCustomer, isPhoneTaken, addCustomer, updateCustomer, addFeedback, recordPurchasePoints, markReminderSent, notify],
+    [today, customers, purchases, prescriptions, loyaltyTransactions, feedback, reminders, notice, getCustomer, isPhoneTaken, addCustomer, updateCustomer, addFeedback, recordPurchasePoints, markReminderSent, resetDemoData, notify],
   );
 
   return (
@@ -194,30 +211,29 @@ export function CustomersProvider({ children }: { children: ReactNode }) {
   );
 }
 
-const toastIcon: Record<ToastTone, { icon: IconName; className: string }> = {
-  success: { icon: "checkCircle", className: "bg-(--success-bg) text-(--success-ink)" },
-  info: { icon: "info", className: "bg-(--info-bg) text-(--info-ink)" },
-  warning: { icon: "alert", className: "bg-(--warning-bg) text-(--warning-ink)" },
-  danger: { icon: "alertCircle", className: "bg-(--danger-bg) text-(--danger-ink)" },
+const toastStyle: Record<ToastTone, { icon: IconName; box: string }> = {
+  success: { icon: "check", box: "border-(--success-solid)/35 bg-(--success-bg) text-(--success-ink)" },
+  info: { icon: "info", box: "border-(--info-solid)/35 bg-(--info-bg) text-(--info-ink)" },
+  warning: { icon: "alert", box: "border-(--warning-solid)/35 bg-(--warning-bg) text-(--warning-ink)" },
+  danger: { icon: "alertCircle", box: "border-(--danger-solid)/35 bg-(--danger-bg) text-(--danger-ink)" },
 };
 
+/** Notifications sit top right of the content area, like "Customer added successfully" in the design. */
 function ToastViewport({ toasts, onDismiss }: { toasts: ToastMessage[]; onDismiss: (id: number) => void }) {
   return (
-    <div aria-live="polite" className="pointer-events-none fixed right-4 bottom-4 left-4 z-[60] flex flex-col items-end gap-2 sm:left-auto">
+    <div aria-live="polite" className="pointer-events-none fixed top-4 right-4 left-4 z-[60] flex flex-col items-end gap-2 sm:left-auto">
       {toasts.map((t) => (
         <div
           key={t.id}
           role="status"
-          className="pointer-events-auto flex w-full max-w-[380px] items-start gap-3 rounded-md border border-(--border) bg-(--surface-raised) px-4 py-3.5 text-(--ink) shadow-(--shadow-2)"
+          className={`pointer-events-auto flex w-full max-w-[420px] items-start gap-2.5 rounded-md border px-4 py-2.5 shadow-(--shadow-2) ${toastStyle[t.tone].box}`}
         >
-          <span className={`grid size-7 flex-none place-items-center rounded-full ${toastIcon[t.tone].className}`}>
-            <Icon name={toastIcon[t.tone].icon} size={18} />
-          </span>
-          <div className="min-w-0 flex-1">
+          <Icon name={toastStyle[t.tone].icon} size={16} strokeWidth={2.5} className="mt-[3px]" />
+          <div className="min-w-0 flex-1 text-sm leading-5">
             <p className="font-semibold">{t.title}</p>
-            {t.description ? <p className="mt-0.5 text-[13px] leading-[18px] text-(--ink-muted)">{t.description}</p> : null}
+            {t.description ? <p className="mt-0.5 text-[13px] leading-[18px] text-(--ink)">{t.description}</p> : null}
             {t.action ? (
-              <Link href={t.action.href} onClick={() => onDismiss(t.id)} className="mt-1 inline-block text-sm font-semibold text-(--link) underline-offset-2 hover:underline">
+              <Link href={t.action.href} onClick={() => onDismiss(t.id)} className="mt-1 inline-block text-[13px] font-semibold text-(--link) underline-offset-2 hover:underline">
                 {t.action.label}
               </Link>
             ) : null}
@@ -225,10 +241,10 @@ function ToastViewport({ toasts, onDismiss }: { toasts: ToastMessage[]; onDismis
           <button
             type="button"
             onClick={() => onDismiss(t.id)}
-            aria-label="Dismiss"
-            className="cursor-pointer rounded-sm p-1 text-(--ink-subtle) hover:bg-(--surface-hover) hover:text-(--ink)"
+            aria-label="Dismiss notification"
+            className="-mr-1 cursor-pointer rounded-sm p-1 opacity-80 hover:bg-black/5 hover:opacity-100"
           >
-            <Icon name="x" size={16} />
+            <Icon name="x" size={14} />
           </button>
         </div>
       ))}

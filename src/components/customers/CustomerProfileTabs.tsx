@@ -2,20 +2,36 @@
 
 import { Fragment, useState } from "react";
 import { getBranchName } from "@/data/customers";
-import { formatDate, formatLKR, formatNumber, loyaltySummary, prescriptionStatus } from "@/lib/customers";
+import { averageRating, formatDate, formatLKR, formatNumber, formatRating, loyaltySummary, prescriptionStatus } from "@/lib/customers";
 import type { Customer, CustomerFeedback, LoyaltyTransaction, PaymentMethod, Purchase, StoredPrescription } from "@/types/customers";
-import { rowClass, tdClass, thClass } from "./CustomerTable";
 import { FeedbackCard } from "./FeedbackCard";
-import { LoyaltyHistoryTable } from "./LoyaltyHistoryTable";
+import { PrescriptionPreviewModal } from "./PrescriptionPreviewModal";
+import { useCustomers } from "./CustomersProvider";
 import { Badge } from "./ui/Badge";
-import { Card, cardClass } from "./ui/Card";
+import { Button } from "./ui/Button";
+import { Card, CardHeader } from "./ui/Card";
 import { EmptyState } from "./ui/EmptyState";
 import { Icon } from "./ui/Icon";
+import { Pagination, usePagination } from "./ui/Pagination";
 import { TabPanel, Tabs } from "./ui/Tabs";
+import { rowClass, tableClass, tableWrap, tdClass, thClass } from "./ui/table";
 
 export type ProfileTab = "purchases" | "prescriptions" | "loyalty" | "feedback";
 
+export const PROFILE_TABS: { id: ProfileTab; label: string }[] = [
+  { id: "purchases", label: "Purchase History" },
+  { id: "prescriptions", label: "Prescriptions" },
+  { id: "loyalty", label: "Loyalty History" },
+  { id: "feedback", label: "Feedback" },
+];
+
+const PAGE_SIZE = 6;
 const PAY_LABEL: Record<PaymentMethod, string> = { cash: "Cash", card: "Card", bank_transfer: "Bank transfer" };
+
+/** "Metformin 500 mg tablets" -> "Metformin" for the compact Items column. */
+function shortMedicine(name: string): string {
+  return name.split(/\s\d/)[0];
+}
 
 interface CustomerProfileTabsProps {
   customer: Customer;
@@ -29,28 +45,15 @@ interface CustomerProfileTabsProps {
 
 export function CustomerProfileTabs({ customer, purchases, prescriptions, transactions, feedback, tab, onTabChange }: CustomerProfileTabsProps) {
   return (
-    <Card as="section" aria-label="Customer records" className="overflow-hidden">
-      <div className="px-3 pt-1">
-        <Tabs<ProfileTab>
-          label="Customer records"
-          idPrefix="profile"
-          value={tab}
-          onChange={onTabChange}
-          tabs={[
-            { id: "purchases", label: "Purchase history", count: purchases.length },
-            { id: "prescriptions", label: "Prescriptions", count: prescriptions.length },
-            { id: "loyalty", label: "Loyalty points", count: transactions.length },
-            { id: "feedback", label: "Feedback", count: feedback.length },
-          ]}
-        />
-      </div>
+    <>
+      <Tabs<ProfileTab> label="Customer records" idPrefix="profile" value={tab} onChange={onTabChange} tabs={PROFILE_TABS} />
       <TabPanel idPrefix="profile" id={tab}>
         {tab === "purchases" ? <PurchasesPanel purchases={purchases} /> : null}
-        {tab === "prescriptions" ? <PrescriptionsPanel prescriptions={prescriptions} /> : null}
-        {tab === "loyalty" ? <LoyaltyPanel customer={customer} transactions={transactions} /> : null}
+        {tab === "prescriptions" ? <PrescriptionsPanel customer={customer} prescriptions={prescriptions} /> : null}
+        {tab === "loyalty" ? <LoyaltyPanel customer={customer} transactions={transactions} purchases={purchases} /> : null}
         {tab === "feedback" ? <FeedbackPanel customer={customer} feedback={feedback} /> : null}
       </TabPanel>
-    </Card>
+    </>
   );
 }
 
@@ -58,212 +61,250 @@ export function CustomerProfileTabs({ customer, purchases, prescriptions, transa
 
 function PurchasesPanel({ purchases }: { purchases: Purchase[] }) {
   const [open, setOpen] = useState<string[]>([]);
-  if (purchases.length === 0) {
-    return <EmptyState icon="receipt" title="No purchases yet" description="Bills from the Billing module will appear here." />;
-  }
+  const pager = usePagination(purchases, PAGE_SIZE);
   const toggle = (id: string) => setOpen((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[860px] border-collapse text-sm leading-5">
-        <caption className="sr-only">Purchase history</caption>
-        <thead>
-          <tr>
-            <th scope="col" className={`${thClass} w-10`}>
-              <span className="sr-only">Show items</span>
-            </th>
-            <th scope="col" className={`${thClass} text-left`}>Bill</th>
-            <th scope="col" className={`${thClass} text-left`}>Date</th>
-            <th scope="col" className={`${thClass} text-left`}>Items</th>
-            <th scope="col" className={`${thClass} text-right`}>Subtotal</th>
-            <th scope="col" className={`${thClass} text-right`}>Discount</th>
-            <th scope="col" className={`${thClass} text-right`}>Paid</th>
-            <th scope="col" className={`${thClass} text-right`}>Points</th>
-            <th scope="col" className={`${thClass} text-left`}>Payment</th>
-          </tr>
-        </thead>
-        <tbody>
-          {purchases.map((p) => {
-            const expanded = open.includes(p.id);
-            return (
-              <Fragment key={p.id}>
-                <tr className={rowClass}>
-                  <td className={`${tdClass} pr-0`}>
-                    <button
-                      type="button"
-                      onClick={() => toggle(p.id)}
-                      aria-expanded={expanded}
-                      aria-controls={`items-${p.id}`}
-                      aria-label={`${expanded ? "Hide" : "Show"} items on bill ${p.id}`}
-                      className="grid size-8 cursor-pointer place-items-center rounded-sm text-(--ink-muted) hover:bg-(--primary-tint) hover:text-(--primary-tint-ink)"
-                    >
-                      <Icon name={expanded ? "chevronDown" : "chevronRight"} size={18} />
-                    </button>
-                  </td>
-                  <td className={`${tdClass} mz-mono whitespace-nowrap`}>{p.id}</td>
-                  <td className={`${tdClass} whitespace-nowrap`}>
-                    {formatDate(p.date)}
-                    <span className="block text-[13px] text-(--ink-muted)">{getBranchName(p.branchId)}</span>
-                  </td>
-                  <td className={tdClass}>
-                    <span className="line-clamp-1">{p.items.map((i) => i.medicine).join(", ")}</span>
-                    <span className="block text-[13px] text-(--ink-muted)">
-                      {p.items.length} {p.items.length === 1 ? "item" : "items"}
-                    </span>
-                  </td>
-                  <td className={`${tdClass} text-right whitespace-nowrap tabular-nums`}>{formatLKR(p.subtotal)}</td>
-                  <td className={`${tdClass} text-right whitespace-nowrap tabular-nums`}>
-                    {p.discountPercent ? (
-                      <>
-                        −{formatLKR(p.discountAmount)}
-                        <span className="block text-[13px] text-(--ink-muted)">{p.discountPercent}% regular</span>
-                      </>
-                    ) : (
-                      <span className="text-(--ink-subtle)">–</span>
-                    )}
-                  </td>
-                  <td className={`${tdClass} text-right font-bold whitespace-nowrap text-(--price) tabular-nums`}>{formatLKR(p.total)}</td>
-                  <td className={`${tdClass} text-right tabular-nums`}>+{p.pointsEarned}</td>
-                  <td className={tdClass}>
-                    <Badge tone="neutral" icon={p.paymentMethod === "bank_transfer" ? "refresh" : "wallet"}>
-                      {PAY_LABEL[p.paymentMethod]}
-                    </Badge>
-                  </td>
-                </tr>
-                {expanded ? (
-                  <tr id={`items-${p.id}`}>
-                    <td colSpan={9} className="border-b border-(--border) bg-(--surface-sunken) px-4 py-3">
-                      <table className="w-full text-[13px]">
-                        <caption className="sr-only">Items on bill {p.id}</caption>
-                        <thead>
-                          <tr className="text-left text-(--ink-muted)">
-                            <th scope="col" className="py-1 pr-4 font-semibold">Medicine</th>
-                            <th scope="col" className="py-1 pr-4 text-right font-semibold">Qty</th>
-                            <th scope="col" className="py-1 pr-4 text-right font-semibold">Unit price</th>
-                            <th scope="col" className="py-1 pr-4 text-right font-semibold">Line total</th>
-                            <th scope="col" className="py-1 text-right font-semibold">Days supply</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {p.items.map((i) => (
-                            <tr key={i.medicine}>
-                              <td className="py-1 pr-4">{i.medicine}</td>
-                              <td className="py-1 pr-4 text-right tabular-nums">{i.quantity}</td>
-                              <td className="py-1 pr-4 text-right tabular-nums">{formatLKR(i.unitPrice)}</td>
-                              <td className="py-1 pr-4 text-right tabular-nums">{formatLKR(i.quantity * i.unitPrice)}</td>
-                              <td className="py-1 text-right tabular-nums">{i.daysSupply ? `${i.daysSupply} days` : "–"}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                ) : null}
-              </Fragment>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-/* ---------- Stored prescriptions ---------- */
-
-type RxFilter = "all" | "active" | "expired";
-
-function PrescriptionsPanel({ prescriptions }: { prescriptions: StoredPrescription[] }) {
-  const [filter, setFilter] = useState<RxFilter>("all");
-  if (prescriptions.length === 0) {
-    return <EmptyState icon="file" title="No stored prescriptions" description="Prescriptions uploaded in the Prescriptions module are stored here." />;
-  }
-  const withStatus = prescriptions.map((p) => ({ ...p, status: prescriptionStatus(p) })).sort((a, b) => b.issuedOn.localeCompare(a.issuedOn));
-  const visible = withStatus.filter((p) => filter === "all" || p.status === filter);
-
-  return (
-    <div className="flex flex-col gap-4 p-5">
-      <Tabs<RxFilter>
-        variant="pill"
-        label="Prescription status"
-        idPrefix="rx-filter"
-        value={filter}
-        onChange={setFilter}
-        tabs={[
-          { id: "all", label: "All", count: withStatus.length },
-          { id: "active", label: "Active", count: withStatus.filter((p) => p.status === "active").length },
-          { id: "expired", label: "Expired", count: withStatus.filter((p) => p.status === "expired").length },
-        ]}
+    <Card as="section" aria-labelledby="purchases-title" className="overflow-hidden">
+      <CardHeader
+        id="purchases-title"
+        title="Purchase History"
+        description="Recent purchases across Medizone branches"
+        action={<span className="text-xs font-medium text-(--ink)">All amounts in LKR</span>}
       />
-      {visible.length === 0 ? (
-        <EmptyState icon="file" title={`No ${filter} prescriptions`} />
+      {purchases.length === 0 ? (
+        <EmptyState icon="receipt" title="No purchases yet" description="Orders and counter bills for this customer will appear here." compact />
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {visible.map((p) => (
-            <article key={p.id} className={`${cardClass} flex flex-col gap-3 p-5 shadow-none`}>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="mz-mono text-(--ink-muted)">{p.id}</p>
-                  <h3 className="text-[15px] font-semibold">{p.doctorName}</h3>
-                  <p className="text-[13px] text-(--ink-muted)">{p.hospital}</p>
-                </div>
-                {p.status === "active" ? (
-                  <Badge tone="success" icon="check">Active</Badge>
-                ) : (
-                  <Badge tone="neutral" icon="clock">Expired</Badge>
-                )}
-              </div>
-              <ul className="flex flex-col gap-1">
-                {p.medicines.map((m) => (
-                  <li key={m} className="flex items-center gap-2 text-sm">
-                    <Icon name="pill" size={16} className="text-(--ink-muted)" />
-                    {m}
-                  </li>
-                ))}
-              </ul>
-              {p.notes ? <p className="rounded-sm bg-(--surface-sunken) px-3 py-2 text-[13px] leading-[18px] text-(--ink)">{p.notes}</p> : null}
-              <p className="text-[13px] text-(--ink-muted)">
-                Issued {formatDate(p.issuedOn)} · Valid until {formatDate(p.validUntil)}
-              </p>
-            </article>
-          ))}
-        </div>
+        <>
+          <div className={tableWrap}>
+            <table className={`${tableClass} min-w-[820px]`}>
+              <caption className="sr-only">Purchase history</caption>
+              <thead>
+                <tr>
+                  <th scope="col" className={thClass}>Order ID</th>
+                  <th scope="col" className={thClass}>Date</th>
+                  <th scope="col" className={thClass}>Items</th>
+                  <th scope="col" className={thClass}>Amount</th>
+                  <th scope="col" className={thClass}>Points Earned</th>
+                  <th scope="col" className={thClass}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pager.visible.map((p) => {
+                  const expanded = open.includes(p.id);
+                  return (
+                    <Fragment key={p.id}>
+                      <tr className={rowClass}>
+                        <td className={tdClass}>
+                          <button
+                            type="button"
+                            onClick={() => toggle(p.id)}
+                            aria-expanded={expanded}
+                            aria-controls={`items-${p.id}`}
+                            title={`${expanded ? "Hide" : "Show"} bill details`}
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-sm font-bold text-(--ink) hover:text-(--heading)"
+                          >
+                            <Icon name={expanded ? "chevronDown" : "chevronRight"} size={14} className="text-(--ink-muted)" />
+                            {p.id}
+                          </button>
+                        </td>
+                        <td className={`${tdClass} whitespace-nowrap`}>{formatDate(p.date)}</td>
+                        <td className={tdClass}>{p.items.map((i) => shortMedicine(i.medicine)).join(", ")}</td>
+                        <td className={`${tdClass} whitespace-nowrap tabular-nums`}>{formatLKR(p.total, { decimals: 0 })}</td>
+                        <td className={`${tdClass} tabular-nums`}>+{p.pointsEarned}</td>
+                        <td className={tdClass}>
+                          <Badge tone="success">Completed</Badge>
+                        </td>
+                      </tr>
+                      {expanded ? (
+                        <tr id={`items-${p.id}`}>
+                          <td colSpan={6} className="border-b border-(--border) bg-(--surface-page) px-4 py-3">
+                            <table className="w-full text-[13px]">
+                              <caption className="sr-only">Items on bill {p.id}</caption>
+                              <thead>
+                                <tr className="text-left text-(--ink-muted)">
+                                  <th scope="col" className="py-1 pr-4 font-semibold">Medicine</th>
+                                  <th scope="col" className="py-1 pr-4 text-right font-semibold">Qty</th>
+                                  <th scope="col" className="py-1 pr-4 text-right font-semibold">Unit price</th>
+                                  <th scope="col" className="py-1 pr-4 text-right font-semibold">Line total</th>
+                                  <th scope="col" className="py-1 text-right font-semibold">Days supply</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {p.items.map((i) => (
+                                  <tr key={i.medicine}>
+                                    <td className="py-1 pr-4">{i.medicine}</td>
+                                    <td className="py-1 pr-4 text-right tabular-nums">{i.quantity}</td>
+                                    <td className="py-1 pr-4 text-right tabular-nums">{formatLKR(i.unitPrice)}</td>
+                                    <td className="py-1 pr-4 text-right tabular-nums">{formatLKR(i.quantity * i.unitPrice)}</td>
+                                    <td className="py-1 text-right tabular-nums">{i.daysSupply ? `${i.daysSupply} days` : "–"}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                            <p className="mt-2 text-[13px] text-(--ink-muted)">
+                              Subtotal {formatLKR(p.subtotal)}
+                              {p.discountPercent ? ` · ${p.discountPercent}% regular discount −${formatLKR(p.discountAmount)}` : ""} · Paid {formatLKR(p.total)} by{" "}
+                              {PAY_LABEL[p.paymentMethod].toLowerCase()} · {getBranchName(p.branchId)} branch
+                            </p>
+                          </td>
+                        </tr>
+                      ) : null}
+                    </Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <Pagination {...pager} onPageChange={pager.setPage} noun="orders" variant="text" />
+        </>
       )}
-    </div>
+    </Card>
   );
 }
 
-/* ---------- Loyalty points ---------- */
+/* ---------- Prescriptions ---------- */
 
-function LoyaltyPanel({ customer, transactions }: { customer: Customer; transactions: LoyaltyTransaction[] }) {
-  const s = loyaltySummary(transactions);
-  const stats = [
-    { label: "Current balance", value: formatNumber(customer.loyaltyPoints) },
-    { label: "Earned on purchases", value: formatNumber(s.earned) },
-    { label: "Opening balance", value: formatNumber(s.adjusted) },
-    { label: "Redeemed", value: formatNumber(s.redeemed) },
-  ];
+function PrescriptionsPanel({ customer, prescriptions }: { customer: Customer; prescriptions: StoredPrescription[] }) {
+  const { today } = useCustomers();
+  const [previewId, setPreviewId] = useState<string>();
+  const sorted = [...prescriptions].sort((a, b) => b.issuedOn.localeCompare(a.issuedOn));
+  const preview = sorted.find((p) => p.id === previewId);
+
   return (
-    <div className="flex flex-col">
-      <div className="grid grid-cols-2 gap-4 border-b border-(--border) p-5 md:grid-cols-4">
-        {stats.map((st, i) => (
-          <div key={st.label} className={i === 0 ? "rounded-md bg-(--loyalty-bg) p-3 text-(--loyalty-ink)" : "p-3"}>
-            <p className={`text-[11px] leading-[14px] font-bold tracking-[0.08em] uppercase ${i === 0 ? "" : "text-(--ink-muted)"}`}>{st.label}</p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums">
-              {st.value} <span className="text-sm font-medium">pts</span>
-            </p>
-          </div>
-        ))}
-      </div>
-      <p className="flex items-center gap-2 px-5 py-3 text-[13px] text-(--ink-muted)">
-        <Icon name="info" size={16} />
-        1 point for every Rs. 100 paid. {customer.isRegular ? `The ${customer.discountPercent}% regular discount is applied separately.` : ""}
-      </p>
-      {transactions.length > 0 ? (
-        <LoyaltyHistoryTable transactions={transactions} caption={`Loyalty points history for ${customer.name}`} />
+    <Card as="section" aria-labelledby="rx-title" className="overflow-hidden">
+      <CardHeader
+        id="rx-title"
+        title="Prescriptions"
+        description={`Stored prescriptions submitted by ${customer.name}`}
+        action={<span className="text-xs font-medium text-(--ink)">{sorted.length} stored {sorted.length === 1 ? "record" : "records"}</span>}
+      />
+      {sorted.length === 0 ? (
+        <EmptyState icon="file" title="No stored prescriptions" description="Prescriptions this customer uploads or brings to a branch will be stored here." compact />
       ) : (
-        <EmptyState icon="gift" title="No points yet" description="Points appear here after the customer's first purchase." />
+        <>
+          <div className={tableWrap}>
+            <table className={`${tableClass} min-w-[760px]`}>
+              <caption className="sr-only">Stored prescriptions</caption>
+              <thead>
+                <tr>
+                  <th scope="col" className={thClass}>Prescription</th>
+                  <th scope="col" className={thClass}>Date</th>
+                  <th scope="col" className={thClass}>Medicine names</th>
+                  <th scope="col" className={`${thClass} w-28`}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.map((p) => {
+                  const status = prescriptionStatus(p, today);
+                  return (
+                    <tr key={p.id} className={rowClass}>
+                      <td className={`${tdClass} py-4`}>
+                        <span className="font-semibold text-(--heading)">{p.id}</span>
+                        <span className="block text-xs text-(--ink-muted)">{p.fileType === "jpg" ? "JPG image" : "PDF document"}</span>
+                      </td>
+                      <td className={`${tdClass} whitespace-nowrap`}>
+                        {formatDate(p.issuedOn)}
+                        <span className={`block text-xs ${status === "active" ? "text-(--success-ink)" : "text-(--ink-muted)"}`}>
+                          {status === "active" ? `Valid until ${formatDate(p.validUntil)}` : "Expired"}
+                        </span>
+                      </td>
+                      <td className={tdClass}>
+                        <span className="font-semibold">{p.medicines.join(" · ")}</span>
+                        <span className="block text-xs text-(--ink-muted)">{p.fileName}</span>
+                      </td>
+                      <td className={tdClass}>
+                        <Button size="sm" className="min-w-[84px]" onClick={() => setPreviewId(p.id)} aria-label={`View prescription ${p.id}`}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="px-5 py-4 text-xs text-(--ink-muted)">Documents retained for reference only</p>
+        </>
       )}
-    </div>
+      <PrescriptionPreviewModal prescription={preview} customer={customer} onClose={() => setPreviewId(undefined)} />
+    </Card>
+  );
+}
+
+/* ---------- Loyalty history ---------- */
+
+function LoyaltyPanel({ customer, transactions, purchases }: { customer: Customer; transactions: LoyaltyTransaction[]; purchases: Purchase[] }) {
+  const summary = loyaltySummary(transactions);
+  // Running balance after each transaction, oldest first; then shown newest first.
+  const chronological = [...transactions].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
+  const rows = chronological
+    .reduce<{ t: LoyaltyTransaction; balance: number; purchase?: Purchase }[]>((list, t) => {
+      const balance = (list.at(-1)?.balance ?? 0) + t.points;
+      list.push({ t, balance, purchase: t.purchaseId ? purchases.find((p) => p.id === t.purchaseId) : undefined });
+      return list;
+    }, [])
+    .reverse();
+  const pager = usePagination(rows, PAGE_SIZE);
+
+  const kindLabel = (t: LoyaltyTransaction) => (t.type === "redeemed" ? "Redeemed against bill" : t.type === "adjusted" ? "Opening balance" : null);
+
+  return (
+    <Card as="section" aria-labelledby="loyalty-title" className="overflow-hidden">
+      <CardHeader
+        id="loyalty-title"
+        title="Loyalty History"
+        description="1 point earned for every Rs. 100 spent."
+        action={
+          <span className="text-xs font-medium text-(--ink)">
+            Current balance: {formatNumber(customer.loyaltyPoints)} points
+          </span>
+        }
+      />
+      {rows.length === 0 ? (
+        <EmptyState icon="gift" title="No loyalty transactions yet" description="Points will appear here after this customer's first eligible purchase." compact />
+      ) : (
+        <>
+          <p className="-mt-2 px-5 pb-3 text-xs text-(--ink-muted)">
+            Earned on purchases {formatNumber(summary.earned)} · Opening balance {formatNumber(summary.adjusted)} · Redeemed {formatNumber(summary.redeemed)}
+          </p>
+          <div className={tableWrap}>
+            <table className={`${tableClass} min-w-[720px]`}>
+              <caption className="sr-only">Loyalty points history for {customer.name}</caption>
+              <thead>
+                <tr>
+                  <th scope="col" className={thClass}>Date</th>
+                  <th scope="col" className={thClass}>Order ID</th>
+                  <th scope="col" className={thClass}>Purchase Amount</th>
+                  <th scope="col" className={thClass}>Points Earned</th>
+                  <th scope="col" className={thClass}>Current Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pager.visible.map(({ t, balance, purchase }) => (
+                  <tr key={t.id} className={rowClass}>
+                    <td className={`${tdClass} font-semibold whitespace-nowrap`}>{formatDate(t.date)}</td>
+                    <td className={tdClass}>
+                      {t.purchaseId ?? <span className="text-(--ink-muted)">—</span>}
+                      {kindLabel(t) ? <span className="block text-xs text-(--ink-muted)">{kindLabel(t)}</span> : null}
+                    </td>
+                    <td className={`${tdClass} tabular-nums`}>
+                      {purchase && t.type === "earned" ? formatLKR(purchase.total, { decimals: 0 }) : <span className="text-(--ink-muted)">—</span>}
+                    </td>
+                    <td className={`${tdClass} tabular-nums ${t.points < 0 ? "text-(--danger-ink)" : ""}`}>
+                      {t.points > 0 ? "+" : ""}
+                      {formatNumber(t.points)}
+                    </td>
+                    <td className={`${tdClass} font-semibold text-(--heading) tabular-nums`}>{formatNumber(balance)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination {...pager} onPageChange={pager.setPage} noun="transactions" variant="text" />
+        </>
+      )}
+    </Card>
   );
 }
 
@@ -271,19 +312,28 @@ function LoyaltyPanel({ customer, transactions }: { customer: Customer; transact
 
 function FeedbackPanel({ customer, feedback }: { customer: Customer; feedback: CustomerFeedback[] }) {
   return (
-    <div className="flex flex-col gap-4 p-5">
-      {feedback.length > 0 ? (
-        <>
-          <p className="text-(--ink-muted)">
-            {feedback.length} {feedback.length === 1 ? "entry" : "entries"} from {customer.name.split(" ")[0]}
-          </p>
-          {feedback.map((f) => (
-            <FeedbackCard key={f.id} entry={f} customer={customer} hideCustomer />
-          ))}
-        </>
+    <Card as="section" aria-labelledby="profile-feedback-title" className="overflow-hidden">
+      <CardHeader
+        id="profile-feedback-title"
+        title="Submitted Feedback"
+        description="Customer reviews submitted through Medizone.lk"
+        action={
+          feedback.length ? (
+            <span className="text-xs font-medium text-(--ink)">
+              {feedback.length} {feedback.length === 1 ? "review" : "reviews"} · Average rating {formatRating(averageRating(feedback))}/5
+            </span>
+          ) : undefined
+        }
+      />
+      {feedback.length === 0 ? (
+        <EmptyState icon="message" title="No feedback submitted" description={`${customer.name} has not submitted any reviews yet.`} compact />
       ) : (
-        <EmptyState icon="message" title="No feedback from this customer" description="Feedback the customer submits will appear here." />
+        <div className="flex flex-col gap-4 px-5 pb-5">
+          {feedback.map((f) => (
+            <FeedbackCard key={f.id} entry={f} customer={customer} variant="profile" />
+          ))}
+        </div>
       )}
-    </div>
+    </Card>
   );
 }

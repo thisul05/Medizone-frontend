@@ -85,11 +85,13 @@ export { ABSENT_MAP };
 
 function generateAttendance(): AttendanceRecord[] {
   const records: AttendanceRecord[] = [];
+  const today = new Date();
+  const currentDay = today.getDate();
 
   for (const staff of staffMembers) {
     const absentDays = ABSENT_MAP[staff.id] ?? [];
 
-    for (let day = 1; day <= WORKING_DAYS; day++) {
+    for (let day = 1; day <= Math.min(currentDay, WORKING_DAYS); day++) {
       if (absentDays.includes(day)) continue;
 
       const idx = staffMembers.indexOf(staff);

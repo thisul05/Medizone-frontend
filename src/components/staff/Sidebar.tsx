@@ -20,7 +20,6 @@ export default function Sidebar() {
           <p className="mz-caption text-nav-muted">Current branch</p>
           <p className="mz-label text-nav-ink">Piliyandala</p>
         </div>
-        <Icon name="chevron-down" size={16} className="ml-auto text-nav-muted" />
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4">

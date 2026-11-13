@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { ButtonLink, Icon, useToast } from "@/components/shared";
 import { categories } from "@/data/storefront";
+import { useCustomerLogout } from "@/lib/account/logout";
+import { useAccount } from "@/lib/account/use-account";
 import { useAuth } from "@/lib/auth";
 import { NAV_LINKS } from "./nav-links";
 import { SearchBox } from "./SearchBox";
@@ -13,6 +15,8 @@ const linkClass = "flex items-center gap-3 rounded-md px-3 py-2.5 text-ink trans
 /** The panel opened by the menu button under 1024px. */
 export function MobileMenu({ onClose }: { onClose: () => void }) {
   const { user, ready, signOut } = useAuth();
+  const account = useAccount();
+  const logout = useCustomerLogout();
   const toast = useToast();
 
   return (
@@ -49,7 +53,27 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="flex flex-col gap-2 border-t border-line pt-4">
-          {ready && user ? (
+          {ready && account ? (
+            <>
+              <p className="px-3 mz-label">Hi, {account.firstName}</p>
+              <Link href="/account" className={linkClass} onClick={onClose}>
+                <Icon name="user" /> My Account
+              </Link>
+              <Link href="/account/orders" className={linkClass} onClick={onClose}>
+                <Icon name="package" /> My Orders
+              </Link>
+              <button
+                type="button"
+                className={linkClass}
+                onClick={() => {
+                  onClose();
+                  logout();
+                }}
+              >
+                <Icon name="logout" /> Logout
+              </button>
+            </>
+          ) : ready && user ? (
             <>
               <p className="px-3 mz-label">Signed in as {user.name}</p>
               <Link href="/home" className={linkClass} onClick={onClose}>

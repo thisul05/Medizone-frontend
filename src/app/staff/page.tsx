@@ -62,7 +62,7 @@ export default function StaffListPage() {
                     <td className="px-4 py-3 mz-code text-ink">{s.id}</td>
                     <td className="px-4 py-3 text-ink font-medium">{s.name}</td>
                     <td className="px-4 py-3 text-ink">{s.role}</td>
-                    <td className="px-4 py-3 text-ink">{s.branch === "all" ? "-" : branchName(s.branch)}</td>
+                    <td className="px-4 py-3 text-ink">{branchName(s.branch)}</td>
                     <td className="px-4 py-3 text-ink mz-num">{formatPhone(s.mobile)}</td>
                     <td className="px-4 py-3 text-ink">{formatDate(s.joinedDate)}</td>
                     <td className="px-4 py-3">

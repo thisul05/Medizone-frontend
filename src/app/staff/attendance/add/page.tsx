@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import AppSidebar from "@/components/shared/AppSidebar";
 import { Button, ButtonLink } from "@/components/shared/Button";
 import { Select } from "@/components/shared/Select";
@@ -12,8 +13,9 @@ import { useStaff } from "@/components/staff/StaffContext";
 import { branchName } from "@/data/branches";
 
 export default function AddAttendanceEntryPage() {
+  const router = useRouter();
   const toast = useToast();
-  const { staff } = useStaff();
+  const { staff, addAttendance } = useStaff();
   const [selectedStaffId, setSelectedStaffId] = useState(staff[0]?.id ?? "");
   const [selectedMonth, setSelectedMonth] = useState("2026-11");
 
@@ -41,7 +43,9 @@ export default function AddAttendanceEntryPage() {
       : "present";
 
   const handleSave = () => {
+    addAttendance({ staffId: selectedStaffId, date, timeIn, timeOut: timeOut || undefined });
     toast({ tone: "success", title: "Attendance saved" });
+    router.push("/staff/attendance");
   };
 
   if (!selectedStaff) return null;
@@ -53,7 +57,10 @@ export default function AddAttendanceEntryPage() {
       <div className="min-w-0 flex-1 overflow-auto bg-surface-page">
         <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <h1 className="mz-h1 text-ink">Attendance entry</h1>
+            <div className="flex items-center gap-3">
+              <ButtonLink href="/staff/attendance" variant="ghost" size="sm" icon="arrow-left" aria-label="Back" />
+              <h1 className="mz-h1 text-ink">Attendance entry</h1>
+            </div>
             <Select
               label="Month"
               labelHidden

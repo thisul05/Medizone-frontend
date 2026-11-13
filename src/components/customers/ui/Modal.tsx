@@ -1,16 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
-import { Icon, type IconName } from "./Icon";
-
-type ModalTone = "danger" | "warning" | "success" | "info";
-
-const toneStyles: Record<ModalTone, { className: string; icon: IconName }> = {
-  danger: { className: "bg-(--danger-bg) text-(--danger-ink)", icon: "alertCircle" },
-  warning: { className: "bg-(--warning-bg) text-(--warning-ink)", icon: "alert" },
-  success: { className: "bg-(--success-bg) text-(--success-ink)", icon: "checkCircle" },
-  info: { className: "bg-(--info-bg) text-(--info-ink)", icon: "info" },
-};
+import { Icon } from "./Icon";
 
 interface ModalProps {
   open: boolean;
@@ -18,19 +9,19 @@ interface ModalProps {
   description?: ReactNode;
   onClose: () => void;
   footer?: ReactNode;
-  tone?: ModalTone;
-  icon?: IconName;
   size?: "md" | "lg";
+  /** Draw a line under the header (Reminder Preview in the design). */
+  divider?: boolean;
   children?: ReactNode;
 }
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /**
- * Dialog per the design system: closes on Escape and on the scrim, keeps focus inside,
- * and returns focus to the button that opened it.
+ * Centered dialog (Figma): navy title, muted subtitle, square close button.
+ * Closes on Escape, the close button and the backdrop; keeps focus inside and returns it afterwards.
  */
-export function Modal({ open, title, description, onClose, footer, tone, icon, size = "md", children }: ModalProps) {
+export function Modal({ open, title, description, onClose, footer, size = "md", divider, children }: ModalProps) {
   const titleId = useId();
   const descId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -78,7 +69,6 @@ export function Modal({ open, title, description, onClose, footer, tone, icon, s
   }, [open]);
 
   if (!open) return null;
-  const toneStyle = tone ? toneStyles[tone] : null;
 
   return (
     <div
@@ -93,20 +83,15 @@ export function Modal({ open, title, description, onClose, footer, tone, icon, s
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={description ? descId : undefined}
-        className={`flex max-h-[calc(100vh-32px)] w-full flex-col overflow-hidden rounded-lg bg-(--surface-raised) text-(--ink) shadow-(--shadow-3) ${size === "lg" ? "max-w-[640px]" : "max-w-[460px]"}`}
+        className={`flex max-h-[calc(100dvh-32px)] w-full flex-col overflow-hidden rounded-[12px] bg-(--surface-raised) text-(--ink) shadow-(--shadow-3) ${size === "lg" ? "max-w-[600px]" : "max-w-[560px]"}`}
       >
-        <div className="flex items-start gap-3 px-6 pt-6">
-          {toneStyle ? (
-            <span className={`grid size-10 flex-none place-items-center rounded-full ${toneStyle.className}`}>
-              <Icon name={icon ?? toneStyle.icon} size={20} />
-            </span>
-          ) : null}
-          <div className="min-w-0 flex-1 pt-0.5">
-            <h2 id={titleId} className="text-lg leading-6 font-semibold">
+        <div className={`flex items-start gap-3 px-6 pt-6 ${divider ? "border-b border-(--border) pb-4" : ""}`}>
+          <div className="min-w-0 flex-1">
+            <h2 id={titleId} className="text-[22px] leading-7 font-bold text-(--heading)">
               {title}
             </h2>
             {description ? (
-              <p id={descId} className="mt-1 text-sm leading-5 text-(--ink-muted)">
+              <p id={descId} className="mt-2 text-[13px] leading-[18px] text-(--ink-muted)">
                 {description}
               </p>
             ) : null}
@@ -115,17 +100,13 @@ export function Modal({ open, title, description, onClose, footer, tone, icon, s
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="cursor-pointer rounded-sm p-1.5 text-(--ink-subtle) hover:bg-(--surface-hover) hover:text-(--ink)"
+            className="grid size-8 flex-none cursor-pointer place-items-center rounded-[6px] bg-(--soft-bg) text-(--ink) hover:bg-(--soft-bg-hover)"
           >
-            <Icon name="x" size={18} />
+            <Icon name="x" size={16} />
           </button>
         </div>
-        <div className="overflow-y-auto px-6 pt-4 pb-6">{children}</div>
-        {footer ? (
-          <div className="flex flex-wrap justify-end gap-3 border-t border-(--border) bg-(--surface-sunken) px-6 py-4">
-            {footer}
-          </div>
-        ) : null}
+        <div className={`overflow-y-auto px-6 ${divider ? "pt-5" : "pt-4"} pb-2`}>{children}</div>
+        {footer ? <div className="flex flex-wrap justify-end gap-3 px-6 pt-4 pb-6">{footer}</div> : <div className="pb-4" />}
       </div>
     </div>
   );

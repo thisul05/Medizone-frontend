@@ -1,4 +1,4 @@
-import { PROTOTYPE_TODAY, formatMonth, formatNumber } from "@/lib/customers";
+import { formatMonth, formatNumber } from "@/lib/customers";
 import type { LoyaltyTransaction } from "@/types/customers";
 import { Card, CardHeader } from "./ui/Card";
 
@@ -18,9 +18,9 @@ function monthsBetween(start: string, end: string): string[] {
 }
 
 /** Points earned per month: a single series, so one hue, no legend, values labelled in ink. */
-export function PointsEarnedChart({ transactions }: { transactions: LoyaltyTransaction[] }) {
+export function PointsEarnedChart({ transactions, today }: { transactions: LoyaltyTransaction[]; today: string }) {
   const earned = transactions.filter((t) => t.type === "earned");
-  const currentMonth = PROTOTYPE_TODAY.slice(0, 7);
+  const currentMonth = today.slice(0, 7);
   const firstMonth = earned.reduce((min, t) => (t.date.slice(0, 7) < min ? t.date.slice(0, 7) : min), currentMonth);
   const months = monthsBetween(firstMonth, currentMonth).slice(-6);
   const data = months.map((month) => ({
@@ -31,8 +31,8 @@ export function PointsEarnedChart({ transactions }: { transactions: LoyaltyTrans
 
   return (
     <Card as="section" aria-labelledby="points-chart-title">
-      <CardHeader id="points-chart-title" title="Points earned history" description="Points earned on purchases each month (opening balances excluded)." />
-      <div className="p-5">
+      <CardHeader id="points-chart-title" title="Points Earned History" description="Points earned on purchases each month (opening balances excluded)." />
+      <div className="px-5 pb-5">
         <div className="flex h-48 items-end gap-3 border-b border-(--border)" role="img" aria-label={data.map((d) => `${formatMonth(d.month)}: ${d.points} points`).join(", ")}>
           {data.map((d) => (
             <div key={d.month} className="group flex h-full flex-1 flex-col items-center justify-end gap-1.5" title={`${formatMonth(d.month)}: ${formatNumber(d.points)} points`}>

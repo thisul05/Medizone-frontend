@@ -16,10 +16,30 @@ import type {
 } from "@/types/customers";
 
 /**
- * The prototype's "today". Mock data is dated around it so that refill reminders
- * and "this month" figures look the same whenever the prototype is demonstrated.
+ * Fallback "today", used only while rendering on the server. In the browser the module
+ * uses the real local date (getTodayISO), so reminder statuses follow the calendar.
  */
-export const PROTOTYPE_TODAY = "2026-11-06";
+export const PROTOTYPE_TODAY = "2026-11-13";
+
+/** Today's date in the browser's time zone (Sri Lanka for staff), as "YYYY-MM-DD". */
+export function getTodayISO(now: Date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+/** "cus-01" -> "CUS-001", the display format used on screen. Internal ids never change. */
+export function formatCustomerId(id: string): string {
+  const match = /^cus-(\d+)$/i.exec(id);
+  return match ? `CUS-${match[1].padStart(3, "0")}` : id.toUpperCase();
+}
+
+/** Name or phone search used by every list in the module. Phone digits may include spaces. */
+export function matchesCustomerSearch(customer: Pick<Customer, "name" | "phone">, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const digits = normalizePhone(q);
+  return customer.name.toLowerCase().includes(q) || (digits.length >= 3 && customer.phone.includes(digits));
+}
 
 /** Reminders show for refills due within this many days. */
 export const REMINDER_WINDOW_DAYS = 7;
@@ -52,11 +72,11 @@ function parseISODate(iso: string): Date {
   return new Date(`${iso}T00:00:00Z`);
 }
 
-/** `4 Nov 2026`. Dates are handled in UTC so server and browser always agree. */
+/** `04 Nov 2026`, as in the design. Dates are handled in UTC so server and browser always agree. */
 export function formatDate(iso: string): string {
   const d = parseISODate(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  return `${String(d.getUTCDate()).padStart(2, "0")} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
 export function formatMonth(isoMonth: string): string {
@@ -182,8 +202,14 @@ export function ratingDistribution(feedback: Pick<CustomerFeedback, "rating">[])
   return ([5, 4, 3, 2, 1] as Rating[]).map((rating) => ({
     rating,
     count: counts[rating],
-    percent: feedback.length ? Math.round((counts[rating] / feedback.length) * 100) : 0,
+    /** One decimal place, e.g. 66.7. */
+    percent: feedback.length ? Math.round((counts[rating] / feedback.length) * 1000) / 10 : 0,
   }));
+}
+
+/** Low ratings are 1 or 2 stars everywhere in the module. */
+export function isLowRating(rating: number): boolean {
+  return rating <= 2;
 }
 
 /* ---------- Prescriptions ---------- */
@@ -248,27 +274,22 @@ export function buildRefillReminders(
   return reminders.sort((a, b) => a.daysUntilRefill - b.daysUntilRefill);
 }
 
-/** The SMS / WhatsApp text a pharmacist would send. Shown as a preview only. */
+/** The personalised reminder text a pharmacist would send. Shown as a preview only; nothing is sent. */
 export function buildReminderMessage(
-  customer: Pick<Customer, "name" | "isRegular" | "discountPercent">,
+  customer: Pick<Customer, "name">,
   reminder: Pick<RefillReminder, "medicine" | "expectedRefillDate" | "daysUntilRefill">,
-  branchLabel: string,
-  contactPhone?: string,
 ): string {
   const firstName = customer.name.split(" ")[0];
+  const date = formatDate(reminder.expectedRefillDate);
   const when =
     reminder.daysUntilRefill < 0
-      ? `may have run out on ${formatDate(reminder.expectedRefillDate)}`
+      ? `was expected to run out on ${date}`
       : reminder.daysUntilRefill === 0
-        ? "are expected to run out today"
-        : `are expected to run out on ${formatDate(reminder.expectedRefillDate)}`;
-  const discount =
-    customer.isRegular && customer.discountPercent > 0
-      ? ` As a regular customer you get ${customer.discountPercent}% off.`
-      : "";
+        ? `is expected to run out today, ${date}`
+        : `is expected to run out on ${date}`;
   return (
-    `Hello ${firstName}, this is Medizone Pharmacy, ${branchLabel}. ` +
-    `Your ${reminder.medicine} ${when}. ` +
-    `${contactPhone ? `Call or WhatsApp us on ${formatPhone(contactPhone)}` : "Reply to this message"} or visit us and we'll have your refill ready.${discount} Thank you.`
+    `Hi ${firstName}, your ${reminder.medicine} supply ${when}. ` +
+    "Please check your remaining medicine and arrange your next refill through Medizone.lk. " +
+    "If your prescription has changed, contact your pharmacist. — Medizone Pharmacy"
   );
 }

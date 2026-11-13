@@ -1,25 +1,26 @@
 import Link from "next/link";
 import { describeDaysFromToday, formatDate, formatPhone } from "@/lib/customers";
 import type { Customer, RefillReminder, ReminderStatus } from "@/types/customers";
-import { rowClass, tdClass, thClass } from "./CustomerTable";
 import { Badge, type BadgeTone } from "./ui/Badge";
 import { Button } from "./ui/Button";
-import type { IconName } from "./ui/Icon";
+import { rowClass, tableClass, tableWrap, tdClass, thClass } from "./ui/table";
 
-const STATUS_BADGE: Record<ReminderStatus, { label: string; tone: BadgeTone; icon: IconName }> = {
-  overdue: { label: "Overdue", tone: "danger", icon: "alertCircle" },
-  due_soon: { label: "Due within 7 days", tone: "warning", icon: "clock" },
-  upcoming: { label: "Upcoming", tone: "neutral", icon: "calendar" },
-  sent: { label: "Sent", tone: "info", icon: "send" },
+export const STATUS_LABEL: Record<ReminderStatus, string> = {
+  upcoming: "Upcoming",
+  due_soon: "Due Soon",
+  overdue: "Overdue",
+  sent: "Sent",
+};
+
+const STATUS_TONE: Record<ReminderStatus, BadgeTone> = {
+  upcoming: "info",
+  due_soon: "warning",
+  overdue: "danger",
+  sent: "success",
 };
 
 export function ReminderStatusBadge({ status }: { status: ReminderStatus }) {
-  const b = STATUS_BADGE[status];
-  return (
-    <Badge tone={b.tone} icon={b.icon}>
-      {b.label}
-    </Badge>
-  );
+  return <Badge tone={STATUS_TONE[status]}>{STATUS_LABEL[status]}</Badge>;
 }
 
 interface ReminderTableProps {
@@ -31,68 +32,63 @@ interface ReminderTableProps {
 
 export function ReminderTable({ reminders, getCustomer, onPreview, onMarkSent }: ReminderTableProps) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[1080px] border-collapse text-sm leading-5">
+    <div className={tableWrap}>
+      <table className={`${tableClass} min-w-[1060px]`}>
         <caption className="sr-only">Refill reminders</caption>
         <thead>
           <tr>
-            <th scope="col" className={`${thClass} text-left`}>Customer</th>
-            <th scope="col" className={`${thClass} text-left`}>Medicine</th>
-            <th scope="col" className={`${thClass} text-left`}>Last purchase</th>
-            <th scope="col" className={`${thClass} text-right`}>Days supply</th>
-            <th scope="col" className={`${thClass} text-left`}>Expected refill</th>
-            <th scope="col" className={`${thClass} text-left`}>Status</th>
-            <th scope="col" className={`${thClass} text-right`}>
-              <span className="sr-only">Actions</span>
-            </th>
+            <th scope="col" className={thClass}>Customer</th>
+            <th scope="col" className={thClass}>Phone</th>
+            <th scope="col" className={thClass}>Medicine</th>
+            <th scope="col" className={thClass}>Last Purchase</th>
+            <th scope="col" className={thClass}>Days Supply</th>
+            <th scope="col" className={thClass}>Expected Refill Date</th>
+            <th scope="col" className={thClass}>Status</th>
+            <th scope="col" className={thClass}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {reminders.map((r) => {
             const customer = getCustomer(r.customerId);
-            const urgent = r.status === "due_soon" || r.status === "overdue";
+            const name = customer?.name ?? r.customerId;
+            const sent = r.status === "sent";
             return (
-              <tr key={r.id} className={`${rowClass} ${urgent ? "bg-(--warning-bg)/40" : ""}`}>
-                <td className={tdClass}>
+              <tr key={r.id} className={rowClass}>
+                <td className={`${tdClass} font-semibold`}>
                   {customer ? (
-                    <Link href={`/customers/${customer.id}`} className="font-semibold underline-offset-2 hover:text-(--link) hover:underline">
-                      {customer.name}
+                    <Link href={`/customers/${customer.id}`} className="underline-offset-2 hover:text-(--heading) hover:underline">
+                      {name}
                     </Link>
                   ) : (
-                    r.customerId
+                    name
                   )}
-                  <span className="block text-[13px] text-(--ink-muted) tabular-nums">{customer ? formatPhone(customer.phone) : ""}</span>
                 </td>
-                <td className={tdClass}>
-                  {r.medicine}
-                  <span className="mz-mono block text-(--ink-muted)">{r.purchaseId}</span>
-                </td>
-                <td className={`${tdClass} whitespace-nowrap`}>{formatDate(r.purchaseDate)}</td>
-                <td className={`${tdClass} text-right tabular-nums`}>{r.daysSupply} days</td>
+                <td className={`${tdClass} text-[13px] whitespace-nowrap tabular-nums`}>{customer ? formatPhone(customer.phone) : "—"}</td>
+                <td className={`${tdClass} text-[13px]`}>{r.medicine}</td>
+                <td className={`${tdClass} text-[13px] whitespace-nowrap`}>{formatDate(r.purchaseDate)}</td>
+                <td className={`${tdClass} text-[13px] whitespace-nowrap`}>{r.daysSupply} days</td>
                 <td className={`${tdClass} whitespace-nowrap`}>
-                  <span className="font-semibold">{formatDate(r.expectedRefillDate)}</span>
-                  <span
-                    className={`block text-[13px] ${
-                      r.status === "overdue" ? "font-semibold text-(--danger-ink)" : urgent ? "font-semibold text-(--loyalty-ink)" : "text-(--ink-muted)"
-                    }`}
-                  >
-                    {describeDaysFromToday(r.daysUntilRefill)}
-                  </span>
+                  <span className="text-[13px] font-semibold">{formatDate(r.expectedRefillDate)}</span>
+                  <span className={`block text-xs ${r.status === "overdue" ? "text-(--danger-ink)" : "text-(--ink-muted)"}`}>{describeDaysFromToday(r.daysUntilRefill)}</span>
                 </td>
                 <td className={tdClass}>
                   <ReminderStatusBadge status={r.status} />
-                  {r.sentOn ? <span className="mt-1 block text-[13px] text-(--ink-muted)">on {formatDate(r.sentOn)}</span> : null}
+                  {r.sentOn ? <span className="mt-0.5 block text-[11px] text-(--ink-muted)">on {formatDate(r.sentOn)}</span> : null}
                 </td>
-                <td className={`${tdClass} text-right`}>
-                  <div className="flex justify-end gap-2">
-                    <Button size="sm" variant="secondary" icon="eye" onClick={() => onPreview(r)} aria-label={`Preview reminder for ${customer?.name ?? r.customerId}, ${r.medicine}`}>
-                      Preview
+                <td className={tdClass}>
+                  <div className="flex gap-1.5">
+                    <Button size="sm" variant="soft" onClick={() => onPreview(r)} aria-label={`Preview reminder for ${name}, ${r.medicine}`}>
+                      Preview Reminder
                     </Button>
-                    {r.status !== "sent" ? (
-                      <Button size="sm" variant="ghost" icon="send" onClick={() => onMarkSent(r)} aria-label={`Mark reminder as sent for ${customer?.name ?? r.customerId}, ${r.medicine}`}>
-                        Mark as sent
-                      </Button>
-                    ) : null}
+                    <Button
+                      size="sm"
+                      onClick={() => onMarkSent(r)}
+                      disabled={sent}
+                      className="min-w-[104px] justify-start"
+                      aria-label={sent ? `Reminder already sent to ${name}` : `Mark reminder as sent for ${name}, ${r.medicine}`}
+                    >
+                      {sent ? "Sent" : "Mark as Sent"}
+                    </Button>
                   </div>
                 </td>
               </tr>

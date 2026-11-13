@@ -59,8 +59,8 @@ export function PointsCalculator() {
 
   return (
     <Card as="section" aria-labelledby="points-calculator-title">
-      <CardHeader id="points-calculator-title" title="Points calculator" description="Record points for a counter bill paid outside the Billing module." />
-      <form noValidate onSubmit={onSubmit} className="flex flex-col gap-4 p-5">
+      <CardHeader id="points-calculator-title" title="Points Calculator" description="Record points for a counter bill paid outside the Billing module." />
+      <form noValidate onSubmit={onSubmit} className="flex flex-col gap-4 px-5 pb-5">
         <SelectField
           label="Customer"
           required

@@ -159,7 +159,7 @@ export default function SuppliersPage() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight text-[#072f68]">
-                    Module 6: Suppliers and purchases
+                    Suppliers &amp; Purchases
                   </h1>
                   <p className="text-xs sm:text-sm text-[#46566d] mt-0.5">
                     Manage pharmaceutical distributors, purchase orders, goods receipts, short-expiry returns, and invoice payments.

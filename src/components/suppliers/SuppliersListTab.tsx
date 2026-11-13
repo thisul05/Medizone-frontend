@@ -78,22 +78,11 @@ export default function SuppliersListTab({
   return (
     <div className="space-y-6">
       {/* Top Header Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Suppliers</h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Find a supplier and see their payment stage at a glance.
-          </p>
-        </div>
-        <button
-          onClick={onOpenAddModal}
-          className="inline-flex items-center gap-2 bg-[#072f68] hover:bg-[#052350] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer self-start sm:self-auto"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Add supplier
-        </button>
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Suppliers</h1>
+        <p className="text-xs text-slate-500 mt-1">
+          Find a supplier and see their payment stage at a glance.
+        </p>
       </div>
 
       {/* KPI Cards */}

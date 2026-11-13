@@ -53,30 +53,30 @@ export default function Sidebar() {
   return (
     <aside className="mz-on-nav sticky top-0 flex h-screen w-nav shrink-0 flex-col bg-surface-nav text-nav-ink select-none overflow-hidden">
       {/* Brand Header */}
-      <div className="px-5 pb-4 pt-5">
+      <div className="px-4 pb-2 pt-3.5">
         <Link href={can("admin") ? "/admin" : "/home"} className="block">
-          <Logo height={28} priority />
+          <Logo height={26} priority />
         </Link>
       </div>
 
       {/* Branch Selector */}
-      <div className="relative mx-3 mb-4">
+      <div className="relative mx-2.5 mb-2">
         <button
           type="button"
           onClick={() => user?.role === "owner" && setBranchOpen((prev) => !prev)}
-          className={`flex w-full items-center justify-between gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm text-nav-muted transition-colors ${
+          className={`flex w-full items-center justify-between gap-2 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs text-nav-muted transition-colors ${
             user?.role === "owner" ? "hover:bg-white/15 cursor-pointer" : "cursor-default"
           }`}
           aria-expanded={branchOpen}
         >
           <div className="flex items-center gap-2 truncate">
-            <Icon name="store" size={16} className="shrink-0 text-nav-muted" />
-            <span className="mz-label truncate font-medium text-white/90">{currentBranchLabel}</span>
+            <Icon name="store" size={14} className="shrink-0 text-nav-muted" />
+            <span className="truncate font-medium text-white/90 text-xs">{currentBranchLabel}</span>
           </div>
           {user?.role === "owner" && (
             <Icon
               name="chevron-down"
-              size={14}
+              size={12}
               className={`shrink-0 transition-transform duration-200 text-nav-muted ${
                 branchOpen ? "rotate-180" : ""
               }`}
@@ -89,7 +89,7 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={() => handleBranchSelect("all")}
-              className={`flex w-full items-center px-3 py-2 text-xs font-medium transition-colors ${
+              className={`flex w-full items-center px-3 py-1.5 text-xs font-medium transition-colors ${
                 !activeBranchId || activeBranchId === "all"
                   ? "bg-white/15 text-white"
                   : "text-nav-muted hover:bg-white/10 hover:text-white"
@@ -102,7 +102,7 @@ export default function Sidebar() {
                 key={b.id}
                 type="button"
                 onClick={() => handleBranchSelect(b.id)}
-                className={`flex w-full items-center px-3 py-2 text-xs font-medium transition-colors ${
+                className={`flex w-full items-center px-3 py-1.5 text-xs font-medium transition-colors ${
                   activeBranchId === b.id
                     ? "bg-white/15 text-white"
                     : "text-nav-muted hover:bg-white/10 hover:text-white"
@@ -116,7 +116,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation List */}
-      <nav className="flex-1 overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-3 pb-4">
+      <nav className="flex-1 overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-2.5 space-y-0.5">
         {/* Dashboard is strictly for Owner */}
         {can("admin") && (
           <NavItem
@@ -163,27 +163,27 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom: Logout and Profile */}
-      <div className="border-t border-white/10 px-3 py-3 space-y-2">
+      <div className="border-t border-white/10 px-2.5 py-2 space-y-1">
         <button
           type="button"
           onClick={() => {
             signOut();
             router.push("/login");
           }}
-          className="flex h-10 w-full items-center gap-3 rounded-md px-2.5 mz-label text-nav-muted transition-colors duration-150 hover:bg-white/10 hover:text-nav-ink cursor-pointer"
+          className="flex h-8 w-full items-center gap-2.5 rounded-lg px-2 text-xs font-medium text-nav-muted transition-colors duration-150 hover:bg-white/10 hover:text-white cursor-pointer"
         >
-          <Icon name="logout" size={18} />
+          <Icon name="logout" size={16} />
           <span>Log out</span>
         </button>
 
         {user && (
-          <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg bg-white/5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#133e7c] text-xs font-bold text-white border border-white/20">
+          <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-white/5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#133e7c] text-[11px] font-bold text-white border border-white/20">
               {getInitials(user.name)}
             </div>
             <div className="min-w-0">
-              <div className="mz-label text-white truncate text-sm font-medium">{user.name}</div>
-              <div className="mz-caption text-nav-muted truncate text-xs">
+              <div className="text-white truncate text-xs font-medium leading-tight">{user.name}</div>
+              <div className="text-nav-muted truncate text-[10px] leading-tight">
                 {user.role === "owner" ? "Owner" : user.jobTitle}
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function Sidebar() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-1.5 mt-4 px-2 text-[11px] font-bold tracking-wider text-nav-muted/80 uppercase">
+    <p className="mb-0.5 mt-2 px-2 text-[10px] font-bold tracking-wider text-nav-muted/80 uppercase">
       {children}
     </p>
   );
@@ -216,13 +216,13 @@ function NavItem({
   return (
     <Link
       href={href}
-      className={`mb-1 flex h-10 items-center gap-3 rounded-lg px-3 mz-label text-sm transition-all duration-150 ${
+      className={`flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-xs transition-all duration-150 ${
         active
-          ? "bg-[#18488e] text-white font-semibold shadow-sm"
-          : "text-nav-muted hover:bg-white/10 hover:text-white"
+          ? "bg-white/20 text-white font-semibold shadow-xs"
+          : "text-nav-muted hover:bg-white/10 hover:text-white font-medium"
       }`}
     >
-      <Icon name={icon} size={18} className={active ? "text-white" : "text-nav-muted"} />
+      <Icon name={icon} size={16} className={active ? "text-white" : "text-nav-muted"} />
       <span>{label}</span>
     </Link>
   );

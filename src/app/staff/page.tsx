@@ -66,7 +66,13 @@ export default function StaffListPage() {
         <main id="main" className="min-w-0 flex-1 overflow-auto">
           <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-              <h1 className="mz-h1 text-ink">Staff</h1>
+              <div>
+                <p className="mz-body-sm text-ink-muted mb-1">Back Office / Staff &amp; Payroll</p>
+                <h1 className="mz-h1 text-ink">Staff &amp; Payroll</h1>
+                <p className="mt-1 mz-body-sm text-ink-muted">
+                  {staff.length} active staff members across all branches.
+                </p>
+              </div>
               <div className="flex items-center gap-3">
                 <ButtonLink href="/staff/attendance" variant="secondary" size="md">
                   Attendance
@@ -79,10 +85,6 @@ export default function StaffListPage() {
                 </ButtonLink>
               </div>
             </div>
-
-          <p className="mb-4 mz-body-sm text-ink-muted">
-            {staff.length} active staff members across all branches.
-          </p>
 
           <div className="rounded-lg border border-line bg-surface-raised shadow-1 overflow-x-auto">
             <table className="w-full text-left">

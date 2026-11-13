@@ -51,7 +51,7 @@ export function StaffOrders() {
     <OrdersShell>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="mz-body-sm text-ink-muted">Dashboard / Orders</p>
+          <p className="mz-body-sm text-ink-muted">Pharmacy / Orders</p>
           <h1 className="mz-h1">Orders</h1>
           <p className="text-ink-muted">{SUBTITLES[tab]}</p>
         </div>

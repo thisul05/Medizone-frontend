@@ -265,7 +265,7 @@ export function AdminDashboard() {
                         <div
                           className={`w-full max-w-[48px] rounded-t-sm transition-all duration-300 ${
                             bar.isToday
-                              ? "bg-[#0b2545]"
+                              ? "bg-[#072f68]"
                               : "bg-[#a4c2e6] hover:bg-[#8faecf]"
                           }`}
                           style={{ height: `${bar.heightPercent}%` }}
@@ -311,7 +311,7 @@ export function AdminDashboard() {
                         {/* Progress Bar Track */}
                         <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
                           <div
-                            className="h-full rounded-full bg-[#0b2545]"
+                            className="h-full rounded-full bg-[#072f68]"
                             style={{ width: `${branch.progressPercent}%` }}
                           />
                         </div>

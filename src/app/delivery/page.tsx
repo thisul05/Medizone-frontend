@@ -145,6 +145,7 @@ export default function DeliveryPage() {
           <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
             {/* Page header */}
             <div className="mb-6">
+              <p className="mz-body-sm text-ink-muted mb-1">Back Office / Delivery &amp; Warranty</p>
               <h1 className="mz-h1 text-ink">Delivery, Returns &amp; Warranty</h1>
               <p className="mt-1 text-sm text-ink-muted">
                 Manage dispatches, customer returns and warranty support in one place.

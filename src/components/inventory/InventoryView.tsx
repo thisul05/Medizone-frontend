@@ -95,7 +95,7 @@ function InventoryWorkspace() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="mb-2 flex items-center gap-2 mz-body-sm text-ink-muted"><span>Pharmacy operations</span><Icon name="chevron-right" size={14} /><span>Inventory</span></p>
+          <p className="mz-body-sm text-ink-muted mb-1">Pharmacy / Inventory</p>
           <div className="flex flex-wrap items-center gap-3"><h1 className="mz-h1">Products and inventory</h1><Badge tone="brand" icon="store">{branchName(branchId)}</Badge></div>
           <p className="mt-2 max-w-2xl text-ink-muted">Keep track of products, batch stock and expiry dates across your pharmacy.</p>
         </div>

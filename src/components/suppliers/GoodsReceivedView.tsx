@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check, AlertTriangle, Info } from "lucide-react";
 import { PurchaseOrder, POLineItem, ReturnNote } from "@/types/suppliers";
 import { formatLKR, formatDate, orderTotal } from "@/lib/suppliers";
 
@@ -131,11 +132,15 @@ export default function GoodsReceivedView({
         <div className="grid grid-cols-3 gap-4 text-xs">
           <div className="border-t-2 border-[#072f68] pt-2">
             <span className="font-bold text-slate-900 block">Draft</span>
-            <span className="text-emerald-600 font-medium">✓ Reached</span>
+            <span className="text-emerald-600 font-medium inline-flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" /> Reached
+            </span>
           </div>
           <div className="border-t-2 border-[#072f68] pt-2">
             <span className="font-bold text-slate-900 block">Sent</span>
-            <span className="text-sky-700 font-medium">✓ Current step</span>
+            <span className="text-sky-700 font-medium inline-flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" /> Current step
+            </span>
           </div>
           <div
             className={`border-t-2 pt-2 ${
@@ -146,11 +151,17 @@ export default function GoodsReceivedView({
             <span
               className={
                 order.status === "received"
-                  ? "text-emerald-600 font-medium"
+                  ? "text-emerald-600 font-medium inline-flex items-center gap-1"
                   : "text-slate-400"
               }
             >
-              {order.status === "received" ? "✓ Reached" : "Not reached yet"}
+              {order.status === "received" ? (
+                <>
+                  <Check className="w-3.5 h-3.5" /> Reached
+                </>
+              ) : (
+                "Not reached yet"
+              )}
             </span>
           </div>
         </div>
@@ -158,9 +169,7 @@ export default function GoodsReceivedView({
 
       {/* Alert Banner */}
       <div className="bg-sky-50 border border-sky-200 rounded-xl p-3.5 flex items-center gap-3 text-xs text-sky-900">
-        <svg className="w-5 h-5 text-sky-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <Info className="w-5 h-5 text-sky-600 shrink-0" />
         <span>
           <strong>Receiving note:</strong> Mark damaged items on the invoice while the supplier representative is still here to claim instant return credit.
         </span>
@@ -229,15 +238,15 @@ export default function GoodsReceivedView({
                     <td className="px-6 py-3.5 text-center">
                       {isDamaged ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-                          ⚠ {l.damagedQty} damaged
+                          <AlertTriangle className="w-3 h-3" /> {l.damagedQty} damaged
                         </span>
                       ) : isShort ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                          ⚠ Short by {l.qty - l.receivedQty}
+                          <AlertTriangle className="w-3 h-3" /> Short by {l.qty - l.receivedQty}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          ✓ Complete
+                          <Check className="w-3 h-3" /> Complete
                         </span>
                       )}
                     </td>

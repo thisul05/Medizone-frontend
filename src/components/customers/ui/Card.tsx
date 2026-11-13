@@ -29,16 +29,11 @@ interface CardHeaderProps {
 }
 
 /** Navy card title with an optional muted subtitle and a right-hand slot (search, count, note). */
-export function CardHeader({ title, id, description, action, icon }: CardHeaderProps) {
+export function CardHeader({ title, id, description, action }: CardHeaderProps) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5 pb-4">
       <div className="min-w-0">
-        <h2 id={id} className="flex items-center gap-2 text-lg leading-6 font-bold text-[#072f68]">
-          {icon ? (
-            <span className="grid size-5 place-items-center rounded-full bg-[#072f68] text-white">
-              <Icon name={icon} size={13} strokeWidth={2.5} />
-            </span>
-          ) : null}
+        <h2 id={id} className="text-lg leading-6 font-bold text-[#072f68]">
           {title}
         </h2>
         {description ? <p className="mt-1 text-[13px] leading-[18px] text-[#46566d]">{description}</p> : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AlertTriangle } from "lucide-react";
 import { ShortExpiryItem } from "@/types/suppliers";
 import { formatDate } from "@/lib/suppliers";
 
@@ -245,8 +246,8 @@ export default function ShortExpiryTab({
                   <td className="px-6 py-4">
                     {item.isDeadlinePassed ? (
                       <div>
-                        <span className="text-xs font-bold text-red-600 block">
-                          ⚠ Deadline passed
+                        <span className="text-xs font-bold text-red-600 inline-flex items-center gap-1">
+                          <AlertTriangle className="w-3.5 h-3.5" /> Deadline passed
                         </span>
                         <span className="text-xs text-slate-500">
                           {formatDate(item.returnDeadline)}

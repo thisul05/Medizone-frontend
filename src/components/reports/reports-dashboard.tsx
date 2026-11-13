@@ -7,6 +7,7 @@ import { useInventoryState } from "@/lib/use-inventory-state";
 import { ReportDialog, exportReport } from "./report-dialog";
 import ForecastingPanel from "./forecasting-panel";
 import Sidebar from "@/components/delivery/Sidebar";
+import { Menu } from "lucide-react";
 import {
   Search,
   Filter,
@@ -112,7 +113,7 @@ export default function ReportsDashboard() {
             className="rounded-md p-1.5 hover:bg-white/10 cursor-pointer"
             aria-label="Open sidebar"
           >
-            <span className="text-xl leading-none">☰</span>
+            <Menu className="w-5 h-5" />
           </button>
           <span className="font-bold text-base tracking-tight">medizone.lk</span>
         </div>
@@ -133,7 +134,7 @@ export default function ReportsDashboard() {
               onClick={() => setMobileMenuOpen(false)}
               className="absolute top-4 right-3 p-1.5 text-white/80 hover:text-white rounded-md bg-white/10 cursor-pointer"
             >
-              ✕
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -362,10 +363,7 @@ export default function ReportsDashboard() {
                     </div>
 
                     {/* Report Title */}
-                    <h3 className="text-sm font-bold text-[#072f68] group-hover:text-blue-700 transition-colors mb-2 flex items-start gap-2.5">
-                      <div className="bg-blue-50 p-2 rounded-lg text-[#072f68] shrink-0 border border-blue-100">
-                        <IconComponent className="w-4 h-4" />
-                      </div>
+                    <h3 className="text-sm font-bold text-[#072f68] group-hover:text-blue-700 transition-colors mb-2">
                       <span className="leading-snug">{report.title}</span>
                     </h3>
 

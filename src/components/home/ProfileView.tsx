@@ -176,8 +176,7 @@ export function ProfileView() {
               <section className="space-y-6 lg:col-span-7">
                 <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                    <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                      <Icon name="user" size={16} className="text-[#072f68]" />
+                    <h2 className="text-sm font-bold text-gray-800">
                       Account & Contact Information
                     </h2>
                     <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
@@ -252,8 +251,7 @@ export function ProfileView() {
                 {profile && (
                   <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
                     <div className="border-b border-gray-100 pb-3">
-                      <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                        <Icon name="file-text" size={16} className="text-[#072f68]" />
+                      <h2 className="text-sm font-bold text-gray-800">
                         Customer Registration Details
                       </h2>
                     </div>
@@ -287,8 +285,7 @@ export function ProfileView() {
               <section className="space-y-6 lg:col-span-5">
                 <div className="rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs">
                   <div className="border-b border-gray-100 pb-3">
-                    <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                      <Icon name="shield-check" size={16} className="text-[#072f68]" />
+                    <h2 className="text-sm font-bold text-gray-800">
                       System Permissions & Access
                     </h2>
                     <p className="mt-1 text-xs text-gray-500">

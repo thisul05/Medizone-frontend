@@ -164,16 +164,10 @@ function InventoryWorkspace() {
   );
 }
 
-function SummaryCard({ label, value, description, icon, tone = "brand", onClick }: { label: string; value: string; description: string; icon: IconName; tone?: "brand" | "warning" | "danger"; onClick?: () => void }) {
-  const iconTone = tone === "warning" ? "bg-amber-50 text-amber-700 border border-amber-200/60" : tone === "danger" ? "bg-red-50 text-red-700 border border-red-200/60" : "bg-blue-50 text-[#072f68] border border-blue-200/60";
+function SummaryCard({ label, value, description, onClick }: { label: string; value: string; description: string; icon?: IconName; tone?: "brand" | "warning" | "danger"; onClick?: () => void }) {
   const content = (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">{label}</p>
-        <span className={`flex size-8 items-center justify-center rounded-lg ${iconTone}`}>
-          <Icon name={icon} size={16} />
-        </span>
-      </div>
+      <p className="text-xs font-semibold tracking-wider text-[#46566d] uppercase">{label}</p>
       <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[#0e1b2e] tabular-nums break-words">{value}</p>
       <p className="mt-1 text-xs text-[#46566d]">{description}</p>
     </>

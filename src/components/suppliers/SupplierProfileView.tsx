@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { Supplier, PurchaseOrder, ReturnNote } from "@/types/suppliers";
 import { formatLKR, formatDate, orderTotal } from "@/lib/suppliers";
 
@@ -139,7 +140,7 @@ export default function SupplierProfileView({
             <h3 className="text-xs font-bold text-slate-900">Cash on delivery</h3>
             <p className="text-xs text-slate-500 mt-1">New supplier, no credit.</p>
             <div className="mt-2 text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              ✓ Reached
+              <Check className="w-3.5 h-3.5" /> Reached
             </div>
           </div>
 
@@ -156,9 +157,13 @@ export default function SupplierProfileView({
               7 to 10 days credit after a few months of payment history.
             </p>
             <div className="mt-2 text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              {supplier.paymentStage === "post_dated_cheque" || supplier.paymentStage === "credit"
-                ? "✓ Reached"
-                : "Upcoming"}
+              {supplier.paymentStage === "post_dated_cheque" || supplier.paymentStage === "credit" ? (
+                <>
+                  <Check className="w-3.5 h-3.5" /> Reached
+                </>
+              ) : (
+                "Upcoming"
+              )}
             </div>
           </div>
 
@@ -173,7 +178,13 @@ export default function SupplierProfileView({
               30 to 35 days after 4 to 5 months of smooth cheque clearance.
             </p>
             <div className="mt-2 text-xs font-semibold text-sky-700 flex items-center gap-1">
-              {supplier.paymentStage === "credit" ? "✓ Current stage" : "Target stage"}
+              {supplier.paymentStage === "credit" ? (
+                <>
+                  <Check className="w-3.5 h-3.5" /> Current stage
+                </>
+              ) : (
+                "Target stage"
+              )}
             </div>
           </div>
         </div>

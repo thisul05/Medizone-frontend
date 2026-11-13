@@ -21,6 +21,7 @@ import ReturnsTable from "@/components/delivery/ReturnsTable";
 import WarrantyTable from "@/components/delivery/WarrantyTable";
 import WarrantyChecker from "@/components/delivery/WarrantyChecker";
 import Sidebar from "@/components/delivery/Sidebar";
+import { Icon } from "@/components/shared/Icon";
 import { Tabs, type TabItem } from "@/components/shared/Tabs";
 
 type Tab = "deliveries" | "cod" | "returns" | "warranty" | "checker";
@@ -115,7 +116,7 @@ export default function DeliveryPage() {
               className="rounded-md p-1.5 hover:bg-white/10 cursor-pointer"
               aria-label="Open sidebar"
             >
-              <span className="text-xl leading-none">☰</span>
+              <Icon name="menu" size={20} />
             </button>
             <span className="font-bold text-base tracking-tight">medizone.lk</span>
           </div>
@@ -135,7 +136,7 @@ export default function DeliveryPage() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="absolute top-4 right-3 p-1.5 text-white/80 hover:text-white rounded-md bg-white/10 cursor-pointer"
               >
-                ✕
+                <Icon name="x" size={18} />
               </button>
             </div>
           </div>

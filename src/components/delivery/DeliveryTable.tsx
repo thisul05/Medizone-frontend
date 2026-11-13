@@ -42,7 +42,7 @@ export default function DeliveryTable({ deliveries, onStatusChange, onMethodChan
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="font-semibold text-ink">Delivery list</p>
-          <p className="mz-body-sm text-ink-muted">{deliveries.length} orders · Nugegoda branch</p>
+          <p className="mz-body-sm text-ink-muted">{deliveries.length} orders across branches</p>
         </div>
         <div className="flex gap-2">
           <div className="relative">

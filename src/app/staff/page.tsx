@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import AppSidebar from "@/components/shared/AppSidebar";
 import { ButtonLink } from "@/components/shared/Button";
@@ -12,6 +13,7 @@ import { formatDate, formatPhone } from "@/lib/format";
 export default function StaffListPage() {
   const { staff, deleteStaff } = useStaff();
   const toast = useToast();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleDelete = (id: string) => {
     deleteStaff(id);
@@ -19,25 +21,64 @@ export default function StaffListPage() {
   };
 
   return (
-    <div className="flex min-h-screen">
-      <AppSidebar />
+    <div className="flex min-h-screen bg-surface-page">
+      {/* Desktop Sticky Sidebar */}
+      <div className="hidden shrink-0 lg:block">
+        <AppSidebar />
+      </div>
 
-      <div className="min-w-0 flex-1 overflow-auto bg-surface-page">
-        <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <h1 className="mz-h1 text-ink">Staff</h1>
-            <div className="flex items-center gap-3">
-              <ButtonLink href="/staff/attendance" variant="secondary" size="md">
-                Attendance
-              </ButtonLink>
-              <ButtonLink href="/staff/payroll" variant="secondary" size="md">
-                Monthly payroll
-              </ButtonLink>
-              <ButtonLink href="/staff/add" variant="primary" size="md" icon="plus">
-                Add staff
-              </ButtonLink>
+      <div className="min-w-0 flex-1 flex flex-col">
+        {/* Mobile Header Bar */}
+        <header className="flex h-14 items-center justify-between border-b border-gray-200 bg-[#072f68] px-4 text-white lg:hidden">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="rounded-md p-1.5 hover:bg-white/10 cursor-pointer"
+              aria-label="Open sidebar"
+            >
+              <span className="text-xl leading-none">☰</span>
+            </button>
+            <span className="font-bold text-base tracking-tight">medizone.lk</span>
+          </div>
+          <span className="text-xs text-white/80 font-medium">Staff</span>
+        </header>
+
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden flex">
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div className="relative z-10 w-nav max-w-[85vw] h-full shadow-2xl">
+              <AppSidebar />
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="absolute top-4 right-3 p-1.5 text-white/80 hover:text-white rounded-md bg-white/10 cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
           </div>
+        )}
+
+        <main id="main" className="min-w-0 flex-1 overflow-auto">
+          <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <h1 className="mz-h1 text-ink">Staff</h1>
+              <div className="flex items-center gap-3">
+                <ButtonLink href="/staff/attendance" variant="secondary" size="md">
+                  Attendance
+                </ButtonLink>
+                <ButtonLink href="/staff/payroll" variant="secondary" size="md">
+                  Monthly payroll
+                </ButtonLink>
+                <ButtonLink href="/staff/add" variant="primary" size="md" icon="plus">
+                  Add staff
+                </ButtonLink>
+              </div>
+            </div>
 
           <p className="mb-4 mz-body-sm text-ink-muted">
             {staff.length} active staff members across all branches.
@@ -90,7 +131,8 @@ export default function StaffListPage() {
             </table>
           </div>
         </div>
-      </div>
+      </main>
     </div>
-  );
+  </div>
+);
 }

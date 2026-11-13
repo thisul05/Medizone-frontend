@@ -6,6 +6,7 @@ import { selectInventoryReports } from "@/lib/inventory-reports";
 import { useInventoryState } from "@/lib/use-inventory-state";
 import { ReportDialog, exportReport } from "./report-dialog";
 import ForecastingPanel from "./forecasting-panel";
+import Sidebar from "@/components/delivery/Sidebar";
 import {
   Search,
   Filter,
@@ -28,6 +29,7 @@ import {
 } from "./report-icons";
 
 export default function ReportsDashboard() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Reports");
   const [selectedBranch, setSelectedBranch] = useState("All Branches");
@@ -101,6 +103,42 @@ export default function ReportsDashboard() {
 
   return (
     <div className="min-h-screen bg-[#f5f7fa] text-[#0e1b2e] font-sans flex flex-col">
+      {/* Mobile Topbar */}
+      <header className="flex h-14 items-center justify-between border-b border-gray-200 bg-[#072f68] px-4 text-white lg:hidden">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="rounded-md p-1.5 hover:bg-white/10 cursor-pointer"
+            aria-label="Open sidebar"
+          >
+            <span className="text-xl leading-none">☰</span>
+          </button>
+          <span className="font-bold text-base tracking-tight">medizone.lk</span>
+        </div>
+        <span className="text-xs text-white/80 font-medium">Reports</span>
+      </header>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="relative z-10 w-nav max-w-[85vw] h-full shadow-2xl">
+            <Sidebar />
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="absolute top-4 right-3 p-1.5 text-white/80 hover:text-white rounded-md bg-white/10 cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Page Header: Breadcrumbs, Title, Search & Branch */}
       <div className="w-full px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <p className="text-xs font-medium text-gray-500 mb-1">

@@ -178,7 +178,7 @@ export default function PaymentsDueTab({
               onClick={() => setStatusFilter(pill.id)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                 statusFilter === pill.id
-                  ? "bg-[#0B2545] text-white shadow-sm"
+                  ? "bg-[#072f68] text-white shadow-sm"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >

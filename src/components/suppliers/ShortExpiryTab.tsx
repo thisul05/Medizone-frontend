@@ -128,7 +128,7 @@ export default function ShortExpiryTab({
         </div>
         <button
           onClick={handleReturnAction}
-          className="inline-flex items-center gap-2 bg-[#0B2545] hover:bg-[#143259] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-2 bg-[#072f68] hover:bg-[#052350] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer self-start sm:self-auto"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -193,7 +193,7 @@ export default function ShortExpiryTab({
                     type="checkbox"
                     onChange={toggleSelectAll}
                     checked={items.length > 0 && items.every((i) => i.selected)}
-                    className="rounded border-slate-300 text-[#0B2545] focus:ring-sky-500 h-4 w-4"
+                    className="rounded border-slate-300 text-[#072f68] focus:ring-sky-500 h-4 w-4"
                   />
                 </th>
                 <th className="px-6 py-3.5">Product and batch</th>
@@ -218,7 +218,7 @@ export default function ShortExpiryTab({
                       type="checkbox"
                       checked={!!item.selected}
                       onChange={() => toggleSelect(item.id)}
-                      className="rounded border-slate-300 text-[#0B2545] focus:ring-sky-500 h-4 w-4"
+                      className="rounded border-slate-300 text-[#072f68] focus:ring-sky-500 h-4 w-4"
                     />
                   </td>
                   <td className="px-6 py-4">

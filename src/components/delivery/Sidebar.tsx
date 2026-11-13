@@ -51,7 +51,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="mz-on-nav sticky top-0 flex h-screen w-nav shrink-0 flex-col bg-surface-nav text-nav-ink select-none">
+    <aside className="mz-on-nav sticky top-0 flex h-screen w-nav shrink-0 flex-col bg-surface-nav text-nav-ink select-none overflow-hidden">
       {/* Brand Header */}
       <div className="px-5 pb-4 pt-5">
         <Link href={can("admin") ? "/admin" : "/home"} className="block">
@@ -116,7 +116,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation List */}
-      <nav className="flex-1 overflow-y-auto px-3 pb-4">
+      <nav className="flex-1 overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-3 pb-4">
         {/* Dashboard is strictly for Owner */}
         {can("admin") && (
           <NavItem

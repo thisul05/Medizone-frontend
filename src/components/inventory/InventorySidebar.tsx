@@ -88,7 +88,7 @@ export function InventorySidebar({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </div>
 
-      <nav aria-label="Staff modules" className="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
+      <nav aria-label="Staff modules" className="min-h-0 flex-1 overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-3 pb-4">
         {SECTIONS.map((section, index) => {
           const items = section.items.filter((item) => can(item.id));
           if (!items.length) return null;

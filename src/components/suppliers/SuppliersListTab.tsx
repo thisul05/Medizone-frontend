@@ -87,7 +87,7 @@ export default function SuppliersListTab({
         </div>
         <button
           onClick={onOpenAddModal}
-          className="inline-flex items-center gap-2 bg-[#0B2545] hover:bg-[#143259] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-2 bg-[#072f68] hover:bg-[#052350] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer self-start sm:self-auto"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

@@ -85,7 +85,7 @@ export default function PurchaseOrdersTab({
         </div>
         <button
           onClick={onNewOrder}
-          className="inline-flex items-center gap-2 bg-[#0B2545] hover:bg-[#143259] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-2 bg-[#072f68] hover:bg-[#052350] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer self-start sm:self-auto"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -110,7 +110,7 @@ export default function PurchaseOrdersTab({
               onClick={() => setStatusFilter(pill.id)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                 statusFilter === pill.id
-                  ? "bg-[#0B2545] text-white shadow-sm"
+                  ? "bg-[#072f68] text-white shadow-sm"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >

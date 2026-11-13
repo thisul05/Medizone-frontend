@@ -73,7 +73,7 @@ export default function GoodsReceivedView({
       <div>
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#185394] hover:text-[#0B2545] cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#185394] hover:text-[#072f68] cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -116,7 +116,7 @@ export default function GoodsReceivedView({
           </button>
           <button
             onClick={handleConfirm}
-            className="inline-flex items-center gap-2 bg-[#0B2545] hover:bg-[#143259] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#072f68] hover:bg-[#052350] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -129,17 +129,17 @@ export default function GoodsReceivedView({
       {/* Stepper Card */}
       <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm">
         <div className="grid grid-cols-3 gap-4 text-xs">
-          <div className="border-t-2 border-[#0B2545] pt-2">
+          <div className="border-t-2 border-[#072f68] pt-2">
             <span className="font-bold text-slate-900 block">Draft</span>
             <span className="text-emerald-600 font-medium">✓ Reached</span>
           </div>
-          <div className="border-t-2 border-[#0B2545] pt-2">
+          <div className="border-t-2 border-[#072f68] pt-2">
             <span className="font-bold text-slate-900 block">Sent</span>
             <span className="text-sky-700 font-medium">✓ Current step</span>
           </div>
           <div
             className={`border-t-2 pt-2 ${
-              order.status === "received" ? "border-[#0B2545]" : "border-slate-200"
+              order.status === "received" ? "border-[#072f68]" : "border-slate-200"
             }`}
           >
             <span className="font-bold text-slate-900 block">Received</span>

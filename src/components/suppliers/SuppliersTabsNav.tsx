@@ -29,7 +29,7 @@ export default function SuppliersTabsNav({
               onClick={() => onTabChange(tab.id)}
               className={`py-3 px-1 inline-flex items-center text-sm font-medium border-b-2 transition-all cursor-pointer ${
                 isActive
-                  ? "border-[#0B2545] text-[#0B2545] font-semibold"
+                  ? "border-[#072f68] text-[#072f68] font-bold"
                   : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
               }`}
             >

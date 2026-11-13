@@ -169,7 +169,7 @@ export default function AddSupplierModal({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-[#0B2545] hover:bg-[#143259] text-white font-semibold shadow-sm"
+              className="px-4 py-2 rounded-lg bg-[#072f68] hover:bg-[#052350] text-white font-semibold shadow-sm"
             >
               Save Supplier
             </button>

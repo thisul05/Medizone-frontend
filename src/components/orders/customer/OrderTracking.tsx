@@ -8,6 +8,7 @@ import { formatDate, formatLKR, formatPhone } from "@/lib/format";
 import { PAY_LABELS, customerStatusLabel, isFinished, orderCode, orderTotals, timeOf } from "@/lib/orders";
 import { useOrders } from "@/lib/orders-store";
 import type { Order, OrderStatus } from "@/types/orders";
+import { AccountFrame } from "./AccountFrame";
 import { itemIcon } from "./item-icon";
 
 function paymentText(order: Order) {
@@ -85,10 +86,19 @@ function OrderConfirmed({ order }: { order: Order }) {
           <ButtonLink href={`/orders/${order.id}`} iconRight="arrow-right">Track order</ButtonLink>
           <ButtonLink href="/shop" variant="secondary">Continue shopping</ButtonLink>
         </div>
-        <p className="mz-caption text-ink-muted">You can see all your orders any time in My orders.</p>
+        <p className="mz-caption text-ink-muted">You can see all your orders any time in My Account › My Orders.</p>
       </section>
     </div>
   );
+}
+
+/** One line under each step of the timeline. */
+function stepText(status: OrderStatus, delivered: boolean): string {
+  if (status === "received") return "We received your order.";
+  if (status === "preparing") return "The pharmacy is checking and packing your items.";
+  if (status === "ready") return delivered ? "Packed and waiting for our driver." : "Ready for you at the branch.";
+  if (status === "out_for_delivery") return "Your order is with our driver.";
+  return "You collected your order.";
 }
 
 /** The banner above the timeline: what the customer can expect next. */
@@ -97,7 +107,7 @@ function expectation(order: Order): { icon: IconName; title: string; detail: str
   if (isFinished(order.status)) return null;
   if (delivered && order.status === "ready") return { icon: "truck", title: "Packed and waiting for the driver", detail: order.deliverySlot ?? "We will message you when it is on its way" };
   if (!delivered && order.status === "ready") return { icon: "store", title: `Ready to collect at ${branchName(order.branchId)} branch`, detail: "Bring your order number when you come" };
-  if (delivered) return { icon: "truck", title: order.deliverySlot ? `Expected ${order.deliverySlot.toLowerCase()}` : "On the way soon", detail: "Our driver will call you before arriving" };
+  if (delivered) return { icon: "truck", title: order.deliverySlot ? `Expected ${order.deliverySlot.charAt(0).toLowerCase()}${order.deliverySlot.slice(1)}` : "On the way soon", detail: "Our driver will call you before arriving" };
   return { icon: "store", title: "Ready within 2 hours", detail: "We send you a message when it is ready" };
 }
 
@@ -112,7 +122,7 @@ export function OrderTracking({ orderId, placed }: { orderId: string; placed: bo
       <div className="mx-auto flex max-w-xl flex-col items-center gap-3 px-4 py-20 text-center">
         <Icon name="bag" size={28} className="text-ink-subtle" />
         <p className="mz-h3">We could not find this order</p>
-        <ButtonLink href="/orders" variant="secondary">Go to my orders</ButtonLink>
+        <ButtonLink href="/account/orders" variant="secondary">Go to My Orders</ButtonLink>
       </div>
     );
   }
@@ -125,11 +135,9 @@ export function OrderTracking({ orderId, placed }: { orderId: string; placed: bo
   const banner = expectation(order);
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6">
-      <p className="mz-body-sm text-ink-muted"><Link href="/" className="text-link">Home</Link> › <Link href="/orders" className="text-link">My orders</Link> › {orderCode(order.id)}</p>
-
+    <AccountFrame crumb={orderCode(order.id)}>
       <div className="flex flex-col gap-2">
-        <Link href="/orders" className="w-fit mz-body-sm text-link hover:underline">← Back to My orders</Link>
+        <Link href="/account/orders" className="w-fit mz-body-sm text-link hover:underline">← Back to My Orders</Link>
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="mz-h1">Order {orderCode(order.id)}</h1>
           <span className={cx("rounded-pill px-3 py-1 mz-caption", isFinished(order.status) ? "bg-success-bg text-success-ink" : "bg-info-bg text-info-ink")}>{customerStatusLabel(order)}</span>
@@ -137,7 +145,7 @@ export function OrderTracking({ orderId, placed }: { orderId: string; placed: bo
         <p className="text-ink-muted">Placed on {formatDate(order.receivedAt)}, {timeOf(order.receivedAt)} · {order.items.length} items · {formatLKR(totals.total)}</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
         <section className={cx(CARD, "flex flex-col gap-5")}>
           {banner && (
             <div className="flex items-center gap-3 rounded-md bg-primary-tint p-4 text-primary-tint-ink">
@@ -156,8 +164,11 @@ export function OrderTracking({ orderId, placed }: { orderId: string; placed: bo
                     {i < flow.length - 1 && <span className={cx("w-0.5 flex-1", i < current ? "bg-success-solid" : "bg-line")} style={{ minHeight: 36 }} />}
                   </div>
                   <div className="pb-6">
-                    <p className={cx("mz-label", !done && "text-ink-muted")}>{customerStatusLabel({ status: s, fulfilment: order.fulfilment })}</p>
-                    <p className="mz-body-sm text-ink-muted">{step ? `${formatDate(step.at)}, ${timeOf(step.at)}` : i === current + 1 ? "Next step" : "Waiting"}</p>
+                    <p className="flex flex-wrap items-baseline gap-x-2">
+                      <span className={cx("mz-label", !done && "text-ink-muted")}>{customerStatusLabel({ status: s, fulfilment: order.fulfilment })}</span>
+                      <span className="mz-caption text-ink-muted">{step ? `${formatDate(step.at)}, ${timeOf(step.at)}` : i === current + 1 ? "Next step" : "Waiting"}</span>
+                    </p>
+                    <p className="mz-body-sm text-ink-muted">{stepText(s, delivered)}</p>
                   </div>
                 </li>
               );
@@ -192,6 +203,6 @@ export function OrderTracking({ orderId, placed }: { orderId: string; placed: bo
           <p className="flex items-center gap-2 rounded-md bg-surface-sunken p-3 mz-body-sm"><Icon name="phone" size={16} />Need help with this order? Call +94 70 185 5855</p>
         </div>
       </div>
-    </div>
+    </AccountFrame>
   );
 }

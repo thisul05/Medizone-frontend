@@ -1,15 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { Alert, Button, ButtonLink, CARD, Icon, Select, TextField, cx, useToast, type IconName } from "@/components/shared";
 import { branches, branchName } from "@/data/branches";
 import { getCategory } from "@/data/storefront";
+import { useAccount } from "@/lib/account/use-account";
 import { useAuth } from "@/lib/auth";
-import { getCustomerProfile } from "@/lib/auth-store";
 import { useCart } from "@/lib/cart";
 import { formatLKR, formatPhone } from "@/lib/format";
-import { DELIVERY_FEE, customerDiscount, orderTotals } from "@/lib/orders";
+import { DELIVERY_FEE, TODAY, customerDiscount, orderTotals } from "@/lib/orders";
 import { useOrders } from "@/lib/orders-store";
 import type { OrderItem } from "@/types/orders";
 import type { BranchId } from "@/types/roles";
@@ -17,7 +18,16 @@ import type { BranchId } from "@/types/roles";
 type Method = "delivery" | "pickup";
 type Pay = "card" | "cod" | "pay_at_counter";
 
-const SLOTS = ["Tomorrow, 9 am – 1 pm", "Tomorrow, 2 pm – 6 pm", "Day after tomorrow, 9 am – 1 pm"];
+/** Delivery windows for the next two days, "Tomorrow, 14 Nov · 9 AM – 1 PM". */
+function deliverySlots(): string[] {
+  const day = (offset: number, weekday = false) => {
+    const d = new Date(TODAY + "T00:00:00");
+    d.setDate(d.getDate() + offset);
+    return d.toLocaleDateString("en-GB", weekday ? { weekday: "long", day: "numeric", month: "short" } : { day: "numeric", month: "short" });
+  };
+  return [`Tomorrow, ${day(1)} · 9 AM – 1 PM`, `Tomorrow, ${day(1)} · 2 PM – 6 PM`, `${day(2, true)} · 9 AM – 1 PM`];
+}
+const SLOTS = deliverySlots();
 
 function Choice({ checked, onChange, title, detail, price, icon }: { checked: boolean; onChange: () => void; title: string; detail: string; price?: string; icon?: IconName }) {
   return (
@@ -52,14 +62,17 @@ export function CheckoutView() {
   const { addOrder } = useOrders();
   const router = useRouter();
   const toast = useToast();
-  const profile = user?.customerId ? getCustomerProfile(user.customerId) : undefined;
+  const account = useAccount();
+  const saved = account?.addresses ?? [];
 
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState(user?.name ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [method, setMethod] = useState<Method>("delivery");
-  const [address, setAddress] = useState(profile ? [profile.addressLine, profile.city].filter(Boolean).join(", ") : "");
+  // A saved address id from My Account, or "new" to type one in.
+  const [addressId, setAddressId] = useState<string>("");
+  const [newAddress, setNewAddress] = useState("");
   const [branchId, setBranchId] = useState<BranchId>(user?.branchId && user.branchId !== "all" ? user.branchId : "b1");
   const [slot, setSlot] = useState(SLOTS[0]);
   const [note, setNote] = useState("");
@@ -72,6 +85,9 @@ export function CheckoutView() {
     return p ? [{ product: p, qty: i.qty }] : [];
   });
   const items: OrderItem[] = lines.map(({ product: p, qty }) => ({ name: p.name, qty, unitPrice: p.price, productId: p.id, needsLabel: false }));
+  const chosenId = addressId || (saved.find((a) => a.isDefault) ?? saved[0])?.id || "new";
+  const chosen = saved.find((a) => a.id === chosenId);
+  const address = chosen ? `${chosen.addressLine}, ${chosen.city}` : newAddress;
   const discountPercent = customerDiscount(user?.jobTitle);
   const totals = orderTotals({ items, discountPercent, deliveryFee: method === "delivery" ? DELIVERY_FEE : 0 });
   const payMethod: Pay = method === "pickup" && pay === "cod" ? "pay_at_counter" : method === "delivery" && pay === "pay_at_counter" ? "cod" : pay;
@@ -143,16 +159,40 @@ export function CheckoutView() {
                 <Choice icon="truck" checked={method === "delivery"} onChange={() => setMethod("delivery")} title="Home delivery" detail="By our pharmacy driver · 1–2 days · Piliyandala, Kesbewa and Maharagama areas" price={formatLKR(DELIVERY_FEE)} />
                 <Choice icon="store" checked={method === "pickup"} onChange={() => setMethod("pickup")} title="Pick up at a branch" detail="Ready within 2 hours · we send you a message when it is ready" price="Free" />
               </div>
-              {method === "delivery" ? (
-                <div className="grid gap-4 md:grid-cols-2">
-                  <TextField label="Delivery address" value={address} onChange={(e) => setAddress(e.target.value)} error={errors.address} placeholder="45/2, Temple Road, Piliyandala" fieldClassName="md:col-span-2" />
-                  <Select label="Preferred delivery time" value={slot} onChange={(e) => setSlot(e.target.value)} options={SLOTS.map((s) => ({ value: s, label: s }))} />
-                  <TextField label="Note for the driver" optional value={note} onChange={(e) => setNote(e.target.value)} />
-                </div>
-              ) : (
+              {method === "pickup" && (
                 <Select label="Branch to collect from" value={branchId} onChange={(e) => setBranchId(e.target.value as BranchId)} options={branches.map((b) => ({ value: b.id, label: b.confirmed ? `${b.name}, ${b.area}` : `${b.name} (details coming soon)` }))} fieldClassName="max-w-md" />
               )}
             </section>
+            {method === "delivery" && (
+              <section className={cx(CARD, "flex flex-col gap-4")}>
+                <div>
+                  <h2 className="mz-h3">Delivery address</h2>
+                  <p className="mz-body-sm text-ink-muted">Choose a saved address or add a new one</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Delivery address">
+                  {saved.map((a) => (
+                    <label key={a.id} className={cx("flex cursor-pointer gap-3 rounded-md border p-3", chosenId === a.id ? "border-primary bg-primary-tint" : "border-line-strong hover:bg-surface-hover")}>
+                      <input type="radio" checked={chosenId === a.id} onChange={() => setAddressId(a.id)} className="mt-0.5 size-4 accent-primary" />
+                      <span className="flex flex-col">
+                        <span className="flex items-center gap-1.5 mz-label"><Icon name="map-pin" size={14} />{a.label}</span>
+                        <span className="mz-body-sm">{a.addressLine}</span>
+                        <span className="mz-caption text-ink-muted">{a.city} · {a.postalCode}</span>
+                      </span>
+                    </label>
+                  ))}
+                  <button type="button" onClick={() => setAddressId("new")} aria-pressed={chosenId === "new"} className={cx("flex min-h-24 flex-col items-center justify-center gap-1 rounded-md border border-dashed p-3 mz-label text-link", chosenId === "new" ? "border-primary bg-primary-tint" : "border-line-strong hover:bg-surface-hover")}>
+                    <Icon name="plus" size={18} />Add new address
+                  </button>
+                </div>
+                {chosenId === "new" && (
+                  <TextField label="New delivery address" value={newAddress} onChange={(e) => setNewAddress(e.target.value)} error={errors.address} placeholder="45/2, Temple Road, Piliyandala" />
+                )}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Select label="Preferred delivery time" value={slot} onChange={(e) => setSlot(e.target.value)} options={SLOTS.map((s) => ({ value: s, label: s }))} />
+                  <TextField label="Note for the driver" optional value={note} onChange={(e) => setNote(e.target.value)} placeholder="Call when you reach the temple junction" />
+                </div>
+              </section>
+            )}
           </div>
         ) : (
           <div className="flex min-w-0 flex-col gap-6">
@@ -165,7 +205,10 @@ export function CheckoutView() {
                 </DetailTile>
                 {method === "delivery" ? (
                   <>
-                    <DetailTile icon="map-pin" label="Address"><span className="mz-label">{address}</span></DetailTile>
+                    <DetailTile icon="map-pin" label="Address">
+                      <span className="mz-label">{chosen ? `${chosen.label} · ${chosen.addressLine}` : address}</span>
+                      {chosen && <span className="mz-body-sm text-ink-muted">{chosen.city} · {chosen.postalCode}</span>}
+                    </DetailTile>
                     <DetailTile icon="truck" label="Delivery">
                       <span className="mz-label">Home delivery by pharmacy driver</span>
                       <span className="mz-body-sm text-ink-muted">{slot}</span>
@@ -251,14 +294,16 @@ export function CheckoutView() {
           <p className="flex justify-between"><span className="text-ink-muted">{method === "delivery" ? "Home delivery" : "Pick up"}</span><span className="mz-num">{method === "delivery" ? formatLKR(DELIVERY_FEE) : "Free"}</span></p>
           <p className="flex justify-between border-t border-line pt-2 mz-label"><span>{step === 1 ? "Total" : "Total to pay"}</span><span className="mz-price mz-num">{formatLKR(totals.total)}</span></p>
           {step === 1 ? (
-            <Button size="lg" block iconRight="arrow-right" className="mt-2" onClick={next}>Continue to review</Button>
+            <>
+              <Button size="lg" block iconRight="arrow-right" className="mt-2" onClick={next}>Continue to review</Button>
+              <Link href="/orders/cart" className="mt-1 self-center mz-body-sm text-link hover:underline">← Back to cart</Link>
+            </>
           ) : (
             <>
               <Button size="lg" block className="mt-2" loading={placing} onClick={place}>Place order</Button>
               <button type="button" className="mt-1 self-center mz-body-sm text-link hover:underline" onClick={() => setStep(1)}>← Back to delivery</button>
             </>
           )}
-          {step === 1 && <p className="mt-1 flex items-center gap-1.5 mz-body-sm text-ink-muted"><Icon name="lock" size={14} />Prescription medicines are not sold online. Send your prescription on WhatsApp instead.</p>}
         </aside>
       </div>
     </div>

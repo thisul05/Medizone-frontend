@@ -1,7 +1,16 @@
-export default function Page() {
+import type { Metadata } from "next";
+import { AccessGuard } from "@/components/shared";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Medizone Owner & Admin Dashboard: Sales, stock and branch performance at a glance.",
+};
+
+export default function AdminPage() {
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">Module 2: Admin dashboard</h1>
-    </main>
+    <AccessGuard module="admin">
+      <AdminDashboard />
+    </AccessGuard>
   );
 }

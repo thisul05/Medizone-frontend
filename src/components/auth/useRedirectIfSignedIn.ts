@@ -7,8 +7,9 @@ import { useAuth } from "@/lib/auth";
 import { isSafeNext, moduleForPath } from "@/lib/routes";
 import type { Role } from "@/types/roles";
 
-/** Default landing route after sign-in: customers go to /shop, staff go to /home. */
+/** Default landing route after sign-in: owner goes to /admin, customers go to /shop, other staff go to /home. */
 export function defaultRouteFor(role: Role): string {
+  if (role === "owner") return "/admin";
   return role === "customer" ? "/shop" : "/home";
 }
 

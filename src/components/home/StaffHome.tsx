@@ -11,7 +11,7 @@ export function StaffHome() {
   const { user, activeBranchId } = useAuth();
   if (!user) return null;
   const modules = modulesFor(user.role);
-  const fullAccess = user.role === "owner" || user.role === "senior_pharmacist";
+  const fullAccess = user.role === "owner";
 
   return (
     <div className="flex flex-col gap-8">

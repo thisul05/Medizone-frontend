@@ -40,10 +40,10 @@ export const STAFF_ROLES: Role[] = [
   "accountant",
 ];
 
-// "*" means every module.
+// Dashboard is strictly restricted to the Owner ("MZ-001 / Mr. Yohan").
 export const access: Record<Role, (ModuleId | "*")[]> = {
   owner: ["*"],
-  senior_pharmacist: ["*"],
+  senior_pharmacist: ["inventory", "orders", "customers", "suppliers", "delivery", "billing", "staff", "reports"],
   pharmacist_assistant: ["orders", "customers", "delivery", "billing"],
   purchasing_manager: ["inventory", "suppliers"],
   accountant: ["billing", "staff", "reports"],

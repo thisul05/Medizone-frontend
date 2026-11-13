@@ -29,17 +29,16 @@ export function StaffOrders() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Overview is for the owner and the senior pharmacist assistant only.
-  const seesOverview = user?.role === "owner" || user?.role === "senior_pharmacist";
+  // Overview is the default first tab for orders
   const tabs: TabItem[] = [
-    ...(seesOverview ? [{ id: "overview", label: "Overview" }] : []),
+    { id: "overview", label: "Overview" },
     { id: "queue", label: "Order queue" },
     { id: "prescriptions", label: "Prescriptions" },
     { id: "repeat", label: "Repeat orders" },
     { id: "labels", label: "Labels" },
   ];
   const asked = params.get("tab") as Tab | null;
-  const tab: Tab = asked && tabs.some((t) => t.id === asked) ? asked : "queue";
+  const tab: Tab = asked && tabs.some((t) => t.id === asked) ? asked : "overview";
 
   // Staff at one branch see that branch; the owner can switch branches in the top bar.
   const branch = activeBranchId ?? user?.branchId ?? "all";

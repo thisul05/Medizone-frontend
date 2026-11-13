@@ -89,8 +89,7 @@ function EditForm({ account }: { account: AccountData }) {
           <TextField label="Full name" value={form.name} onChange={(e) => set("name")(e.target.value)} error={errors.name} autoComplete="name" required fieldClassName="md:col-span-2" />
           <TextField label="Email" type="email" value={form.email} onChange={(e) => set("email")(e.target.value)} error={errors.email} autoComplete="email" icon="mail" required />
           <TextField label="Mobile number" type="tel" value={form.phone} onChange={(e) => set("phone")(e.target.value)} error={errors.phone} autoComplete="tel" icon="phone" placeholder="077 123 4567" hint="Sri Lankan mobile, starting with 07" required />
-          <TextField label="Customer ID" value={account.customerId} readOnly disabled hint="Assigned by Medizone. Can't be changed." />
-          <TextField label="Loyalty points" value={`${account.loyalty.balance.toLocaleString("en-LK")} points`} readOnly disabled hint="Updated automatically from your purchases." />
+          <TextField label="Loyalty points" value={`${account.loyalty.balance.toLocaleString("en-LK")} points`} readOnly disabled hint="Updated automatically from your purchases. Can't be changed here." fieldClassName="md:col-span-2" />
         </div>
       </Panel>
 
@@ -103,7 +102,7 @@ function EditForm({ account }: { account: AccountData }) {
         </div>
       </Panel>
 
-      <p className="mz-body-sm text-ink-muted">Demo: changes are saved in this browser only. Your sign-in details stay the same.</p>
+      <p className="mz-body-sm text-ink-muted">This is a demonstration site: changes are saved in this browser only. The mobile number or email you sign in with stays the same.</p>
 
       <div className="flex flex-wrap justify-end gap-2">
         <ButtonLink href="/account/profile" variant="secondary">Cancel</ButtonLink>

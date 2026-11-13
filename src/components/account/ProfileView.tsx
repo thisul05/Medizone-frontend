@@ -1,6 +1,8 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Badge, ButtonLink, cx } from "@/components/shared";
+import { DISCOUNT_NOTE, discountLabel } from "@/lib/account/rules";
 import { branchName } from "@/data/branches";
 import { formatDate, formatPhone } from "@/lib/format";
 import { useAccount } from "@/lib/account/use-account";
@@ -32,8 +34,9 @@ export function ProfileView() {
           <div className="flex flex-wrap gap-2">
             <Badge tone="success" icon="circle-check">Active account</Badge>
             <Badge tone={account.isRegular ? "loyalty" : "neutral"} icon={account.isRegular ? "badge-check" : undefined}>{account.statusLabel}</Badge>
-            {account.isRegular && <Badge tone="brand" icon="percent">{account.discount}% discount</Badge>}
+            {account.isRegular && <Badge tone="brand">{discountLabel(account.discount)}</Badge>}
           </div>
+          {account.isRegular && <p className="mz-body-sm text-ink-muted">{DISCOUNT_NOTE}</p>}
         </div>
       </section>
 
@@ -44,7 +47,7 @@ export function ProfileView() {
               ["Full name", profile.name],
               ["Email", profile.email || <span className="text-ink-muted">Not added</span>],
               ["Phone number", profile.phone ? formatPhone(profile.phone) : <span className="text-ink-muted">Not added</span>],
-              ["Customer ID", <span key="id" className="mz-code">{account.customerId}</span>],
+              ["Preferred branch", branchName(account.branchId)],
             ]}
           />
         </Panel>
@@ -54,9 +57,10 @@ export function ProfileView() {
             rows={[
               ["Account status", <Badge key="s" tone="success" dot>Active</Badge>],
               ["Customer type", account.statusLabel],
-              ["Discount", account.isRegular ? `${account.discount}% off every purchase` : "No regular-customer discount yet"],
+              ...(account.isRegular
+                ? [["Discount", <span key="d" className="flex flex-col"><span>{discountLabel(account.discount)}</span><span className="mz-body-sm text-ink-muted">{DISCOUNT_NOTE}</span></span>] as [string, ReactNode]]
+                : []),
               ["Loyalty points", `${account.loyalty.balance.toLocaleString("en-LK")} points`],
-              ["Preferred branch", branchName(account.branchId)],
               ["Member since", formatDate(account.memberSince)],
             ]}
           />
@@ -82,7 +86,7 @@ export function ProfileView() {
       </Panel>
 
       <p className="mz-body-sm text-ink-muted">
-        Your customer ID and loyalty balance are managed by Medizone and can&apos;t be changed here. Demo: profile changes are saved in this browser only.
+        Your customer type, discount and loyalty points are managed by Medizone and can&apos;t be changed here. This is a demonstration site: profile changes are saved in this browser only.
       </p>
     </>
   );

@@ -7,6 +7,14 @@ import type {
 } from "@/types/account";
 import type { Order } from "@/types/orders";
 
+/**
+ * Regular-customer discount wording. The organisation profile confirms a 3% or 5% discount tied to the
+ * registered regular-customer status and applied by the POS at billing. It does not say which products
+ * qualify, so the UI never claims "every purchase" or "eligible purchases".
+ */
+export const discountLabel = (percent: number) => `${percent}% Regular Customer Discount`;
+export const DISCOUNT_NOTE = "Your registered customer discount is applied during billing.";
+
 /** Refills due within this many days are "due soon". */
 export const DUE_SOON_DAYS = 7;
 
@@ -98,7 +106,7 @@ export function buildLoyaltyLedger(seed: AccountSeed, orders: Order[]): LoyaltyE
   type Row = Omit<LoyaltyEntry, "balance">;
   const rows: Row[] = [];
   if (seed.openingPoints && seed.openingPoints.points > 0) {
-    rows.push({ id: "LP-open", date: seed.openingPoints.date, reference: "Opening balance", description: "Balance carried over from your paper loyalty card", earned: seed.openingPoints.points, redeemed: 0 });
+    rows.push({ id: "LP-open", date: seed.openingPoints.date, reference: "Opening balance", description: "Opening points balance (sample data)", earned: seed.openingPoints.points, redeemed: 0 });
   }
   for (const order of orders) {
     if (order.paymentState !== "paid") continue;

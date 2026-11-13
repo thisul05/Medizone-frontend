@@ -6,7 +6,7 @@ import { Badge, Button, Logo, cx } from "@/components/shared";
 import { site } from "@/data/site";
 import { formatDate, formatLKR } from "@/lib/format";
 import { orderCode, timeOf } from "@/lib/orders";
-import { PAYMENT_STATUS } from "@/lib/account/rules";
+import { PAYMENT_STATUS, discountLabel } from "@/lib/account/rules";
 import { useAccount } from "@/lib/account/use-account";
 import type { AccountPayment } from "@/types/account";
 import { EmptyState, Modal, PANEL, PageTitle, Pagination, StatCard, TABLE_HEAD, TD, TH, usePaged } from "./ui";
@@ -43,7 +43,7 @@ function Receipt({ payment, customer, onClose }: { payment: AccountPayment | nul
           <dl className="flex flex-col gap-2 rounded-md bg-surface-sunken p-4">
             <div className="flex justify-between gap-4"><dt>Subtotal</dt><dd className="mz-num">{formatLKR(payment.subtotal)}</dd></div>
             <div className="flex justify-between gap-4">
-              <dt>Discount{payment.discountPercent ? ` (${payment.discountPercent}%)` : ""}</dt>
+              <dt>{payment.discountPercent ? discountLabel(payment.discountPercent) : "Discount"}</dt>
               <dd className="mz-num">{payment.discount ? `− ${formatLKR(payment.discount)}` : formatLKR(0)}</dd>
             </div>
             <div className="flex justify-between gap-4"><dt>Delivery fee</dt><dd className="mz-num">{formatLKR(payment.deliveryFee)}</dd></div>
@@ -53,7 +53,7 @@ function Receipt({ payment, customer, onClose }: { payment: AccountPayment | nul
             </div>
           </dl>
           <p className="mz-body-sm text-ink-muted">
-            {paid ? "Thank you for shopping with Medizone Pharmacy." : "No payment has been received for this order yet. This summary is not a receipt."} Demo receipt generated from order data; no card details are stored.
+            {paid ? "Thank you for shopping with Medizone Pharmacy." : "No payment has been received for this order yet. This summary is not a receipt."} This is a sample receipt on a demonstration site. Card details are never stored.
           </p>
         </div>
       )}
@@ -80,7 +80,11 @@ export function PaymentsView() {
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard icon="wallet" tone="success" label="Total paid" value={formatLKR(totalPaid, { decimals: false })} hint={`${paid.length} payment${paid.length === 1 ? "" : "s"}`} />
         <StatCard icon="clock" tone="warning" label="Awaiting payment" value={formatLKR(totalDue, { decimals: false })} hint={`${due.length} order${due.length === 1 ? "" : "s"}`} />
-        <StatCard icon="percent" tone="loyalty" label="Saved with discounts" value={formatLKR(saved, { decimals: false })} hint="On paid orders" />
+        {account.isRegular || saved > 0 ? (
+          <StatCard icon="percent" tone="loyalty" label="Regular Customer Discount savings" value={formatLKR(saved, { decimals: false })} hint="On paid orders" />
+        ) : (
+          <StatCard icon="receipt" tone="info" label="Payments recorded" value={list.length} hint="Paid and unpaid orders" />
+        )}
       </div>
 
       <section aria-labelledby="pay-title" className={cx(PANEL, "overflow-hidden")}>
@@ -93,7 +97,7 @@ export function PaymentsView() {
               <table className="w-full min-w-[780px]">
                 <thead className={TABLE_HEAD}>
                   <tr>
-                    <th scope="col" className={TH}>Payment ID</th>
+                    <th scope="col" className={TH}>Payment reference</th>
                     <th scope="col" className={TH}>Order ID</th>
                     <th scope="col" className={TH}>Date</th>
                     <th scope="col" className={cx(TH, "text-right")}>Amount (LKR)</th>

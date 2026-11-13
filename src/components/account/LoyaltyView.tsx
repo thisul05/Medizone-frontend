@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { cx } from "@/components/shared";
+import { Badge, cx } from "@/components/shared";
+import { DISCOUNT_NOTE, discountLabel } from "@/lib/account/rules";
 import { formatDate } from "@/lib/format";
 import { orderCode } from "@/lib/orders";
 import { useAccount } from "@/lib/account/use-account";
@@ -28,16 +29,16 @@ export function LoyaltyView() {
         <StatCard icon="tag" tone="info" label="Total points redeemed" value={pts(loyalty.redeemed)} />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-2">
+      <div className={cx("grid gap-5", account.isRegular && "xl:grid-cols-2")}>
         <Panel title="How you earn points">
           <ul className="flex flex-col gap-3">
             <li className="flex gap-3">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-loyalty-bg mz-label text-loyalty-ink">1</span>
-              <p><strong className="font-semibold">1 point for every Rs. 100</strong> of eligible purchases. For example, a Rs. 2,450 purchase earns 24 points. Part amounts below Rs. 100 do not earn a point.</p>
+              <p><strong className="font-semibold">1 point for every Rs. 100</strong> you spend on paid orders. For example, a Rs. 2,450 purchase earns 24 points. Part amounts below Rs. 100 do not earn a point.</p>
             </li>
             <li className="flex gap-3">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-loyalty-bg mz-label text-loyalty-ink">2</span>
-              <p>Points are worked out on the amount you pay after any discount. Delivery fees do not earn points.</p>
+              <p>Points are counted on the product total shown on your order after any discount. Delivery fees do not earn points.</p>
             </li>
             <li className="flex gap-3">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-loyalty-bg mz-label text-loyalty-ink">3</span>
@@ -46,20 +47,17 @@ export function LoyaltyView() {
           </ul>
         </Panel>
 
-        <Panel title="Regular customer discount">
-          <div className="flex flex-col gap-2">
-            {account.isRegular ? (
-              <p>
-                As a <strong className="font-semibold">{account.statusLabel.toLowerCase()}</strong>, you get <strong className="font-semibold">{account.discount}% off</strong> every purchase.
+        {account.isRegular && (
+          <Panel title="Your regular customer discount">
+            <div className="flex flex-col gap-2">
+              <p className="flex flex-wrap items-center gap-2">
+                <Badge tone="brand">{discountLabel(account.discount)}</Badge>
               </p>
-            ) : (
-              <p>Customers who shop with us regularly get <strong className="font-semibold">3% or 5% off</strong> every purchase. Ask at your branch about becoming a regular customer.</p>
-            )}
-            <p className="text-ink-muted">
-              This discount is separate from loyalty points. It comes off your bill straight away, and you still earn points on what you pay.
-            </p>
-          </div>
-        </Panel>
+              <p>{DISCOUNT_NOTE}</p>
+              <p className="text-ink-muted">This discount is a separate benefit from loyalty points.</p>
+            </div>
+          </Panel>
+        )}
       </div>
 
       <section aria-labelledby="points-history" className={cx(PANEL, "overflow-hidden")}>

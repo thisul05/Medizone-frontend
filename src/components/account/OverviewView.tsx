@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Badge, Button, ButtonLink, Icon, cx } from "@/components/shared";
+import { branchName } from "@/data/branches";
 import { formatDate, formatLKR } from "@/lib/format";
+import { DISCOUNT_NOTE, discountLabel } from "@/lib/account/rules";
 import { customerStatusLabel, orderCode, orderTotals } from "@/lib/orders";
 import { orderStatusTone } from "@/lib/account/rules";
 import { useAccount } from "@/lib/account/use-account";
@@ -27,16 +29,13 @@ export function OverviewView() {
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <h1 id="welcome-title" className="mz-h2 text-primary-tint-ink">Welcome back, {account.firstName}!</h1>
           <p className="text-ink-muted">
-            {account.name} · Customer ID <span className="mz-code text-ink">{account.customerId}</span>
+            {account.name} · Preferred branch: {branchName(account.branchId)}
           </p>
           <div className="flex flex-wrap gap-2">
             <Badge tone={account.isRegular ? "loyalty" : "neutral"} icon={account.isRegular ? "badge-check" : "user"}>{account.statusLabel}</Badge>
-            {account.isRegular ? (
-              <Badge tone="brand" icon="percent">{account.discount}% discount on every purchase</Badge>
-            ) : (
-              <Badge tone="neutral" icon="info">Regular customers get 3% or 5% off</Badge>
-            )}
+            {account.isRegular && <Badge tone="brand">{discountLabel(account.discount)}</Badge>}
           </div>
+          {account.isRegular && <p className="mz-body-sm text-ink-muted">{DISCOUNT_NOTE}</p>}
         </div>
         <ButtonLink href="/shop" variant="secondary" icon="bag" className="self-start sm:self-center">Continue shopping</ButtonLink>
       </section>

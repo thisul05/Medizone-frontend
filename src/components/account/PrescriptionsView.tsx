@@ -22,7 +22,7 @@ function SamplePreview({ p, customer }: { p: AccountPrescription; customer: stri
   return (
     <figure className="flex flex-col gap-2">
       <figcaption className="flex items-center gap-1.5 mz-body-sm font-semibold text-warning-ink">
-        <Icon name="info" size={16} /> Sample preview: no prescription image is stored in this demo
+        <Icon name="info" size={16} /> Sample preview only: no prescription image is stored on this demonstration site
       </figcaption>
       <div aria-hidden className="relative overflow-hidden rounded-md border border-dashed border-line-strong bg-surface-sunken p-4 font-mono text-[12px] leading-5 text-ink-muted">
         <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[40px] font-bold uppercase tracking-widest text-line-strong/40 [transform:rotate(-18deg)]">Sample</span>

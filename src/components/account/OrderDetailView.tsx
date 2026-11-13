@@ -4,7 +4,7 @@ import { Badge, ButtonLink, cx } from "@/components/shared";
 import { branchName } from "@/data/branches";
 import { formatDate, formatLKR } from "@/lib/format";
 import { FULFILMENT_LABELS, PAY_LABELS, customerStatusLabel, orderCode, orderTotals, timeOf } from "@/lib/orders";
-import { PAYMENT_STATUS, orderStatusTone, paymentForOrder } from "@/lib/account/rules";
+import { PAYMENT_STATUS, discountLabel, orderStatusTone, paymentForOrder } from "@/lib/account/rules";
 import { useAccount } from "@/lib/account/use-account";
 import { DetailList, EmptyState, PANEL, PageTitle, Panel, TABLE_HEAD, TD, TH } from "./ui";
 
@@ -67,7 +67,7 @@ export function OrderDetailView({ orderId }: { orderId: string }) {
             <dl className="flex flex-col gap-2 border-t border-line px-4 py-4 sm:ml-auto sm:w-80">
               <div className="flex justify-between gap-4"><dt className="text-ink-muted">Subtotal</dt><dd className="mz-num">{formatLKR(totals.subtotal)}</dd></div>
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-muted">Discount{order.discountPercent ? ` (regular customer ${order.discountPercent}%)` : ""}</dt>
+                <dt className="text-ink-muted">{order.discountPercent ? discountLabel(order.discountPercent) : "Discount"}</dt>
                 <dd className="mz-num text-success-ink">{totals.discount ? `− ${formatLKR(totals.discount)}` : formatLKR(0)}</dd>
               </div>
               <div className="flex justify-between gap-4"><dt className="text-ink-muted">Delivery fee</dt><dd className="mz-num">{totals.deliveryFee ? formatLKR(totals.deliveryFee) : "Free"}</dd></div>
@@ -93,7 +93,7 @@ export function OrderDetailView({ orderId }: { orderId: string }) {
               rows={[
                 ["Payment method", PAY_LABELS[order.payMethod]],
                 ["Payment status", <Badge key="p" tone={payStatus.tone} dot>{payStatus.label}</Badge>],
-                ["Payment ID", <span key="id" className="mz-code">{payment.id}</span>],
+                ["Payment reference", <span key="id" className="mz-code">{payment.id}</span>],
               ]}
             />
             <ButtonLink href="/account/payments" variant="ghost" size="sm" iconRight="arrow-right" className="-ml-3 mt-2">Payment history</ButtonLink>

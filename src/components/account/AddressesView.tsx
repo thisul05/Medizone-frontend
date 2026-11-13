@@ -133,7 +133,7 @@ export function AddressesView() {
         </ul>
       )}
 
-      <p className="mz-body-sm text-ink-muted">Demo: addresses are saved in this browser only. Only one address can be the default.</p>
+      <p className="mz-body-sm text-ink-muted">This is a demonstration site: addresses are saved in this browser only. Only one address can be your default.</p>
 
       <Modal
         open={!!modal}

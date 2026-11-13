@@ -2,8 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Alert, Button, ButtonLink, CARD, Icon, Select, TextField, cx, useToast } from "@/components/shared";
+import { Alert, Button, ButtonLink, CARD, Icon, Select, TextField, cx, useToast, type IconName } from "@/components/shared";
 import { branches, branchName } from "@/data/branches";
+import { getCategory } from "@/data/storefront";
 import { useAuth } from "@/lib/auth";
 import { getCustomerProfile } from "@/lib/auth-store";
 import { useCart } from "@/lib/cart";
@@ -18,15 +19,15 @@ type Pay = "card" | "cod" | "pay_at_counter";
 
 const SLOTS = ["Tomorrow, 9 am – 1 pm", "Tomorrow, 2 pm – 6 pm", "Day after tomorrow, 9 am – 1 pm"];
 
-function Choice({ checked, onChange, title, detail, price }: { checked: boolean; onChange: () => void; title: string; detail: string; price?: string }) {
+function Choice({ checked, onChange, title, detail, price, icon }: { checked: boolean; onChange: () => void; title: string; detail: string; price?: string; icon?: IconName }) {
   return (
     <label className={cx("flex cursor-pointer items-start gap-3 rounded-md border p-4", checked ? "border-primary bg-primary-tint" : "border-line-strong hover:bg-surface-hover")}>
       <input type="radio" checked={checked} onChange={onChange} className="mt-0.5 size-4 accent-primary" />
-      <span className="flex flex-1 flex-col">
-        <span className="mz-label">{title}</span>
+      <span className="flex flex-1 flex-col gap-0.5">
+        <span className="flex items-center gap-2 mz-label">{icon && <Icon name={icon} size={18} />}{title}</span>
         <span className="mz-body-sm text-ink-muted">{detail}</span>
+        {price && <span className={cx("mt-1 mz-label", price === "Free" && "text-success-ink")}>{price}</span>}
       </span>
-      {price && <span className="mz-label">{price}</span>}
     </label>
   );
 }
@@ -43,6 +44,7 @@ export function CheckoutView() {
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState(user?.name ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [method, setMethod] = useState<Method>("delivery");
   const [address, setAddress] = useState(profile ? [profile.addressLine, profile.city].filter(Boolean).join(", ") : "");
   const [branchId, setBranchId] = useState<BranchId>(user?.branchId && user.branchId !== "all" ? user.branchId : "b1");
@@ -76,6 +78,7 @@ export function CheckoutView() {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = "Enter your name";
     if (phone.replace(/\D/g, "").length !== 10) e.phone = "Enter a 10-digit mobile number";
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = "Enter a valid email, or leave it empty";
     if (method === "delivery" && address.trim().length < 8) e.address = "Enter your full delivery address";
     setErrors(e);
     if (!Object.keys(e).length) setStep(2);
@@ -113,15 +116,18 @@ export function CheckoutView() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
         {step === 1 ? (
           <div className="flex min-w-0 flex-col gap-6">
-            <section className={cx(CARD, "grid gap-4 md:grid-cols-2")}>
-              <h2 className="mz-h3 md:col-span-2">Contact details</h2>
+            <section className={cx(CARD, "grid gap-4 md:grid-cols-3")}>
+              <h2 className="mz-h3 md:col-span-3">Contact details</h2>
               <TextField label="Full name" value={name} onChange={(e) => setName(e.target.value)} error={errors.name} />
               <TextField label="Mobile number" icon="phone" value={phone} onChange={(e) => setPhone(e.target.value)} error={errors.phone} />
+              <TextField label="Email" optional type="email" icon="mail" value={email} onChange={(e) => setEmail(e.target.value)} error={errors.email} />
             </section>
             <section className={cx(CARD, "flex flex-col gap-3")}>
               <h2 className="mz-h3">How would you like to get your order?</h2>
-              <Choice checked={method === "delivery"} onChange={() => setMethod("delivery")} title="Home delivery" detail="By our pharmacy driver · Piliyandala, Kesbewa and Maharagama areas" price={formatLKR(DELIVERY_FEE)} />
-              <Choice checked={method === "pickup"} onChange={() => setMethod("pickup")} title="Pick up at a branch" detail="We send you a message when it is ready" price="Free" />
+              <div className="grid gap-3 md:grid-cols-2">
+                <Choice icon="truck" checked={method === "delivery"} onChange={() => setMethod("delivery")} title="Home delivery" detail="By our pharmacy driver · 1–2 days · Piliyandala, Kesbewa and Maharagama areas" price={formatLKR(DELIVERY_FEE)} />
+                <Choice icon="store" checked={method === "pickup"} onChange={() => setMethod("pickup")} title="Pick up at a branch" detail="Ready within 2 hours · we send you a message when it is ready" price="Free" />
+              </div>
               {method === "delivery" ? (
                 <div className="grid gap-4 md:grid-cols-2">
                   <TextField label="Delivery address" value={address} onChange={(e) => setAddress(e.target.value)} error={errors.address} placeholder="45/2, Temple Road, Piliyandala" fieldClassName="md:col-span-2" />
@@ -137,7 +143,7 @@ export function CheckoutView() {
           <div className="flex min-w-0 flex-col gap-6">
             <section className={cx(CARD, "flex flex-col gap-2")}>
               <div className="flex justify-between"><h2 className="mz-h3">Delivery details</h2><button type="button" className="mz-label text-link" onClick={() => setStep(1)}>Edit</button></div>
-              <p>{name} · {phone}</p>
+              <p>{name} · {phone}{email.trim() && ` · ${email.trim()}`}</p>
               <p className="text-ink-muted">{method === "delivery" ? `Home delivery by our driver to ${address} · ${slot}` : `Pick up at ${branchName(branchId)} branch`}</p>
               {note && <p className="text-ink-muted">Note: {note}</p>}
             </section>
@@ -161,6 +167,24 @@ export function CheckoutView() {
 
         <aside className={cx(CARD, "flex h-fit flex-col gap-2")}>
           <h2 className="mb-1 mz-h3">Order summary</h2>
+          <ul className="mb-2 flex flex-col gap-3 border-b border-line pb-4">
+            {cart.items.map((i) => {
+              const p = cart.getProduct(i.productId);
+              if (!p) return null;
+              return (
+                <li key={i.productId} className="flex items-center gap-3">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-surface-sunken">
+                    <Icon name={getCategory(p.categoryId)?.icon ?? "package"} size={20} className="text-ink-subtle" />
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="line-clamp-2 mz-label">{p.name}</span>
+                    <span className="mz-caption text-ink-muted">Qty {i.qty}</span>
+                  </span>
+                  <span className="mz-label mz-num">{formatLKR(p.price * i.qty)}</span>
+                </li>
+              );
+            })}
+          </ul>
           <p className="flex justify-between"><span className="text-ink-muted">Subtotal ({items.length} items)</span><span className="mz-num">{formatLKR(totals.subtotal)}</span></p>
           {discountPercent > 0 && <p className="flex justify-between"><span className="text-ink-muted">Regular customer discount ({discountPercent}%)</span><span className="mz-num text-success-ink">− {formatLKR(totals.discount)}</span></p>}
           <p className="flex justify-between"><span className="text-ink-muted">{method === "delivery" ? "Home delivery" : "Pick up"}</span><span className="mz-num">{method === "delivery" ? formatLKR(DELIVERY_FEE) : "Free"}</span></p>

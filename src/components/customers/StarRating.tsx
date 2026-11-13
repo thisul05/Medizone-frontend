@@ -12,12 +12,12 @@ export function StarRatingDisplay({ value, size = 16, className = "" }: { value:
   const percent = Math.max(0, Math.min(100, (value / 5) * 100));
   return (
     <span role="img" aria-label={`Rated ${formatRating(value)} out of 5`} className={`relative inline-flex ${className}`}>
-      <span className="flex gap-0.5 text-(--border-strong)">
+      <span className="flex gap-0.5 text-(--star)">
         {STARS.map((s) => (
           <Icon key={s} name="star" size={size} strokeWidth={1.5} />
         ))}
       </span>
-      <span className="absolute inset-y-0 left-0 flex gap-0.5 overflow-hidden text-(--warning-solid)" style={{ width: `${percent}%` }}>
+      <span className="absolute inset-y-0 left-0 flex gap-0.5 overflow-hidden text-(--star)" style={{ width: `${percent}%` }}>
         {STARS.map((s) => (
           <Icon key={s} name="star" size={size} strokeWidth={1.5} filled />
         ))}

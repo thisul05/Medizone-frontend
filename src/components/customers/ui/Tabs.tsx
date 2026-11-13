@@ -12,13 +12,17 @@ interface TabsProps<T extends string> {
   tabs: TabItem<T>[];
   value: T;
   onChange: (id: T) => void;
-  /** underline: sections of one record. pill: 2–5 filter choices for a list. */
+  /** underline: sections of one record (Figma). pill: compact filter choices. */
   variant?: "underline" | "pill";
   label: string;
   /** Prefix for tab/panel ids; panels use `${idPrefix}-panel-${id}`. */
   idPrefix: string;
   className?: string;
 }
+
+const underlineTab = "relative inline-flex h-12 flex-none cursor-pointer items-center gap-2 px-4 text-sm font-medium transition-colors";
+const underlineOn = "font-semibold text-(--heading) after:absolute after:right-0 after:-bottom-px after:left-0 after:h-[3px] after:bg-(--heading)";
+const underlineOff = "text-(--ink-muted) hover:text-(--heading)";
 
 export function Tabs<T extends string>({ tabs, value, onChange, variant = "underline", label, idPrefix, className = "" }: TabsProps<T>) {
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -42,8 +46,8 @@ export function Tabs<T extends string>({ tabs, value, onChange, variant = "under
       aria-label={label}
       className={
         pill
-          ? `inline-flex max-w-full gap-1 overflow-x-auto rounded-full bg-(--surface-sunken) p-1 ${className}`
-          : `flex gap-1 overflow-x-auto border-b border-(--border) ${className}`
+          ? `inline-flex max-w-full gap-1 overflow-x-auto rounded-md bg-(--soft-bg) p-1 ${className}`
+          : `flex gap-2 overflow-x-auto border-b border-(--border) ${className}`
       }
     >
       {tabs.map((tab, i) => {
@@ -64,26 +68,14 @@ export function Tabs<T extends string>({ tabs, value, onChange, variant = "under
             onKeyDown={(e) => onKeyDown(e, i)}
             className={
               pill
-                ? `inline-flex h-8 flex-none cursor-pointer items-center gap-2 rounded-full px-3.5 text-sm font-semibold transition-colors ${
-                    active ? "bg-(--surface-raised) text-(--primary-tint-ink) shadow-(--shadow-1)" : "text-(--ink-muted) hover:text-(--ink)"
+                ? `inline-flex h-8 flex-none cursor-pointer items-center gap-2 rounded-[6px] px-3 text-sm font-semibold transition-colors ${
+                    active ? "bg-(--surface-raised) text-(--heading) shadow-(--shadow-1)" : "text-(--ink-muted) hover:text-(--ink)"
                   }`
-                : `relative inline-flex h-11 flex-none cursor-pointer items-center gap-2 px-3 text-sm font-semibold transition-colors ${
-                    active
-                      ? "text-(--primary-tint-ink) after:absolute after:right-2 after:-bottom-px after:left-2 after:h-[3px] after:rounded-t-[3px] after:bg-(--primary)"
-                      : "text-(--ink-muted) hover:text-(--ink)"
-                  }`
+                : `${underlineTab} ${active ? underlineOn : underlineOff}`
             }
           >
             {tab.label}
-            {tab.count != null ? (
-              <span
-                className={`inline-grid h-5 min-w-[22px] place-items-center rounded-full px-1.5 text-xs tabular-nums ${
-                  active ? "bg-(--primary-tint) text-(--primary-tint-ink)" : pill ? "bg-(--surface-raised) text-(--ink-muted)" : "bg-(--surface-sunken) text-(--ink-muted)"
-                }`}
-              >
-                {tab.count}
-              </span>
-            ) : null}
+            {tab.count != null ? <span className="text-xs text-(--ink-muted) tabular-nums">({tab.count})</span> : null}
           </button>
         );
       })}
@@ -93,7 +85,7 @@ export function Tabs<T extends string>({ tabs, value, onChange, variant = "under
 
 export function TabPanel({ idPrefix, id, children }: { idPrefix: string; id: string; children: ReactNode }) {
   return (
-    <div role="tabpanel" id={`${idPrefix}-panel-${id}`} aria-labelledby={`${idPrefix}-tab-${id}`} tabIndex={0} className="focus-visible:outline-offset-4">
+    <div role="tabpanel" id={`${idPrefix}-panel-${id}`} aria-labelledby={`${idPrefix}-tab-${id}`} tabIndex={-1} className="focus-visible:outline-offset-4">
       {children}
     </div>
   );

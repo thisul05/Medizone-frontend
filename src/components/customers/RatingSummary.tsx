@@ -7,68 +7,58 @@ import { Card } from "./ui/Card";
 import { Icon } from "./ui/Icon";
 
 interface RatingSummaryProps {
+  /** Always the complete dataset, so the overview does not change with the filter. */
   feedback: CustomerFeedback[];
   selected: Rating | "all";
   onSelect: (rating: Rating | "all") => void;
 }
 
-/** Average rating with five stars, plus the distribution as horizontal bars (one series, one hue). */
+/** Rating Overview (Figma): big average, stars, review count and the 5→1 distribution bars. */
 export function RatingSummary({ feedback, selected, onSelect }: RatingSummaryProps) {
   const avg = averageRating(feedback);
   const rows = ratingDistribution(feedback);
-  const max = Math.max(1, ...rows.map((r) => r.count));
 
   return (
-    <Card as="section" aria-labelledby="rating-summary-title" className="flex flex-col gap-5 p-5">
-      <h2 id="rating-summary-title" className="text-lg leading-6 font-semibold">
-        Rating overview
+    <Card as="section" aria-labelledby="rating-summary-title" className="px-5 py-5">
+      <h2 id="rating-summary-title" className="text-base leading-6 font-bold text-(--heading)">
+        Rating Overview
       </h2>
-      <div className="flex items-center gap-4">
-        <span className="text-[56px] leading-none font-bold tracking-[-0.02em] tabular-nums">{feedback.length ? formatRating(avg) : "–"}</span>
-        <div className="flex flex-col gap-1">
-          <StarRatingDisplay value={avg} size={22} />
-          <span className="text-[13px] text-(--ink-muted)">
-            Average of {feedback.length} {feedback.length === 1 ? "review" : "reviews"}
-          </span>
-        </div>
+      <div className="flex flex-col items-center gap-2 border-b border-(--border) pt-4 pb-5">
+        <span className="text-[44px] leading-[52px] font-bold text-(--heading) tabular-nums">{feedback.length ? `${formatRating(avg)}/5` : "–"}</span>
+        <StarRatingDisplay value={avg} size={24} />
+        <span className="text-[13px] text-(--ink)">
+          Based on {feedback.length} customer {feedback.length === 1 ? "review" : "reviews"}
+        </span>
       </div>
 
-      <div>
-        <p className="mb-2 text-[11px] leading-[14px] font-bold tracking-[0.08em] text-(--ink-muted) uppercase">Rating distribution</p>
-        <ul className="flex flex-col gap-1">
-          {rows.map((row) => {
-            const active = selected === row.rating;
-            return (
-              <li key={row.rating}>
-                <button
-                  type="button"
-                  onClick={() => onSelect(active ? "all" : row.rating)}
-                  aria-pressed={active}
-                  title={`${row.rating} stars: ${row.count} reviews (${row.percent}%)`}
-                  className={`grid w-full cursor-pointer grid-cols-[44px_1fr_64px] items-center gap-3 rounded-sm px-2 py-1.5 text-left transition-colors ${
-                    active ? "bg-(--primary-tint)" : "hover:bg-(--surface-hover)"
-                  }`}
-                >
-                  <span className="flex items-center gap-1 text-sm font-semibold tabular-nums">
-                    {row.rating}
-                    <Icon name="star" size={14} filled className="text-(--warning-solid)" />
-                  </span>
-                  <span className="h-2.5 overflow-hidden rounded-full bg-(--surface-sunken)">
-                    <span
-                      className="block h-full rounded-full bg-(--primary) transition-[width] duration-150"
-                      style={{ width: `${(row.count / max) * 100}%` }}
-                    />
-                  </span>
-                  <span className="text-right text-[13px] text-(--ink-muted) tabular-nums">
-                    {row.count} · {row.percent}%
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        <p className="mt-2 text-[13px] text-(--ink-muted)">Select a row to filter the list by that rating.</p>
-      </div>
+      <ul className="mt-4 flex flex-col gap-1" aria-label="Rating distribution">
+        {rows.map((row) => {
+          const active = selected === row.rating;
+          return (
+            <li key={row.rating}>
+              <button
+                type="button"
+                onClick={() => onSelect(active ? "all" : row.rating)}
+                aria-pressed={active}
+                aria-label={`${row.rating} stars: ${row.count} reviews, ${row.percent}%. ${active ? "Showing only these; select to show all." : "Select to show only these."}`}
+                className={`grid w-full cursor-pointer grid-cols-[32px_1fr_32px_48px] items-center gap-3 rounded-[6px] px-1.5 py-1.5 text-left transition-colors ${
+                  active ? "bg-(--primary-tint)" : "hover:bg-(--surface-hover)"
+                }`}
+              >
+                <span className="flex items-center gap-1 text-[13px] font-medium tabular-nums">
+                  {row.rating}
+                  <Icon name="star" size={12} filled className="text-(--star)" />
+                </span>
+                <span className="h-2 overflow-hidden rounded-full bg-(--surface-sunken)">
+                  <span className="block h-full rounded-full bg-(--rating-bar) transition-[width] duration-150" style={{ width: `${row.percent}%` }} />
+                </span>
+                <span className="text-right text-[13px] font-medium tabular-nums">{row.count}</span>
+                <span className="text-right text-xs text-(--ink-muted) tabular-nums">{row.percent}%</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </Card>
   );
 }

@@ -1,133 +1,77 @@
 "use client";
 
-import { useState } from "react";
-import { PHARMACY_CONTACT, getBranchName } from "@/data/customers";
-import { buildReminderMessage, describeDaysFromToday, formatDate, formatPhone } from "@/lib/customers";
+import { buildReminderMessage, formatDate, formatPhone } from "@/lib/customers";
 import type { Customer, RefillReminder } from "@/types/customers";
 import { ReminderStatusBadge } from "./ReminderTable";
 import { Button } from "./ui/Button";
-import { Icon } from "./ui/Icon";
 import { Modal } from "./ui/Modal";
-import { Tabs } from "./ui/Tabs";
-
-export type ReminderChannel = "sms" | "whatsapp";
 
 interface ReminderPreviewModalProps {
   reminder?: RefillReminder;
   customer?: Customer;
   onClose: () => void;
-  onMarkSent: (reminder: RefillReminder, channel: ReminderChannel) => void;
+  onMarkSent: (reminder: RefillReminder) => void;
 }
 
+function Item({ label, children, accent }: { label: string; children: React.ReactNode; accent?: boolean }) {
+  return (
+    <div>
+      <dt className="text-xs text-(--ink-muted)">{label}</dt>
+      <dd className={`mt-1 text-sm font-semibold ${accent ? "text-(--heading)" : "text-(--ink)"}`}>{children}</dd>
+    </div>
+  );
+}
+
+/** Reminder Preview (Figma). Frontend simulation: no SMS, WhatsApp or email is sent. */
 export function ReminderPreviewModal({ reminder, customer, onClose, onMarkSent }: ReminderPreviewModalProps) {
-  const [channel, setChannel] = useState<ReminderChannel>("whatsapp");
   const open = Boolean(reminder && customer);
-  const message =
-    reminder && customer ? buildReminderMessage(customer, reminder, getBranchName(customer.branchId), PHARMACY_CONTACT.phone) : "";
-  const smsParts = Math.ceil(message.length / 160);
+  const sent = reminder?.status === "sent";
 
   return (
     <Modal
       open={open}
       onClose={onClose}
       size="lg"
-      tone="info"
-      icon="message"
-      title="Preview refill reminder"
-      description="Simulated only. This prototype does not send SMS, WhatsApp or email."
+      divider
+      title="Reminder Preview"
+      description="Review the personalized reminder before marking it as sent."
       footer={
-        reminder && reminder.status !== "sent" ? (
+        reminder ? (
           <>
-            <Button variant="ghost" onClick={onClose}>
-              Cancel
+            <Button variant="secondary" onClick={onClose} className="min-w-[100px]">
+              Close
             </Button>
-            <Button icon="send" onClick={() => onMarkSent(reminder, channel)}>
-              Mark as sent
+            <Button onClick={() => onMarkSent(reminder)} disabled={sent} className="min-w-[148px]">
+              {sent ? "Already Sent" : "Mark as Sent"}
             </Button>
           </>
-        ) : (
-          <Button variant="secondary" onClick={onClose}>
-            Close preview
-          </Button>
-        )
+        ) : null
       }
     >
       {reminder && customer ? (
         <div className="flex flex-col gap-5">
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-3">
-            <div>
-              <dt className="text-(--ink-muted)">To</dt>
-              <dd className="font-semibold">{customer.name}</dd>
-              <dd className="text-(--ink-muted) tabular-nums">{formatPhone(customer.phone)}</dd>
-            </div>
-            <div>
-              <dt className="text-(--ink-muted)">Medicine</dt>
-              <dd className="font-semibold">{reminder.medicine}</dd>
-            </div>
-            <div>
-              <dt className="text-(--ink-muted)">Expected refill</dt>
-              <dd className="font-semibold">{formatDate(reminder.expectedRefillDate)}</dd>
-              <dd className="text-(--ink-muted)">{describeDaysFromToday(reminder.daysUntilRefill)}</dd>
-            </div>
-            <div className="col-span-2 sm:col-span-3">
-              <dt className="sr-only">Status</dt>
-              <dd className="flex flex-wrap items-center gap-2">
-                <ReminderStatusBadge status={reminder.status} />
-                <span className="text-[13px] text-(--ink-muted)">
-                  {formatDate(reminder.purchaseDate)} + {reminder.daysSupply} days supply = {formatDate(reminder.expectedRefillDate)}
-                </span>
-              </dd>
-            </div>
+          <dl className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+            <Item label="Customer">{customer.name}</Item>
+            <Item label="Medicine">{reminder.medicine}</Item>
+            <Item label="Expected Refill Date" accent>
+              {formatDate(reminder.expectedRefillDate)}
+            </Item>
+            <Item label="Phone">{formatPhone(customer.phone)}</Item>
           </dl>
-
-          <div className="flex flex-col gap-3 rounded-lg bg-(--surface-sunken) p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-[11px] leading-[14px] font-bold tracking-[0.08em] text-(--ink-muted) uppercase">Message preview</p>
-              <Tabs<ReminderChannel>
-                variant="pill"
-                label="Channel"
-                idPrefix="reminder-channel"
-                value={channel}
-                onChange={setChannel}
-                tabs={[
-                  { id: "whatsapp", label: "WhatsApp" },
-                  { id: "sms", label: "SMS" },
-                ]}
-                className="bg-(--surface-raised)"
-              />
-            </div>
-
-            {channel === "whatsapp" ? (
-              <div className="overflow-hidden rounded-lg border border-(--border) bg-(--surface-raised) shadow-(--shadow-1)">
-                <div className="flex items-center gap-3 bg-(--surface-nav) px-4 py-2.5 text-(--nav-ink)">
-                  <span aria-hidden className="grid size-8 place-items-center rounded-full bg-(--logo-green) text-xs font-extrabold text-(--logo-navy)">
-                    MZ
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold">{PHARMACY_CONTACT.name}</p>
-                    <p className="text-xs text-(--nav-ink-muted) tabular-nums">{formatPhone(PHARMACY_CONTACT.phone)} · Business account</p>
-                  </div>
-                </div>
-                <div className="bg-(--loyalty-bg) p-4">
-                  <div className="max-w-[440px] rounded-lg rounded-tl-sm bg-(--surface-raised) px-3.5 py-2.5 text-(--ink) shadow-(--shadow-1)">
-                    <p className="text-[15px] leading-[22px]">{message}</p>
-                    <p className="mt-1 flex items-center justify-end gap-1 text-[11px] text-(--ink-subtle)">
-                      9:00 am <Icon name="check" size={12} />
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="max-w-[460px] rounded-lg rounded-tl-sm border border-(--border) bg-(--surface-raised) p-4 text-(--ink) shadow-(--shadow-1)">
-                  <p className="text-[15px] leading-[22px]">{message}</p>
-                </div>
-                <p className="text-xs text-(--ink-muted) tabular-nums">
-                  {message.length} characters · {smsParts} SMS {smsParts === 1 ? "part" : "parts"}
-                </p>
-              </>
-            )}
+          <div className="flex flex-wrap items-center gap-2 text-xs text-(--ink-muted)">
+            <ReminderStatusBadge status={reminder.status} />
+            <span>
+              {formatDate(reminder.purchaseDate)} + {reminder.daysSupply} days supply = {formatDate(reminder.expectedRefillDate)}
+            </span>
+            {reminder.sentOn ? <span>· Marked as sent on {formatDate(reminder.sentOn)}</span> : null}
           </div>
+          <div>
+            <p className="text-[13px] font-semibold text-(--heading)">Personalized reminder message</p>
+            <p className="mt-2 rounded-md border border-(--border) bg-(--surface-page) px-4 py-3.5 text-[13px] leading-5 text-(--ink)">
+              {buildReminderMessage(customer, reminder)}
+            </p>
+          </div>
+          <p className="text-xs text-(--ink-muted)">Frontend simulation only. No real messages are sent.</p>
         </div>
       ) : null}
     </Modal>

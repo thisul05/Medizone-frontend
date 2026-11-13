@@ -1,11 +1,12 @@
 // Module 5 mock data: customers, purchases, prescriptions, loyalty points and feedback.
 // Customers cus-01 to cus-08 use the same ids, names, phone numbers and branches as the
 // Delivery module's mock data (src/data/delivery.ts), so both modules point at the same people.
-// All dates are ISO, all money is LKR, and "today" is PROTOTYPE_TODAY (6 Nov 2026).
+// All dates are ISO and all money is LKR. Reminder statuses are worked out from the real current date.
+// Branch ids and names come from the team's shared list in src/data/branches.ts.
 
+import { branchName, branches as sharedBranches } from "@/data/branches";
 import { calculateLoyaltyPoints, calculatePurchaseTotals } from "@/lib/customers";
 import type {
-  Branch,
   BranchId,
   Customer,
   CustomerFeedback,
@@ -25,12 +26,8 @@ export const PHARMACY_CONTACT = {
   address: "238 1/B, Horana Road, Miriswaththa, Piliyandala",
 };
 
-export const branches: Branch[] = [
-  { id: "b1", name: "Branch 1", isMain: true },
-  { id: "b2", name: "Branch 2" },
-  { id: "b3", name: "Branch 3" },
-  { id: "b4", name: "Branch 4" },
-];
+/** The five Medizone branches, from the shared list (same ids as every other module). */
+export const branches: { id: BranchId; name: string }[] = sharedBranches.map((b) => ({ id: b.id, name: b.name }));
 
 /* ---------- Customers (loyaltyPoints is filled in from the transactions below) ---------- */
 
@@ -201,7 +198,15 @@ export const customers: Customer[] = baseCustomers.map((c) => ({
 
 /* ---------- Stored prescriptions ---------- */
 
-export const prescriptions: StoredPrescription[] = [
+const FILE_MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+/** "2026-11-07" + "pdf" -> "prescription_07nov2026.pdf" */
+function prescriptionFileName(issuedOn: string, type: "pdf" | "jpg"): string {
+  const [y, m, d] = issuedOn.split("-");
+  return `prescription_${d}${FILE_MONTHS[Number(m) - 1]}${y}.${type}`;
+}
+
+const rawPrescriptions: StoredPrescription[] = [
   { id: "RX-1042", customerId: "cus-01", doctorName: "Dr. A. Gunawardena", hospital: "Colombo South Teaching Hospital", issuedOn: "2026-06-18", validUntil: "2026-12-18", medicines: [MED.metformin.name, MED.atorvastatin.name], notes: "Metformin twice daily after meals. Review HbA1c in December." },
   { id: "RX-0987", customerId: "cus-01", doctorName: "Dr. A. Gunawardena", hospital: "Colombo South Teaching Hospital", issuedOn: "2025-12-10", validUntil: "2026-06-10", medicines: [MED.metformin.name, MED.atorvastatin.name] },
   { id: "RX-1056", customerId: "cus-02", doctorName: "Dr. S. Wickramaratne", hospital: "Lanka Hospitals, Colombo 5", issuedOn: "2026-08-30", validUntil: "2027-02-28", medicines: [MED.losartan.name, MED.amlodipine.name], notes: "Check blood pressure monthly at the pharmacy." },
@@ -217,9 +222,15 @@ export const prescriptions: StoredPrescription[] = [
   { id: "RX-1068", customerId: "cus-14", doctorName: "Dr. P. Kodikara", hospital: "Piliyandala Medical Centre", issuedOn: "2026-10-24", validUntil: "2026-11-24", medicines: [MED.omeprazole.name], notes: "14-day course before meals." },
 ];
 
+// Uploaded file details: alternate PDF scans and phone photos (JPG) so both preview types appear.
+export const prescriptions: StoredPrescription[] = rawPrescriptions.map((p, i) => {
+  const fileType = i % 3 === 1 ? "jpg" : "pdf";
+  return { ...p, fileType, fileName: prescriptionFileName(p.issuedOn, fileType) };
+});
+
 /* ---------- Customer feedback ---------- */
 
-export const feedback: CustomerFeedback[] = [
+const rawFeedback: CustomerFeedback[] = [
   { id: "FB-018", customerId: "cus-08", branchId: "b4", date: "2026-11-02", rating: 5, comment: "First visit and the pharmacist explained how to use the rehydration salts for my son. Very kind." },
   { id: "FB-017", customerId: "cus-14", branchId: "b1", date: "2026-10-31", rating: 4, comment: "Got my medicine quickly. The queue was a bit long in the evening." },
   { id: "FB-016", customerId: "cus-10", branchId: "b2", date: "2026-10-30", rating: 3, comment: "Staff were helpful but the antibiotic was out of stock and I had to come back the next day." },
@@ -240,14 +251,19 @@ export const feedback: CustomerFeedback[] = [
   { id: "FB-001", customerId: "cus-11", branchId: "b4", date: "2026-07-18", rating: 4, comment: "Reliable stock of my blood pressure tablets every month." },
 ];
 
+// Link each review to the customer's bill from the same day, when there is one.
+export const feedback: CustomerFeedback[] = rawFeedback.map((f) => {
+  const bill = purchases.find((p) => p.customerId === f.customerId && p.date === f.date);
+  return bill ? { ...f, orderId: bill.id } : f;
+});
+
 /* ---------- Refill reminders already sent (reminder id → date sent) ---------- */
 
 export const sentReminders: Record<string, string> = {
   "rem-INV-1028-1": "2026-11-03",
 };
 
+/** Branch name from the shared branch list, e.g. "Kesbewa". */
 export function getBranchName(branchId: BranchId): string {
-  const branch = branches.find((b) => b.id === branchId);
-  if (!branch) return branchId;
-  return branch.isMain ? `${branch.name} (main)` : branch.name;
+  return branchName(branchId);
 }

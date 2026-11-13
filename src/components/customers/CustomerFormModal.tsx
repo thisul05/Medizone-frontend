@@ -1,25 +1,28 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { branches, getBranchName } from "@/data/customers";
-import { isValidEmail, isValidSriLankanMobile } from "@/lib/customers";
+import { branches } from "@/data/customers";
+import { formatNumber, isValidEmail, isValidSriLankanMobile } from "@/lib/customers";
 import type { BranchId, Customer, CustomerInput, DiscountPercent } from "@/types/customers";
 import { useCustomers } from "./CustomersProvider";
 import { Button } from "./ui/Button";
-import { Checkbox, SelectField, TextField, TextareaField } from "./ui/Field";
+import { SelectField, TextField, TextareaField } from "./ui/Field";
 import { Modal } from "./ui/Modal";
 
-type Errors = Partial<Record<keyof CustomerInput, string>>;
+interface FormValues {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  branchId: BranchId;
+  type: "regular" | "non_regular";
+  /** "" until staff choose 3% or 5%; regular customers never get a discount by default. */
+  discount: "" | "3" | "5";
+}
 
-const EMPTY: CustomerInput = {
-  name: "",
-  phone: "",
-  email: "",
-  address: "",
-  branchId: "b1",
-  isRegular: false,
-  discountPercent: 0,
-};
+type Errors = Partial<Record<"name" | "phone" | "email" | "discount", string>>;
+
+const EMPTY: FormValues = { name: "", phone: "", email: "", address: "", branchId: "b2", type: "non_regular", discount: "" };
 
 interface CustomerFormModalProps {
   open: boolean;
@@ -29,50 +32,50 @@ interface CustomerFormModalProps {
   onSaved: (customer: Customer) => void;
 }
 
-/** Add customer / Edit details. Remounts each time it opens so the form starts fresh. */
+/** Add New Customer / Edit customer details. Remounts each time it opens, so the form always starts fresh. */
 export function CustomerFormModal(props: CustomerFormModalProps) {
   if (!props.open) return null;
   return <CustomerForm {...props} />;
 }
 
+function toValues(customer: Customer): FormValues {
+  return {
+    name: customer.name,
+    phone: customer.phone,
+    email: customer.email ?? "",
+    address: customer.address ?? "",
+    branchId: customer.branchId,
+    type: customer.isRegular ? "regular" : "non_regular",
+    discount: customer.isRegular && customer.discountPercent ? (String(customer.discountPercent) as "3" | "5") : "",
+  };
+}
+
 function CustomerForm({ onClose, customer, onSaved }: CustomerFormModalProps) {
   const { addCustomer, updateCustomer, isPhoneTaken } = useCustomers();
   const editing = Boolean(customer);
-  const [values, setValues] = useState<CustomerInput>(
-    customer
-      ? {
-          name: customer.name,
-          phone: customer.phone,
-          email: customer.email ?? "",
-          address: customer.address,
-          branchId: customer.branchId,
-          isRegular: customer.isRegular,
-          discountPercent: customer.discountPercent,
-        }
-      : EMPTY,
-  );
+  const [values, setValues] = useState<FormValues>(customer ? toValues(customer) : EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  function validate(v: CustomerInput): Errors {
+  function validate(v: FormValues): Errors {
     const e: Errors = {};
     const name = v.name.trim();
-    if (!name) e.name = "Enter the customer's full name";
-    else if (name.length < 3) e.name = "Name must be at least 3 characters";
-    else if (!/^[\p{L} .'-]+$/u.test(name)) e.name = "Use letters, spaces, full stops and hyphens only";
-    if (!v.phone.trim()) e.phone = "Enter a mobile number";
-    else if (!isValidSriLankanMobile(v.phone)) e.phone = "Enter a 10-digit mobile number starting with 07";
-    else if (isPhoneTaken(v.phone, customer?.id)) e.phone = "This number already belongs to another customer";
-    if (v.email && !isValidEmail(v.email)) e.email = "Enter an email like name@example.com, or leave it blank";
-    if (!v.address.trim()) e.address = "Enter the customer's address";
-    if (v.isRegular && v.discountPercent !== 3 && v.discountPercent !== 5) e.discountPercent = "Choose a 3% or 5% discount";
+    if (!name) e.name = "Full name is required.";
+    else if (name.length < 3) e.name = "Full name must be at least 3 characters.";
+    else if (!/^[\p{L} .'-]+$/u.test(name)) e.name = "Use letters, spaces, full stops and hyphens only.";
+    if (!v.phone.trim()) e.phone = "Phone number is required.";
+    else if (!isValidSriLankanMobile(v.phone)) e.phone = "Enter a valid 10-digit phone number.";
+    else if (isPhoneTaken(v.phone, customer?.id)) e.phone = "This phone number is already registered to another customer.";
+    if (v.email.trim() && !isValidEmail(v.email)) e.email = "Enter a valid email address.";
+    if (v.type === "regular" && !v.discount) e.discount = "Select a 3% or 5% discount for a regular customer.";
     return e;
   }
 
-  function update<K extends keyof CustomerInput>(key: K, value: CustomerInput[K]) {
+  function update<K extends keyof FormValues>(key: K, value: FormValues[K]) {
     const next = { ...values, [key]: value };
-    if (key === "isRegular") next.discountPercent = value ? 3 : 0;
+    // Non-regular customers always have 0%; switching to regular makes staff choose 3% or 5%.
+    if (key === "type") next.discount = value === "regular" && customer?.isRegular ? toValues(customer).discount : "";
     setValues(next);
     if (submitted) setErrors(validate(next));
   }
@@ -82,50 +85,61 @@ function CustomerForm({ onClose, customer, onSaved }: CustomerFormModalProps) {
     setSubmitted(true);
     const found = validate(values);
     setErrors(found);
-    if (Object.keys(found).length > 0) {
-      const firstKey = Object.keys(found)[0];
+    const firstKey = Object.keys(found)[0];
+    if (firstKey) {
       document.getElementById(`customer-${firstKey}`)?.focus();
       return;
     }
+    const isRegular = values.type === "regular";
+    const input: CustomerInput = {
+      name: values.name,
+      phone: values.phone,
+      email: values.email,
+      address: values.address,
+      branchId: values.branchId,
+      isRegular,
+      discountPercent: (isRegular ? Number(values.discount) : 0) as DiscountPercent,
+    };
     setSaving(true);
-    // Short pause so the saving state is visible, like a real save.
+    // A short pause so the saving state is visible, like a real save.
     window.setTimeout(() => {
       if (customer) {
-        updateCustomer(customer.id, values);
-        onSaved({ ...customer, ...values, discountPercent: values.isRegular ? values.discountPercent : 0 });
+        updateCustomer(customer.id, input);
+        onSaved({ ...customer, ...input, discountPercent: input.discountPercent });
       } else {
-        onSaved(addCustomer(values));
+        onSaved(addCustomer(input));
       }
       setSaving(false);
-    }, 400);
+    }, 350);
   }
+
+  const isRegular = values.type === "regular";
 
   return (
     <Modal
       open
       onClose={onClose}
-      size="lg"
-      title={editing ? "Edit customer details" : "Add customer"}
-      description={editing ? `Changes apply to ${customer?.name}'s record in every module.` : "New customers start with 0 loyalty points."}
+      title={editing ? "Edit Customer Details" : "Add New Customer"}
+      description={editing ? `Changes apply to ${customer?.name}'s record across the module.` : "Register a customer through manual staff entry."}
       footer={
         <>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} className="min-w-[104px]">
             Cancel
           </Button>
-          <Button type="submit" form="customer-form" loading={saving} icon={editing ? "check" : "plus"}>
-            {editing ? "Save changes" : "Add customer"}
+          <Button type="submit" form="customer-form" loading={saving} className="min-w-[128px]">
+            {editing ? "Save Changes" : "Add Customer"}
           </Button>
         </>
       }
     >
-      <form id="customer-form" noValidate onSubmit={onSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <form id="customer-form" noValidate onSubmit={onSubmit} className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
         <TextField
           id="customer-name"
-          label="Full name"
+          label="Full Name"
           required
           data-autofocus
           autoComplete="name"
-          placeholder="e.g. Nimal Perera"
+          placeholder="Enter full name"
           value={values.name}
           error={errors.name}
           onChange={(e) => update("name", e.target.value)}
@@ -133,15 +147,14 @@ function CustomerForm({ onClose, customer, onSaved }: CustomerFormModalProps) {
         />
         <TextField
           id="customer-phone"
-          label="Mobile number"
+          label="Phone Number"
           required
           type="tel"
           inputMode="tel"
           autoComplete="tel"
-          placeholder="077 123 4567"
+          placeholder="e.g. 077 234 5678"
           value={values.phone}
           error={errors.phone}
-          hint="Used for refill reminders"
           onChange={(e) => update("phone", e.target.value)}
         />
         <TextField
@@ -149,54 +162,73 @@ function CustomerForm({ onClose, customer, onSaved }: CustomerFormModalProps) {
           label="Email (optional)"
           type="email"
           autoComplete="email"
-          placeholder="name@example.com"
+          placeholder="Email address (optional)"
           value={values.email}
           error={errors.email}
           onChange={(e) => update("email", e.target.value)}
         />
-        <TextareaField
-          id="customer-address"
-          label="Address"
-          required
-          rows={2}
-          placeholder="House number, street, town"
-          value={values.address}
-          error={errors.address}
-          onChange={(e) => update("address", e.target.value)}
-          className="min-h-16"
-        />
+        {editing ? (
+          <TextareaField
+            id="customer-address"
+            label="Address (optional)"
+            rows={2}
+            placeholder="House number, street, town"
+            value={values.address}
+            onChange={(e) => update("address", e.target.value)}
+            containerClassName="sm:col-span-2"
+          />
+        ) : null}
         <SelectField
           id="customer-branchId"
-          label="Home branch"
-          required
+          label="Branch"
           value={values.branchId}
           onChange={(e) => update("branchId", e.target.value as BranchId)}
-          options={branches.map((b) => ({ value: b.id, label: getBranchName(b.id) }))}
+          options={branches.map((b) => ({ value: b.id, label: b.name }))}
+          containerClassName="sm:col-span-2"
         />
-        <fieldset className="flex flex-col gap-3 rounded-md border border-(--border) bg-(--surface-sunken) p-4 sm:col-span-2">
-          <legend className="sr-only">Regular customer</legend>
-          <Checkbox
-            label="Regular customer"
-            description="Regular customers get a 3% or 5% discount on every bill. This is separate from loyalty points."
-            checked={values.isRegular}
-            onChange={(e) => update("isRegular", e.target.checked)}
+        <SelectField
+          id="customer-type"
+          label="Customer Type"
+          value={values.type}
+          onChange={(e) => update("type", e.target.value as FormValues["type"])}
+          options={[
+            { value: "non_regular", label: "Non-Regular" },
+            { value: "regular", label: "Regular" },
+          ]}
+        />
+        {isRegular ? (
+          <SelectField
+            id="customer-discount"
+            label="Discount"
+            required
+            placeholder="Select discount"
+            value={values.discount}
+            error={errors.discount}
+            onChange={(e) => update("discount", e.target.value as FormValues["discount"])}
+            options={[
+              { value: "3", label: "3%" },
+              { value: "5", label: "5%" },
+            ]}
           />
-          {values.isRegular ? (
-            <SelectField
-              id="customer-discountPercent"
-              label="Discount"
-              required
-              value={String(values.discountPercent)}
-              error={errors.discountPercent}
-              onChange={(e) => update("discountPercent", Number(e.target.value) as DiscountPercent)}
-              options={[
-                { value: "3", label: "3% discount" },
-                { value: "5", label: "5% discount" },
-              ]}
-              containerClassName="sm:max-w-60"
-            />
-          ) : null}
-        </fieldset>
+        ) : (
+          <SelectField
+            id="customer-discount"
+            label="Discount"
+            value="0"
+            disabled
+            hint="Non-regular customers have no discount."
+            options={[{ value: "0", label: "0%" }]}
+          />
+        )}
+        <div className="flex items-center justify-between gap-4 rounded-md bg-(--surface-sunken) px-3 py-3 sm:col-span-2">
+          <div>
+            <p className="text-[13px] font-medium text-(--ink)">{editing ? "Current Loyalty Points" : "Initial Loyalty Points"}</p>
+            <p className="text-[11px] leading-4 text-(--ink-muted)">Read-only · earned automatically from purchases</p>
+          </div>
+          <output className="text-xl font-bold text-(--heading) tabular-nums" aria-label="Loyalty points">
+            {formatNumber(customer?.loyaltyPoints ?? 0)}
+          </output>
+        </div>
       </form>
     </Modal>
   );
